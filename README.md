@@ -8,7 +8,9 @@ Documentation:
 
 #### Developed by:
 
-D. Smith, K. Tritz, H. Yuh
+D. Smith, U. Wisconsin-Madison<br />
+K. Tritz, The Johns Hopkins U.<br />
+H. Yuh, Nova Photonics
 
 #### License:
 
