@@ -1,4 +1,4 @@
-## Fusion Data Framework
+## Fusion Data Framework (FDF)
 
 A library for data access and management.
 
