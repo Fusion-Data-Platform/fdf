@@ -8,6 +8,7 @@ Documentation:
 
 #### Developed by:
 
+D. Smith, K. Tritz, H. Yuh
 
 #### License:
 
