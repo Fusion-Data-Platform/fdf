@@ -10,9 +10,9 @@ Submit bugs or feature requests: [https://github.com/Fusion-Data-Framework/fdf/i
 
 ##### Developed by:
 
-David Smith<br />
-Kevin Tritz<br />
-Howard Yuh
+David Smith (U. Wisconsin-Madison)<br />
+Kevin Tritz (The Johns Hopkins U.)<br />
+Howard Yuh (Nova Photonics)
 
 We welcome your contributions to the FDF project.  To contribute, please fork the repo and submit pull requests.
 
