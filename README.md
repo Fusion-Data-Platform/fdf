@@ -10,7 +10,7 @@ Submit bugs or feature requests: [https://github.com/Fusion-Data-Framework/fdf/i
 
 ##### Developed by:
 
-David Smith (U. Wisconsin-Madison)<br />
+David R. Smith (U. Wisconsin-Madison)<br />
 Kevin Tritz (The Johns Hopkins U.)<br />
 Howard Yuh (Nova Photonics)
 
