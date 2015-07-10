@@ -14,7 +14,9 @@ David Smith<br />
 Kevin Tritz<br />
 Howard Yuh
 
-If you want to contribute to the FDF project, please contact David, Kevin, or Howard.
+We welcome your contributions to the FDF project.  To contribute, please fork the repo and submit pull requests.
+
+For more information, please contact David, Kevin, or Howard.
 
 ##### License:
 
