@@ -8,12 +8,12 @@ Documentation:
 
 Submit bugs or feature requests: [https://github.com/Fusion-Data-Framework/fdf/issues](https://github.com/Fusion-Data-Framework/fdf/issues)
 
-#### Developed by:
+##### Developed by:
 
 D. Smith<br />
 K. Tritz<br />
 H. Yuh
 
-#### License:
+##### License:
 
 2015
