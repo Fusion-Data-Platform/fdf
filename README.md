@@ -10,7 +10,9 @@ Submit bugs or feature requests: [https://github.com/Fusion-Data-Framework/fdf/i
 
 #### Developed by:
 
-D. Smith, K. Tritz, H. Yuh
+D. Smith<br />
+K. Tritz<br />
+H. Yuh
 
 #### License:
 
