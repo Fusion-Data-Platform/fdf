@@ -6,7 +6,11 @@ Repository: [https://github.com/Fusion-Data-Framework/fdf](https://github.com/Fu
 
 Documentation:
 
+Submit bugs or feature requests: [https://github.com/Fusion-Data-Framework/fdf/issues](https://github.com/Fusion-Data-Framework/fdf/issues)
+
 #### Developed by:
+
+D. Smith, K. Tritz, H. Yuh
 
 #### License:
 
