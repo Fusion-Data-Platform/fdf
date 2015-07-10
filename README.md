@@ -20,4 +20,4 @@ For more information, please contact David, Kevin, or Howard.
 
 ##### License:
 
-2015
+[https://github.com/Fusion-Data-Framework/fdf/blob/master/LICENSE.txt](https://github.com/Fusion-Data-Framework/fdf/blob/master/LICENSE.txt)
