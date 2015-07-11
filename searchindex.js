@@ -1,1 +1,1 @@
-Search.setIndex({envversion:46,filenames:["index"],objects:{},objnames:{},objtypes:{},terms:{content:0,index:0,modul:0,page:0,search:0},titles:["Fusion Data Framework documentation"],titleterms:{data:0,document:0,framework:0,fusion:0,indic:0,tabl:0,welcom:[]}})
+Search.setIndex({envversion:46,filenames:["index"],objects:{},objnames:{},objtypes:{},terms:{content:0,index:0,modul:0,page:0,search:0},titles:["Fusion Data Framework documentation"],titleterms:{data:0,document:0,framework:0,fusion:0,indic:0,tabl:0}})
