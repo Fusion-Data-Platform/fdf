@@ -21,4 +21,4 @@ We welcome your contributions to the FDF project. To contribute, please fork the
 
 ##### License:
 
-[https://github.com/Fusion-Data-Framework/fdf/blob/master/LICENSE.txt](https://github.com/Fusion-Data-Framework/fdf/blob/master/LICENSE.txt)
+[http://fusion-data-framework.github.io/fdf/_static/LICENSE.txt](http://fusion-data-framework.github.io/fdf/_static/LICENSE.txt)
