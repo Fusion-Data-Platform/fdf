@@ -2,9 +2,12 @@
 
 A software framework and application library for working with data from magnetic fusion experiments.
 
-Repository: [https://github.com/Fusion-Data-Framework/fdf](https://github.com/Fusion-Data-Framework/fdf)
+Repository:
+[https://github.com/Fusion-Data-Framework/fdf](https://github.com/Fusion-Data-Framework/fdf)
 
-Documentation: [HTML](http://fusion-data-framework.github.io/fdf/) [PDF](https://github.com/Fusion-Data-Framework/fdf/blob/master/documentation/build/latex/FusionDataFramework.pdf)
+Documentation: 
+[HTML](http://fusion-data-framework.github.io/fdf/) 
+[PDF](http://fusion-data-framework.github.io/fdf/_static/FusionDataFramework.pdf)
 
 Submit bugs or feature requests: [https://github.com/Fusion-Data-Framework/fdf/issues](https://github.com/Fusion-Data-Framework/fdf/issues)
 
