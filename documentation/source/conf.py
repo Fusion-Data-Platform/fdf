@@ -241,6 +241,11 @@ latex_documents = [
    u'David Smith, Kevin Tritz, Howard Yuh', 'manual'),
 ]
 
+latex_elements = {
+  'classoptions': ',oneside',
+  'babel': '\\usepackage[english]{babel}'
+}
+
 # The name of an image file (relative to this directory) to place at the top of
 # the title page.
 #latex_logo = None
