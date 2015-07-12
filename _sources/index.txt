@@ -3,18 +3,26 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Fusion Data Framework documentation
-=================================================
+##########################
+Fusion Data Framework
+##########################
 
-Contents:
+
+
+.. include:: _static/README.rst
+
 
 .. toctree::
    :maxdepth: 2
+   
+   introduction
+   fdfmodule
 
 
 
+*************************
 Indices and tables
-==================
+*************************
 
 * :ref:`genindex`
 * :ref:`modindex`
