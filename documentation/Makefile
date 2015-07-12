@@ -51,9 +51,9 @@ help:
 clean:
 	rm -rf $(BUILDDIR)/*
 
-htmlpdf: html latexpdf
-	cp $(BUILDDIR)/latex/*.pdf $(BUILDDIR)/html/_static
-	@echo "Copied PDF to $(BUILDDIR)/html/_static"
+#htmlpdf: html latexpdf
+#	cp $(BUILDDIR)/latex/*.pdf $(BUILDDIR)/html/_static
+#	@echo "Copied PDF to $(BUILDDIR)/html/_static"
 
 html:
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html

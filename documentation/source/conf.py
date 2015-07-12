@@ -54,8 +54,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Fusion Data Framework'
-copyright = u'2015, David Smith, Kevin Tritz, Howard Yuh'
-author = u'David Smith, Kevin Tritz, Howard Yuh'
+copyright = u'2015, David R. Smith, Kevin Tritz, Howard Yuh'
+author = u'David R. Smith, Kevin Tritz, Howard Yuh'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -237,7 +237,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  (master_doc, 'FusionDataFramework.tex', u'Fusion Data Framework Documentation',
+  (master_doc, 'FusionDataFramework.tex', u'Fusion Data Framework',
    u'David Smith, Kevin Tritz, Howard Yuh', 'manual'),
 ]
 
@@ -267,7 +267,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'fusiondataframework', u'Fusion Data Framework Documentation',
+    (master_doc, 'fusiondataframework', u'Fusion Data Framework',
      [author], 1)
 ]
 
@@ -281,7 +281,7 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  (master_doc, 'FusionDataFramework', u'Fusion Data Framework Documentation',
+  (master_doc, 'FusionDataFramework', u'Fusion Data Framework',
    author, 'FusionDataFramework', 'One line description of project.',
    'Miscellaneous'),
 ]
