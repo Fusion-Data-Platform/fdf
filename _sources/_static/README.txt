@@ -17,5 +17,5 @@ Created by:
 * Howard Yuh, Nova Photonics
 
 
-We welcome your contributions to the FDF project. To contribute, please fork the repo and submit pull requests. For more information, please contact David, Kevin, or Howard.
+We welcome your contributions to the FDF project. To contribute, please contact David, Kevin, or Howard and request an invitation for the development repository: https://github.com/Fusion-Data-Framework/fdf-dev
 
