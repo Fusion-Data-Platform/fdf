@@ -1,0 +1,8 @@
+<?xml version='1.0'?>
+<container name='usxr' mdstree='usxr'>
+    <container name='vtop'>
+        <signal name='time' units='s' mdsnode='\usxr_vtop_00' dim_of='0'>
+        </signal>
+        <signal name='vtop{}' units='DN' axes='time' mdsnode='\usxr_vtop_{}' range='16'></signal>
+    </container>
+</container>
