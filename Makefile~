@@ -1,4 +1,4 @@
-DOCDIR   = docs
+DOCDIR   = documentation
 
 all:
 	cp README.rst $(DOCDIR)/source/_static
