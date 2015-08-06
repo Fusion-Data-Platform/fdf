@@ -1,20 +1,28 @@
 .. Fusion Data Framework documentation master file, created by
-   sphinx-quickstart on Thu Aug  6 09:28:10 2015.
+   sphinx-quickstart on Fri Jul 10 17:43:56 2015.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Fusion Data Framework's documentation!
-=================================================
+##########################
+Fusion Data Framework
+##########################
 
-Contents:
+
+
+.. include:: _static/README.rst
+
 
 .. toctree::
    :maxdepth: 2
+   
+   introduction
+   fdfmodule
 
 
 
+*************************
 Indices and tables
-==================
+*************************
 
 * :ref:`genindex`
 * :ref:`modindex`
