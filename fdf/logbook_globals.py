@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sun Aug 08 08:50:21 2015
-
 @author: drsmith-wisc
 """
 
@@ -21,7 +19,4 @@ engine = create_engine('mysql+mysqldb://drsmith:pfcworld@sql2008.pppl.gov<:port>
 
 # generate new Session class for conversing with database
 Session = sessionmaker(bind=engine)
-
-# open a session
-session = Session()
 
