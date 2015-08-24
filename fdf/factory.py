@@ -132,7 +132,7 @@ class Machine(MutableMapping):
                 data = data.dim_of()
         except:
             pass
-        data = data.value
+        data = data.value_of().value
         try:
             if signal._transpose is not None:
                 data = data.transpose(signal._transpose)
