@@ -285,8 +285,11 @@ class Container(object):
                 else:
                     SignalClass = cls._classes[SignalClassName]
                 SignalObj = SignalClass(**signal_dict)
-                for axis in SignalObj.axes:
-                    setattr(SignalObj, axis, getattr(self, '_'+axis))
+                refs = parse_refs(self, element, SignalObj._transpose)
+                if not refs:
+                    refs = SignalObj.axes
+                for axis, ref in zip(SignalObj.axes, refs):
+                    setattr(SignalObj, axis, getattr(self, '_'+ref))
                 setattr(self, signal_dict['name'], SignalObj)
 
     def __getattr__(self, attribute):
@@ -370,7 +373,9 @@ def parse_signal(obj, element):
 
 def parse_axes(obj, element):
     axes = []
+    refs = []
     transpose = None
+    time_ind = 0
     try:
         axes = [axis.strip() for axis in element.get('axes').split(',')]
         if 'time' in axes:
@@ -386,6 +391,16 @@ def parse_axes(obj, element):
 
     return axes, transpose
 
+def parse_refs(obj, element, transpose=None):
+    refs = None
+    try:
+        refs = [ref.strip() for ref in element.get('axes_refs').split(',')]
+        if transpose is not None:
+            refs = [refs[index] for index in transpose]
+    except:
+        pass
+
+    return refs
 
 def parse_units(obj, element):
     units = element.get('units')

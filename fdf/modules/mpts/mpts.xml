@@ -4,8 +4,8 @@
     <node name='valid' mdsnode='valid'></node>
     <method name='plot'></method>
     <axis name='radius' units='cm' error='fit_r_width' mdsnode='fit_radii'></axis>
-    <axis name='time' units='s' mdsnode='ts_times'></axis>
-    <signal name='te' units='keV' axes='radius, time' error='fit_te_err' mdsnode='fit_te'>
+    <axis name='ttime' units='s' mdsnode='ts_times'></axis>
+    <signal name='te' units='keV' axes='radius, time' axes_refs='radius, ttime' error='fit_te_err' mdsnode='fit_te'>
     </signal>
     <signal name='ne' units='cm^-3' axes='radius, time' error='fit_ne_err' mdsnode='fit_ne'>
     </signal>
