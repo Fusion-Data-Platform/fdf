@@ -1,6 +1,3 @@
 docs/build
 fdf/.spyderproject
 *.pyc
-*.pyc
-*.pyc
-fdf/modules/mpts/plot.pyc
