@@ -27,7 +27,7 @@ class Signal(np.ndarray):
     def __init__(self, **kwargs):
         pass
 
-    def __new__(cls, input_array=[], units=None, axes=None, axes_units=None, axes_values=None,
+    def __new__(cls, input_array=[], units=None, axes=[], axes_units=None, axes_values=None,
                 name=None, parent=None, root=None, dim_of=None, verbose=False, **kwargs):
         #maybe an **kwargs dict for more attr
         #name is name of signal...e.g. Te

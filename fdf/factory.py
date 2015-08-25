@@ -250,9 +250,7 @@ class Container(object):
                 NodeClass = cls._classes[NodeClassName]
             setattr(self, node.get('name'), NodeClass(node, parent=self))
 
-        for element in module_tree.findall('signal'):
-            if element.get('axes') is not None:
-                continue
+        for element in module_tree.findall('axis'):
             signal_list = parse_signal(self, element)
             for signal_dict in signal_list:
                 SignalClassName = ''.join(['Signal', cls._name.capitalize()])
@@ -263,7 +261,7 @@ class Container(object):
                 else:
                     SignalClass = cls._classes[SignalClassName]
                 SignalObj = SignalClass(**signal_dict)
-                setattr(self, signal_dict['name'], SignalObj)
+                setattr(self, '_'+signal_dict['name'], SignalObj)
 
         for branch in module_tree.findall('container'):
             ContainerClassName = ''.join(['Container', branch.get('name').capitalize()])
@@ -277,8 +275,6 @@ class Container(object):
             setattr(self, branch.get('name'), ContainerObj)
 
         for element in module_tree.findall('signal'):
-            if element.get('axes') is None:
-                continue
             signal_list = parse_signal(self, element)
             for signal_dict in signal_list:
                 SignalClassName = ''.join(['Signal', cls._name.capitalize()])
@@ -289,6 +285,8 @@ class Container(object):
                 else:
                     SignalClass = cls._classes[SignalClassName]
                 SignalObj = SignalClass(**signal_dict)
+                for axis in SignalObj.axes:
+                    setattr(SignalObj, axis, getattr(self, '_'+axis))
                 setattr(self, signal_dict['name'], SignalObj)
 
     def __getattr__(self, attribute):
@@ -371,7 +369,7 @@ def parse_signal(obj, element):
 
 
 def parse_axes(obj, element):
-    axes = None
+    axes = []
     transpose = None
     try:
         axes = [axis.strip() for axis in element.get('axes').split(',')]
