@@ -3,17 +3,21 @@
 Created on Fri Jul 31 11:50:21 2015
 
 @author: ktritz
+====
+2015-Sep-1:  jcschmitt: added option to plot single timeslice using keyword 
+                        option 'timeslice'
 """
 
 import numpy as np
 import matplotlib.pyplot as plt
+import math as math
 
-
-def plot(signal, overwrite=False):
+def plot(signal, overwrite=False, timeslice=float('NaN')):
     print(signal._name)
     if not overwrite:
         plt.figure()
     if signal._name in ['mpts', 'spline']:
+        # Plot contour plots of both TE and NE for all time and radii
         plt.subplot(2, 1, 1)
         signal.te.plot(overwrite=True)
         plt.title(signal.te._name, fontsize=20)
@@ -26,7 +30,15 @@ def plot(signal, overwrite=False):
         plt.suptitle('Shot #{}'.format(signal.shot), x=0.5, y=1.00,
                      fontsize=20, horizontalalignment='center')
         plt.show()
+    elif not(math.isnan(timeslice)):
+        # Plot the data for a single timeslice; plot all radial locations
+        print("Timeslice: %f" % (timeslice))
+        r = signal.radius[:]
+        t = signal.time[:]
+        ind_nearest_timeslice = round( (timeslice - t[0]) / (t[1] - t[0])) - 1
+        plt.plot(r, signal.T[:, ind_nearest_timeslice])
     else:
+        # Plot contour plot for either te or ne for all time and radii
         r = signal.radius[:]
         t = signal.time[:]
         signal[:]
