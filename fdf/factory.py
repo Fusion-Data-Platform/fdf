@@ -28,7 +28,7 @@ class Machine(MutableMapping):
 
     the Machine class contains a model shot object: nstx.s0
 
-    shot data can be access directly through the Machine class:
+    shot data can be accessed directly through the Machine class:
     >>>nstx.s141398
     >>>nstx.s141399
 
