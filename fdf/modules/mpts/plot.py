@@ -12,7 +12,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math as math
 
-def plot(signal, overwrite=False, timeslice=float('NaN')):
+def plot(signal, overwrite=False, timeslice=None):
     print(signal._name)
     if not overwrite:
         plt.figure()
@@ -30,13 +30,26 @@ def plot(signal, overwrite=False, timeslice=float('NaN')):
         plt.suptitle('Shot #{}'.format(signal.shot), x=0.5, y=1.00,
                      fontsize=20, horizontalalignment='center')
         plt.show()
-    elif not(math.isnan(timeslice)):
-        # Plot the data for a single timeslice; plot all radial locations
-        print("Timeslice: %f" % (timeslice))
+    elif timeslice is not None:
+        # Plot the data for a single or multple timeslice; 
+        #    plot all radial locations
         r = signal.radius[:]
         t = signal.time[:]
-        ind_nearest_timeslice = round( (timeslice - t[0]) / (t[1] - t[0])) - 1
-        plt.plot(r, signal.T[:, ind_nearest_timeslice])
+        signal[:]
+        ind_nearest_timeslice = None
+        print("The following time slices are requested")
+        print timeslice
+        # Find the index of the nearest timeslice - does not assume that
+        # t is uniform, but does assume it contains unique time entries
+        #[print("Timeslice: %f" % (timeslice)) for ts in timeslice]
+        if isinstance(timeslice, list):
+            # timeslice is a list of times 
+            ind_nearest_timeslice = [np.argmin( abs( ts - t)) for ts in timeslice]
+        else:
+            # timeslice is only a single number
+            ind_nearest_timeslice = np.argmin( abs( timeslice - t )) 
+        print ind_nearest_timeslice
+        plt.plot(r, signal[:].T[:, ind_nearest_timeslice])
     else:
         # Plot contour plot for either te or ne for all time and radii
         r = signal.radius[:]
