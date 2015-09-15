@@ -13,7 +13,6 @@ import matplotlib.pyplot as plt
 import math as math
 
 def plot(signal, overwrite=False, timeslice=None):
-    print(signal._name)
     if not overwrite:
         plt.figure()
     if signal._name in ['mpts', 'spline']:
