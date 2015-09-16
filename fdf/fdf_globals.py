@@ -7,7 +7,7 @@ Created on Thu Jun 18 11:18:16 2015
 import os
 
 if 'linux' in os.sys.platform:
-    FDF_DIR = '/p/fdf/fdf/'
+    FDF_DIR = './fdf/'
 elif 'win32' in os.sys.platform:
     FDF_DIR = '.\\fdf\\'
 

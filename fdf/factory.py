@@ -3,7 +3,6 @@
 Created on Thu Jun 18 10:38:40 2015
 
 @author: ktritz
-test #1.1
 """
 import xml.etree.ElementTree as ET
 import os
@@ -29,7 +28,7 @@ class Machine(MutableMapping):
 
     the Machine class contains a model shot object: nstx.s0
 
-    shot data can be access directly through the Machine class:
+    shot data can be accessed directly through the Machine class:
     >>>nstx.s141398
     >>>nstx.s141399
 
@@ -132,7 +131,7 @@ class Machine(MutableMapping):
                 data = data.dim_of()
         except:
             pass
-        data = data.value
+        data = data.value_of().value
         try:
             if signal._transpose is not None:
                 data = data.transpose(signal._transpose)
@@ -250,9 +249,7 @@ class Container(object):
                 NodeClass = cls._classes[NodeClassName]
             setattr(self, node.get('name'), NodeClass(node, parent=self))
 
-        for element in module_tree.findall('signal'):
-            if element.get('axes') is not None:
-                continue
+        for element in module_tree.findall('axis'):
             signal_list = parse_signal(self, element)
             for signal_dict in signal_list:
                 SignalClassName = ''.join(['Signal', cls._name.capitalize()])
@@ -263,7 +260,7 @@ class Container(object):
                 else:
                     SignalClass = cls._classes[SignalClassName]
                 SignalObj = SignalClass(**signal_dict)
-                setattr(self, signal_dict['name'], SignalObj)
+                setattr(self, '_'+signal_dict['name'], SignalObj)
 
         for branch in module_tree.findall('container'):
             ContainerClassName = ''.join(['Container', branch.get('name').capitalize()])
@@ -277,8 +274,6 @@ class Container(object):
             setattr(self, branch.get('name'), ContainerObj)
 
         for element in module_tree.findall('signal'):
-            if element.get('axes') is None:
-                continue
             signal_list = parse_signal(self, element)
             for signal_dict in signal_list:
                 SignalClassName = ''.join(['Signal', cls._name.capitalize()])
@@ -289,6 +284,11 @@ class Container(object):
                 else:
                     SignalClass = cls._classes[SignalClassName]
                 SignalObj = SignalClass(**signal_dict)
+                refs = parse_refs(self, element, SignalObj._transpose)
+                if not refs:
+                    refs = SignalObj.axes
+                for axis, ref in zip(SignalObj.axes, refs):
+                    setattr(SignalObj, axis, getattr(self, '_'+ref))
                 setattr(self, signal_dict['name'], SignalObj)
 
     def __getattr__(self, attribute):
@@ -371,8 +371,10 @@ def parse_signal(obj, element):
 
 
 def parse_axes(obj, element):
-    axes = None
+    axes = []
+    refs = []
     transpose = None
+    time_ind = 0
     try:
         axes = [axis.strip() for axis in element.get('axes').split(',')]
         if 'time' in axes:
@@ -388,6 +390,16 @@ def parse_axes(obj, element):
 
     return axes, transpose
 
+def parse_refs(obj, element, transpose=None):
+    refs = None
+    try:
+        refs = [ref.strip() for ref in element.get('axes_refs').split(',')]
+        if transpose is not None:
+            refs = [refs[index] for index in transpose]
+    except:
+        pass
+
+    return refs
 
 def parse_units(obj, element):
     units = element.get('units')

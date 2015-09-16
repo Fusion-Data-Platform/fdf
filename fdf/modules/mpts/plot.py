@@ -3,17 +3,20 @@
 Created on Fri Jul 31 11:50:21 2015
 
 @author: ktritz
+====
+2015-Sep-1:  jcschmitt: added option to plot single timeslice using keyword 
+                        option 'timeslice'
 """
 
 import numpy as np
 import matplotlib.pyplot as plt
+import math as math
 
-
-def plot(signal, overwrite=False):
-    print(signal._name)
+def plot(signal, overwrite=False, timeslice=None):
     if not overwrite:
         plt.figure()
     if signal._name in ['mpts', 'spline']:
+        # Plot contour plots of both TE and NE for all time and radii
         plt.subplot(2, 1, 1)
         signal.te.plot(overwrite=True)
         plt.title(signal.te._name, fontsize=20)
@@ -26,7 +29,28 @@ def plot(signal, overwrite=False):
         plt.suptitle('Shot #{}'.format(signal.shot), x=0.5, y=1.00,
                      fontsize=20, horizontalalignment='center')
         plt.show()
+    elif timeslice is not None:
+        # Plot the data for a single or multple timeslice; 
+        #    plot all radial locations
+        r = signal.radius[:]
+        t = signal.time[:]
+        signal[:]
+        ind_nearest_timeslice = None
+        print("The following time slices are requested")
+        print timeslice
+        # Find the index of the nearest timeslice - does not assume that
+        # t is uniform, but does assume it contains unique time entries
+        #[print("Timeslice: %f" % (timeslice)) for ts in timeslice]
+        if isinstance(timeslice, list):
+            # timeslice is a list of times 
+            ind_nearest_timeslice = [np.argmin( abs( ts - t)) for ts in timeslice]
+        else:
+            # timeslice is only a single number
+            ind_nearest_timeslice = np.argmin( abs( timeslice - t )) 
+        print ind_nearest_timeslice
+        plt.plot(r, signal[:].T[:, ind_nearest_timeslice])
     else:
+        # Plot contour plot for either te or ne for all time and radii
         r = signal.radius[:]
         t = signal.time[:]
         signal[:]

@@ -1,3 +1,10 @@
 docs/build
+<<<<<<< HEAD
 *.pyc
 *~
+=======
+fdf/.spyderproject
+*.pyc
+*.pyc
+*.ipynb
+>>>>>>> origin/master

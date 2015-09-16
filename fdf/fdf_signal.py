@@ -27,12 +27,13 @@ class Signal(np.ndarray):
     def __init__(self, **kwargs):
         pass
 
-    def __new__(cls, input_array=[], units=None, axes=None, axes_units=None, axes_values=None,
+    def __new__(cls, input_array=[], units=None, axes=[], axes_units=None, axes_values=None,
                 name=None, parent=None, root=None, dim_of=None, verbose=False, **kwargs):
         #maybe an **kwargs dict for more attr
         #name is name of signal...e.g. Te
         #__doc__ for the signal...decriptor (filled in when? XML/MDSvalue?)
-        print 'Called __new__:'
+        if verbose:
+            print 'Called __new__:'
         obj = np.asanyarray(input_array).view(cls).copy()
         #arr = np.asanyarray(input_array).view(cls)
         #print '__new__: type(arr) %s' % type(arr)
@@ -45,8 +46,9 @@ class Signal(np.ndarray):
         #arr = np.asarray(input_array)
         #obj = np.ndarray.__new__(cls, shape=arr.shape, buffer=arr, dtype=arr.dtype)
 
-        print '__new__: type(obj) %s' % type(obj)
-        print '__new__: setting attributes'
+        if verbose:
+            print '__new__: type(obj) %s' % type(obj)
+            print '__new__: setting attributes'
         obj.units = units
         obj.axes = axes
         obj._parent = parent
@@ -181,7 +183,8 @@ class Signal(np.ndarray):
         return np.asarray(self).__repr__()
 
     def __getslice__(self, start, stop):
-        print 'Called __getslice__:'
+        if self._verbose:
+            print 'Called __getslice__:'
         """This solves a subtle bug, where __getitem__ is not called, and all
         the dimensional checking not done, when a slice of only the first
         dimension is taken, e.g. a[1:3]. From the Python docs:
