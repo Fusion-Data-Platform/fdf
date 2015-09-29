@@ -3,10 +3,19 @@
 @author: drsmith-wisc
 """
 
-from logbook_globals import Session, Logbook
+import pyodbc
 
-# open a session
-session = Session()
+driver = 'ODBC for MySQL (64 bit)'
+server = 'sql2008.pppl.gov\sql2008'
+connect_str = ('Driver={%s};'
+    'Server=%s;'
+    'UID=drsmith;'
+    'PWD=pfcworld;'
+    'Database=nstxlogs;'
+    'Port=62917' % (driver, server))
 
-for shot, in session.query(Logbook.shot).filter_by(shot=140000):
-    print shot
+connection = pyodbc.connect(connect_str)
+
+cursor = connection.cursor()
+
+
