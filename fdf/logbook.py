@@ -16,34 +16,29 @@ connection = pymssql.connect(server=server,
                              user=username,
                              password=password,
                              database=database,
-                             port=port)
+                             port=port,
+                             as_dict=True)
                              
 cursor = connection.cursor()
 
 cursor.execute('SET ROWCOUNT 80')
 
-query = """
+query_txt = """
 select dbkey, username, rundate, shot, xp, topic, text, entered, voided from entries where VOIDED IS NULL and shot=140000 order by Shot asc, Entered asc
 """
-cursor.execute(query)
+cursor.execute(query_txt)
 
-print(cursor.fetchone())
-print(cursor.fetchone())
-
-#import pyodbc
-#
-#driver = 'ODBC for MySQL (64 bit)'
-#server = 'sql2008.pppl.gov\sql2008'
-#connect_str = ('Driver={%s};'
-#    'Server=%s;'
-#    'UID=drsmith;'
-#    'PWD=pfcworld;'
-#    'Database=nstxlogs;'
-#    'Port=62917' % (driver, server))
-#
-#connection = pyodbc.connect(connect_str)
-#
-#cursor = connection.cursor()
+rows = cursor.fetchall()
+for row in rows:
+    print(('dbkey: %d\n'
+        'date: %d\n'
+        'xp: %d\n'
+        'shot: %d\n'
+        'author: %s\n'
+        'datetime: %s\n'
+        'text: %s\n'
+        % (row['dbkey'], row['rundate'], row['xp'], row['shot'], 
+            row['username'], row['entered'], row['text'])))
 
 cursor.close()
 connection.close()
