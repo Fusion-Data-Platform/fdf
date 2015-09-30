@@ -14,12 +14,23 @@ from collections import MutableMapping, OrderedDict
 import MDSplus as mds
 import types
 import inspect
+import pymssql
 
 # changed nstx server to skylark.pppl.gov - ds 9/30/2015
 mds_servers = {
     'nstx': 'skylark.pppl.gov:8501'
 }
 
+logbook_parameters = {
+    'nstx': {
+        'server': 'sql2008.pppl.gov\sql2008',
+        'username': os.getenv('USER'),
+        'password': 'pfdworld',
+        'database': 'nstxlogs',
+        'port': '62917',
+        'table': 'entries'
+    }
+}
 
 class Machine(MutableMapping):
     '''Factory root class that contains shot objects and MDS access methods.
@@ -45,6 +56,7 @@ class Machine(MutableMapping):
     # to avoid proliferation of MDS server connections
     _connections = OrderedDict()
     _parent = None
+    _logbook_connection = None
 
     def __init__(self, name='nstx', shotlist=None):
         self._shots = {}
@@ -57,6 +69,10 @@ class Machine(MutableMapping):
             for _ in range(2):
                 self._connections[mds.Connection(mds_servers[name])] = None
             print('Finished.')
+        
+        if self._logbook_connection is None:
+            self._make_logbook_connection()
+        
         if shotlist is not None:
             self.addshot(shotlist)
 
@@ -145,6 +161,16 @@ class Machine(MutableMapping):
         modules = [module for module in os.listdir(module_dir)
                    if os.path.isdir(os.path.join(module_dir, module))]
         return modules
+        
+    def _make_logbook_connection(self):
+        lbparams = logbook_parameters[self._name]
+        self._logbook_connection = pymssql.connect(
+            server=lbparams['server'], 
+            user=lbparams['username'],
+            password=lbparams['password'],
+            database=lbparams['database'],
+            port=lbparams['port'],
+            as_dict=True)
 
     def addshot(self, shotlist):
         # I propose renaming to add_shot for consistency with add_shot_from - DRS 9/30/2015
