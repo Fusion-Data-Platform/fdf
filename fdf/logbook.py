@@ -88,3 +88,7 @@ def do_shot_query(shot):
                row['username'], row['topic'], row['entered'], row['text'])))
     
     cursor.close()
+
+
+if __name__ == '__main__':
+    do_shot_query(140001)

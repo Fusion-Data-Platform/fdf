@@ -12,7 +12,7 @@ from sqlalchemy.orm import sessionmaker
 # examples: http://docs.sqlalchemy.org/en/rel_1_0/orm/examples.html
 
 # mysql-python is the default DBAPI for the mysql dialect in sqlalchemy
-engine = create_engine('mysql+pymysql://drsmith:pfcworld@sql2008.pppl.gov:62917/logbook')
+engine = create_engine('mssql+pymssql://drsmith:pfcworld@sql2008.pppl.gov\sql2008:62917/logbook')
 
 # base class for declarative class definitions
 Base = declarative_base()
