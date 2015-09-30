@@ -15,8 +15,9 @@ import MDSplus as mds
 import types
 import inspect
 
+# changed nstx server to skylark.pppl.gov - ds 9/30/2015
 mds_servers = {
-    'nstx': 'skylark:8501'
+    'nstx': 'skylark.pppl.gov:8501'
 }
 
 
@@ -146,17 +147,45 @@ class Machine(MutableMapping):
         return modules
 
     def addshot(self, shotlist):
+        # I propose renaming to add_shot for consistency with add_shot_from - DRS 9/30/2015
+        # alternatively, expand functionality to handle xp= and date= keywords
         if type(shotlist) is int:
             shotlist = [shotlist]
         for shot in shotlist:
             if shot not in self._shots:
                 self._shots[shot] = Shot(shot, root=self)
+    
+    def add_shot_from_date(self, date):
+        # query logbook on date, then load shots
+        pass
+    
+    def add_shot_from_xp(self, xp):
+        # query logbook on xp, then load shots
+        pass
+    
+    def get_shotlist_from_date(self, date):
+        # query logbook on date, return shotlist
+        return None
+    
+    def get_shotlist_from_xp(self, xp):
+        # query logbook on XP, return shotlist
+        return None
+    
+    def get_xp_from_date(self, date):
+        # query logbook on date, return xp list
+        return None
+    
+    def get_date_from_xp(self, xp):
+        # query logbook on xp, return date list
+        return None
 
 
 class Shot(MutableMapping):
 
     def __init__(self, shot, root=None, parent=None):
         self.shot = shot
+        self.xp = _get_xp()  # DRS 9/30/2015
+        self.rundate = _get_rundate()  # DRS 9/30/2015
         self._root = root
         self._parent = parent
         modules = root._get_modules()
@@ -194,6 +223,18 @@ class Shot(MutableMapping):
 
     def __dir__(self):
         return self._signals.keys()
+    
+    def _get_xp(self):
+        # query logbook for XP, return XP
+        return None
+    
+    def _get_rundate(self):
+        # query logbook for rundate, return rundate
+        return None
+    
+    def logbook(self):
+        # query logbook for entries, return list of LogbookEntry
+        pass
 
 
 def Factory(module, root=None, shot=None, parent=None):
