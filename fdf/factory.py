@@ -164,6 +164,7 @@ class Machine(MutableMapping):
         
     def _make_logbook_connection(self):
         lbparams = logbook_parameters[self._name]
+        # add try/except
         self._logbook_connection = pymssql.connect(
             server=lbparams['server'], 
             user=lbparams['username'],
