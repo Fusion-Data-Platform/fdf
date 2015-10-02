@@ -25,7 +25,7 @@ logbook_parameters = {
     'nstx': {
         'server': 'sql2008.pppl.gov\sql2008',
         'username': os.getenv('USER'),
-        'password': 'pfdworld',
+        'password': 'pfcworld',
         'database': 'nstxlogs',
         'port': '62917',
         'table': 'entries'
@@ -58,6 +58,14 @@ class Machine(MutableMapping):
     _parent = None
     _logbook_connection = None
 
+    _shot_query_prefix = ('SELECT username, rundate, shot, xp, topic, text, entered, voided '
+                         'FROM entries '
+                         'WHERE voided IS null')
+    
+    _shotlist_query_prefix = ('SELECT DISTINCT rundate, shot, xp, voided '
+                            'FROM entries '
+                            'WHERE voided IS null')
+    
     def __init__(self, name='nstx', shotlist=None):
         self._shots = {}
         self._classlist = {}
@@ -70,6 +78,7 @@ class Machine(MutableMapping):
                 self._connections[mds.Connection(mds_servers[name])] = None
             print('Finished.')
         
+        # logbook connection 9/30/15 DRS
         if self._logbook_connection is None:
             self._make_logbook_connection()
         
@@ -173,30 +182,55 @@ class Machine(MutableMapping):
             port=lbparams['port'],
             as_dict=True)
 
-    def addshot(self, shotlist):
-        # I propose renaming to add_shot for consistency with add_shot_from - DRS 9/30/2015
-        # alternatively, expand functionality to handle xp= and date= keywords
-        if type(shotlist) is int:
+    def addshot(self, shotlist=None, date=None, xp=None):
+        if shotlist and type(shotlist) is int:
             shotlist = [shotlist]
+        elif date:
+            shotlist = self.get_shotlist_from_date(date)
+        elif xp:
+            shotlist = self.get_shotlist_from_xp(xp)
+        else:
+            shotlist = None
+            print('invalid addshot format')
+        
         for shot in shotlist:
             if shot not in self._shots:
                 self._shots[shot] = Shot(shot, root=self)
     
-    def add_shot_from_date(self, date):
-        # query logbook on date, then load shots
-        pass
-    
-    def add_shot_from_xp(self, xp):
-        # query logbook on xp, then load shots
-        pass
-    
     def get_shotlist_from_date(self, date):
-        # query logbook on date, return shotlist
-        return None
+        # enter date as int YYYYMMDD
+        # >>> shotlist = nstx.get_shotlist_from_date(20100817)
+        # need logic for date list
+        cursor = self._logbook_connection.cursor()
+        cursor.execute('SET ROWCOUNT 80')
+        
+        query = ('%s and rundate=%d '
+                'ORDER BY shot ASC'
+                % (self._shotlist_query_prefix, date))
+        cursor.execute(query)
+        
+        rows = cursor.fetchall()
+        shotlist = [row['shot'] for row in rows]
+        cursor.close()
+        
+        return shotlist
     
     def get_shotlist_from_xp(self, xp):
-        # query logbook on XP, return shotlist
-        return None
+        # >>> shotlist = nstx.get_shotlist_from_xp(1048)
+        # need logic for xp list
+        cursor = self._logbook_connection.cursor()
+        cursor.execute('SET ROWCOUNT 80')
+        
+        query = ('%s and xp=%d '
+                'ORDER BY shot ASC'
+                % (self._shotlist_query_prefix, xp))
+        cursor.execute(query)
+        
+        rows = cursor.fetchall()
+        shotlist = [row['shot'] for row in rows]
+        
+        cursor.close()
+        return shotlist
     
     def get_xp_from_date(self, date):
         # query logbook on date, return xp list
@@ -211,8 +245,8 @@ class Shot(MutableMapping):
 
     def __init__(self, shot, root=None, parent=None):
         self.shot = shot
-        self.xp = _get_xp()  # DRS 9/30/2015
-        self.rundate = _get_rundate()  # DRS 9/30/2015
+        self.xp = self._get_xp  # DRS 9/30/2015
+        self.rundate = self._get_rundate  # DRS 9/30/2015
         self._root = root
         self._parent = parent
         modules = root._get_modules()
