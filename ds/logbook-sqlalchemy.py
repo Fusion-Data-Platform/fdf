@@ -26,8 +26,8 @@ dbkeys = dict(servertype='mssql',
 
 connection_str = '%s+%s://%s:%s@%s:%s/%s' % \
     (dbkeys['servertype'], dbkeys['frontend'],
-     dbkeys['username'], dbkeys['password'], 
-     dbkeys['server'], dbkeys['port'], 
+     dbkeys['username'], dbkeys['password'],
+     dbkeys['server'], dbkeys['port'],
      dbkeys['database'])
 print(connection_str)
 
