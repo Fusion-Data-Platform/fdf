@@ -59,7 +59,7 @@ def get_shotlist(rundate=[], xp=[], verbose=False):
         if verbose:
             print('Rundate {}'.format(rundate))
             for row in rows:
-                print('   {} in XP {}'.format(row['shot'], row['xp']))
+                print('   {shot} in XP {xp}'.format(**row))
         shotlist.extend([row['shot'] for row in rows  # add shots to shotlist
                         if row['shot'] is not None])
 
@@ -76,8 +76,7 @@ def get_shotlist(rundate=[], xp=[], verbose=False):
         if verbose:
             print('XP {}'.format(xp))
             for row in rows:
-                print('   {} on rundate {}'.
-                      format(row['shot'], row['rundate']))
+                print('   {shot} on rundate {rundate}'.format(**row))
         shotlist.extend([row['shot'] for row in rows  # add shots to shotlist
                         if row['shot'] is not None])
 
