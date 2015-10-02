@@ -32,6 +32,16 @@ logbook_parameters = {
     }
 }
 
+def iterable(obj):
+    try:
+        iter(obj)
+        if type(obj) is str:
+            return False
+        return True
+    except TypeError:
+        return False
+
+
 class Machine(MutableMapping):
     '''Factory root class that contains shot objects and MDS access methods.
 
@@ -176,67 +186,74 @@ class Machine(MutableMapping):
         
     def _make_logbook_connection(self):
         # added 9/30/2015 DRS
-        # add try/except
-        self._logbook_connection = pymssql.connect(
-            server=self._lbparams['server'], 
-            user=self._lbparams['username'],
-            password=self._lbparams['password'],
-            database=self._lbparams['database'],
-            port=self._lbparams['port'],
-            as_dict=True)
+        try:
+            self._logbook_connection = pymssql.connect(
+                server=self._lbparams['server'], 
+                user=self._lbparams['username'],
+                password=self._lbparams['password'],
+                database=self._lbparams['database'],
+                port=self._lbparams['port'],
+                as_dict=True)
+        except:
+            print('Connecting to Logbook server as drsmith')
+            self._logbook_connection = pymssql.connect(
+                server=self._lbparams['server'], 
+                user='drsmith',
+                password=self._lbparams['password'],
+                database=self._lbparams['database'],
+                port=self._lbparams['port'],
+                as_dict=True)
+            
 
-    def addshot(self, shotlist=None, date=None, xp=None):
+    def addshot(self, shotlist=[], date=[], xp=[]):
+        sl = []
         if shotlist and type(shotlist) is int:
-            shotlist = [shotlist]
-        elif date:
-            shotlist = self.get_shotlist_from_date(date)
-        elif xp:
-            shotlist = self.get_shotlist_from_xp(xp)
-        else:
-            shotlist = None
-            print('invalid addshot format')
-        
+            sl = sl.append([shotlist])
+        if date or xp:
+            sl = sl.append(self.get_shotlist(date=date, xp=xp))
         for shot in shotlist:
             if shot not in self._shots:
                 self._shots[shot] = Shot(shot, root=self)
     
-    def get_shotlist_from_date(self, date):
-        # added 9/30/2015 DRS
-        # enter date as int YYYYMMDD
-        # >>> shotlist = nstx.get_shotlist_from_date(20100817)
-        # need logic for date list
+    def get_shotlist(rundate=[], xp=[], verbose=False):
         cursor = self._logbook_connection.cursor()
-        cursor.execute('SET ROWCOUNT 80')
-        
-        query = ('%s and rundate=%d '
-                'ORDER BY shot ASC'
-                % (self._shotlist_query_prefix, date))
-        cursor.execute(query)
-        
-        rows = cursor.fetchall()
-        shotlist = [row['shot'] for row in rows]
-        cursor.close()
-        
-        return shotlist
+        cursor.execute('SET ROWCOUNT ')
     
-    def get_shotlist_from_xp(self, xp):
-        # added 9/30/2015 DRS
-        # >>> shotlist = nstx.get_shotlist_from_xp(1048)
-        # need logic for xp list
-        cursor = self._logbook_connection.cursor()
-        cursor.execute('SET ROWCOUNT 80')
-        
-        query = ('%s and xp=%d '
-                'ORDER BY shot ASC'
-                % (self._shotlist_query_prefix, xp))
-        cursor.execute(query)
-        
-        rows = cursor.fetchall()
-        shotlist = [row['shot'] for row in rows]
-        
-        cursor.close()
-        return shotlist
+        shotlist = []   # start with empty shotlist
+        rundate_list = rundate
+        if not iterable(rundate_list):      # if it's just a single date
+            rundate_list = [rundate_list]   # put it into a list
+        for rundate in rundate_list:
+            query = ('{} and rundate={} ORDER BY shot ASC'.
+                     format(shotlist_query_prefix, rundate))
+            cursor.execute(query)
+            rows = cursor.fetchall()
+            if verbose:
+                print('Rundate {}'.format(rundate))
+                for row in rows:
+                    print('   {shot} in XP {xp}'.format(**row))
+            shotlist.extend([row['shot'] for row in rows  # add shots to shotlist
+                            if row['shot'] is not None])
     
+        xp_list = xp
+        if not iterable(xp_list):           # if it's just a single xp
+            xp_list = [xp_list]             # put it into a list
+        for xp in xp_list:
+            query = ('{} and xp={} ORDER BY shot ASC'.
+                     format(shotlist_query_prefix, xp))
+            cursor.execute(query)
+            rows = cursor.fetchall()
+            if verbose:
+                print('XP {}'.format(xp))
+                for row in rows:
+                    print('   {shot} on rundate {rundate}'.format(**row))
+            shotlist.extend([row['shot'] for row in rows  # add shots to shotlist
+                            if row['shot'] is not None])
+    
+        cursor.close()
+        return np.unique(shotlist)
+
+
     def get_xp_from_date(self, date):
         # added 9/30/2015 DRS
         # query logbook on date, return xp list
