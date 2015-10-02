@@ -217,7 +217,7 @@ class Machine(MutableMapping):
     
     def get_shotlist(rundate=[], xp=[], verbose=False):
         cursor = self._logbook_connection.cursor()
-        cursor.execute('SET ROWCOUNT ')
+        cursor.execute('SET ROWCOUNT 200')
     
         shotlist = []   # start with empty shotlist
         rundate_list = rundate
