@@ -58,10 +58,6 @@ class Machine(MutableMapping):
     _parent = None
     _logbook_connection = None
 
-    _shotlist_query_prefix = ('SELECT DISTINCT rundate, shot, xp, voided '
-                            'FROM entries '
-                            'WHERE voided IS null')
-    
     def __init__(self, name='nstx', shotlist=None, xp=None, date=None):
         self._shots = {}
         self._classlist = {}
@@ -75,8 +71,14 @@ class Machine(MutableMapping):
             print('Finished.')
         
         # logbook connection 9/30/15 DRS
+        self._lbparams = logbook_parameters[self._name]
         if self._logbook_connection is None:
             self._make_logbook_connection()
+        self._shotlist_query_prefix = (
+            'SELECT DISTINCT rundate, shot, xp, voided '
+            'FROM %s '
+            'WHERE voided IS null' %
+            self._lbparams['table'])
         
         # add shots
         if shotlist is not None:
@@ -173,14 +175,14 @@ class Machine(MutableMapping):
         return modules
         
     def _make_logbook_connection(self):
-        lbparams = logbook_parameters[self._name]
+        # added 9/30/2015 DRS
         # add try/except
         self._logbook_connection = pymssql.connect(
-            server=lbparams['server'], 
-            user=lbparams['username'],
-            password=lbparams['password'],
-            database=lbparams['database'],
-            port=lbparams['port'],
+            server=self._lbparams['server'], 
+            user=self._lbparams['username'],
+            password=self._lbparams['password'],
+            database=self._lbparams['database'],
+            port=self._lbparams['port'],
             as_dict=True)
 
     def addshot(self, shotlist=None, date=None, xp=None):
@@ -199,6 +201,7 @@ class Machine(MutableMapping):
                 self._shots[shot] = Shot(shot, root=self)
     
     def get_shotlist_from_date(self, date):
+        # added 9/30/2015 DRS
         # enter date as int YYYYMMDD
         # >>> shotlist = nstx.get_shotlist_from_date(20100817)
         # need logic for date list
@@ -217,6 +220,7 @@ class Machine(MutableMapping):
         return shotlist
     
     def get_shotlist_from_xp(self, xp):
+        # added 9/30/2015 DRS
         # >>> shotlist = nstx.get_shotlist_from_xp(1048)
         # need logic for xp list
         cursor = self._logbook_connection.cursor()
@@ -234,10 +238,12 @@ class Machine(MutableMapping):
         return shotlist
     
     def get_xp_from_date(self, date):
+        # added 9/30/2015 DRS
         # query logbook on date, return xp list
         return None
     
     def get_date_from_xp(self, xp):
+        # added 9/30/2015 DRS
         # query logbook on xp, return date list
         return None
 
@@ -295,6 +301,7 @@ class Shot(MutableMapping):
         return None
     
     def logbook(self):
+        # added 9/30/2015 DRS
         # query logbook for entries, return list of LogbookEntry
         pass
 
