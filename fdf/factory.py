@@ -58,15 +58,11 @@ class Machine(MutableMapping):
     _parent = None
     _logbook_connection = None
 
-    _shot_query_prefix = ('SELECT username, rundate, shot, xp, topic, text, entered, voided '
-                         'FROM entries '
-                         'WHERE voided IS null')
-    
     _shotlist_query_prefix = ('SELECT DISTINCT rundate, shot, xp, voided '
                             'FROM entries '
                             'WHERE voided IS null')
     
-    def __init__(self, name='nstx', shotlist=None):
+    def __init__(self, name='nstx', shotlist=None, xp=None, date=None):
         self._shots = {}
         self._classlist = {}
         self._name = name.lower()
@@ -82,8 +78,13 @@ class Machine(MutableMapping):
         if self._logbook_connection is None:
             self._make_logbook_connection()
         
+        # add shots
         if shotlist is not None:
-            self.addshot(shotlist)
+            self.addshot(shotlist=shotlist)
+        if xp is not None:
+            self.addshot(xp=xp)
+        if date is not None:
+            self.addshot(date=date)
 
     def __getattr__(self, name):
         try:
