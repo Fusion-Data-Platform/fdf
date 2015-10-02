@@ -10,6 +10,6 @@ __sub_mods__ = [".".join(_mod[1].split(".")[1:]) for _mod in
                        [_mod for _mod in
                         _pkgutil.walk_packages("." + __name__)])]
 from . import *
-import factory
+from factory import Machine
 for _module in __sub_mods__:
     _importlib.import_module("." + _module, package=__name__)
