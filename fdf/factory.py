@@ -78,7 +78,7 @@ class Machine(MutableMapping):
             'SELECT DISTINCT rundate, shot, xp, voided '
             'FROM %s '
             'WHERE voided IS null' %
-            self._lbparams['table'])
+            self._lbparams['table']) # used in get_shotlist*()
         
         # add shots
         if shotlist is not None:
