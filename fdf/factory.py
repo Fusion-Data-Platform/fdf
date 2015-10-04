@@ -265,7 +265,7 @@ class Logbook():
         self._shot_query_prefix = (
             'SELECT dbkey, username, rundate, shot, xp, topic, text, entered, voided '
             'FROM {} WHERE voided IS null').format(self._table)
-        self.entry = {}
+        self.logbook = {} # dictionary: kw is shot, value is list of logbook entries
         
         self._make_logbook_connection()
 
@@ -310,6 +310,18 @@ class Logbook():
                 pass
         return cursor
 
+    def _shot_query(shot=[]):
+        cursor = self._get_cursor()
+        if shot and not iterable(shot):
+            shot = [shot]
+        for sh in shot:
+            if sh not in self.logbook:
+                query = ('{0} and shot={1} '
+                    'ORDER BY shot ASC, entered ASC'
+                    ).format(self._shot_query_prefix, sh)
+                cursor.execute(query)
+                self.logbook[sh] = cursor.fetchall() # a list of logbook entries
+    
     def get_shotlist(date=[], xp=[], verbose=False):
         cursor = self._get_cursor()
         
@@ -318,7 +330,7 @@ class Logbook():
         if not iterable(date_list):      # if it's just a single date
             date_list = [date_list]   # put it into a list
         for date in date_list:
-            query = ('{} and rundate={} ORDER BY shot ASC'.
+            query = ('{0} and rundate={1} ORDER BY shot ASC'.
                      format(shotlist_query_prefix, date))
             cursor.execute(query)
             rows = cursor.fetchall()
@@ -333,7 +345,7 @@ class Logbook():
         if not iterable(xp_list):           # if it's just a single xp
             xp_list = [xp_list]             # put it into a list
         for xp in xp_list:
-            query = ('{} and xp={} ORDER BY shot ASC'.
+            query = ('{0} and xp={1} ORDER BY shot ASC'.
                      format(shotlist_query_prefix, xp))
             cursor.execute(query)
             rows = cursor.fetchall()
@@ -347,22 +359,16 @@ class Logbook():
         cursor.close()
         return np.unique(shotlist)
     
-    def get_entry(shot=shot):
-        cursor = self._get_cursor()
+    def get_entries(shot=[]):
+        # add xp and date keywords
         if shot and not iterable(shot):
             shot = [shot]
-        if type(shot) is int:
-            for sh in shot:
-                query = (
-                    '{0} and shot={1} '
-                    'ORDER BY shot ASC, enteredASC'
-                    ).format(self._shot_query_prefix, sh)
-                cursor.execute(query)
-                rows = cursor.fetchall()
-                for row in rows:
-                    if row['dbkey'] not in self.entry:
-                        self.entry['dbkey'] = row
-        return None
+        if shot:
+            self._shot_query(shot=shot)
+        entries = []
+        for sh in shot:
+            entries.extend = self.logbook[sh]
+        return entries
 
 
 class Shot(MutableMapping):
