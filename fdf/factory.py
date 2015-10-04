@@ -71,7 +71,7 @@ class Machine(MutableMapping):
             print('Finished.')
         
         # establish logbook connection
-        self.logbook = Logbook(name=self._name, root=self)
+        self._logbook = Logbook(name=self._name, root=self)
         
         # add shots
         if shotlist or xp or date:
@@ -174,7 +174,7 @@ class Machine(MutableMapping):
         if shotlist and type(shotlist) is int:
             shots = shots.extend([shotlist])
         if date or xp:
-            shots = shots.extend(self.logbook.get_shotlist(date=date, xp=xp))
+            shots = shots.extend(self._logbook.get_shotlist(date=date, xp=xp))
         for shot in np.unique(shots):
             if shot not in self._shots:
                 self._shots[shot] = Shot(shot, root=self, parent=self)
@@ -257,12 +257,17 @@ class Logbook():
         self._name = name.lower()
         self._root = root
         self._lbparams = logbook_parameters[self._name]
+        self._table = self._lbparams['table']
         self._logbook_connection = None
-        self._make_logbook_connection()
         self._shotlist_query_prefix = (
             'SELECT DISTINCT rundate, shot, xp, voided '
-            'FROM {} WHERE voided IS null').format(self._lbparams['table'])
-
+            'FROM {} WHERE voided IS null').format(self._table)
+        self._shot_query_prefix = (
+            'SELECT dbkey, username, rundate, shot, xp, topic, text, entered, voided '
+            'FROM {} WHERE voided IS null').format(self._table)
+        self.entry = {}
+        
+        self._make_logbook_connection()
 
     def _make_logbook_connection(self):
         try:
@@ -287,11 +292,11 @@ class Logbook():
                 print('FDF: cannot connect to {} logbook'.format(self._name.upper()))
                 pass
 
-
-    def get_cursor():
+    def _get_cursor():
         cursor = None
         try:
             cursor = self._logbook_connection.cursor()
+            cursor.execute('SET ROWCOUNT 500')
         except:
             # close connection if possible, then reopen connection and try again
             if hasattr(self._logbook_connection, 'close'): # close connection
@@ -305,19 +310,9 @@ class Logbook():
                 pass
         return cursor
 
-
-    def get_shotlist(date=[], xp=[]):
-        cursor = self.get_cursor()
-        if not cursor:
-            print('FDF: invalid logbook cursor; returning empty shotlist')
-            return []
-        try:
-            cursor.execute('SET ROWCOUNT 200')
-        except:
-            print('FDF: logbook command SET ROWCOUNT failed; returning empty shotlist')
-            return []
-            pass
-    
+    def get_shotlist(date=[], xp=[], verbose=False):
+        cursor = self._get_cursor()
+        
         shotlist = []   # start with empty shotlist
         date_list = date
         if not iterable(date_list):      # if it's just a single date
@@ -327,9 +322,10 @@ class Logbook():
                      format(shotlist_query_prefix, date))
             cursor.execute(query)
             rows = cursor.fetchall()
-            print('date {}'.format(date))
-            for row in rows:
-                print('   {shot} in XP {xp}'.format(**row))
+            if verbose:
+                print('date {}'.format(date))
+                for row in rows:
+                    print('   {shot} in XP {xp}'.format(**row))
             shotlist.extend([row['shot'] for row in rows  # add shots to shotlist
                             if row['shot'] is not None])
         
@@ -341,14 +337,32 @@ class Logbook():
                      format(shotlist_query_prefix, xp))
             cursor.execute(query)
             rows = cursor.fetchall()
-            print('XP {}'.format(xp))
-            for row in rows:
-                print('   {shot} on date {rundate}'.format(**row))
+            if verbose:
+                print('XP {}'.format(xp))
+                for row in rows:
+                    print('   {shot} on date {rundate}'.format(**row))
             shotlist.extend([row['shot'] for row in rows  # add shots to shotlist
                             if row['shot'] is not None])
         
         cursor.close()
         return np.unique(shotlist)
+    
+    def get_entry(shot=shot):
+        cursor = self._get_cursor()
+        if shot and not iterable(shot):
+            shot = [shot]
+        if type(shot) is int:
+            for sh in shot:
+                query = (
+                    '{0} and shot={1} '
+                    'ORDER BY shot ASC, enteredASC'
+                    ).format(self._shot_query_prefix, sh)
+                cursor.execute(query)
+                rows = cursor.fetchall()
+                for row in rows:
+                    if row['dbkey'] not in self.entry:
+                        self.entry['dbkey'] = row
+        return None
 
 
 class Shot(MutableMapping):
