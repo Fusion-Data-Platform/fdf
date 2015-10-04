@@ -56,7 +56,6 @@ class Machine(MutableMapping):
     # to avoid proliferation of MDS server connections
     _connections = OrderedDict()
     _parent = None
-    _logbook_connection = None
 
     def __init__(self, name='nstx', shotlist=[], xp=[], date=[]):
         self._shots = {}
@@ -178,6 +177,16 @@ class Machine(MutableMapping):
         for shot in np.unique(shots):
             if shot not in self._shots:
                 self._shots[shot] = Shot(shot, root=self, parent=self)
+    
+    def get_shotlist(self, date=[], xp=[], verbose=False):
+        # return an np.array of shots
+        return self._logbook.get_shotlist(date=date, xp=xp, verbose=verbose)
+    
+    def logbook(self, shot=[]):
+        # return a list of logbook entries (dictionaries)
+        # add xp and date keywords
+        return self._logbook.get_entries(self, shot=shot)
+        
 
 
 #    def _make_logbook_connection(self):
@@ -292,7 +301,7 @@ class Logbook():
                 print('FDF: cannot connect to {} logbook'.format(self._name.upper()))
                 pass
 
-    def _get_cursor():
+    def _get_cursor(self):
         cursor = None
         try:
             cursor = self._logbook_connection.cursor()
@@ -310,7 +319,7 @@ class Logbook():
                 pass
         return cursor
 
-    def _shot_query(shot=[]):
+    def _shot_query(self, shot=[]):
         cursor = self._get_cursor()
         if shot and not iterable(shot):
             shot = [shot]
@@ -322,7 +331,7 @@ class Logbook():
                 cursor.execute(query)
                 self.logbook[sh] = cursor.fetchall() # a list of logbook entries
     
-    def get_shotlist(date=[], xp=[], verbose=False):
+    def get_shotlist(self, date=[], xp=[], verbose=False):
         cursor = self._get_cursor()
         
         shotlist = []   # start with empty shotlist
@@ -359,7 +368,7 @@ class Logbook():
         cursor.close()
         return np.unique(shotlist)
     
-    def get_entries(shot=[]):
+    def get_entries(self, shot=[]):
         # add xp and date keywords
         if shot and not iterable(shot):
             shot = [shot]
@@ -367,7 +376,7 @@ class Logbook():
             self._shot_query(shot=shot)
         entries = []
         for sh in shot:
-            entries.extend = self.logbook[sh]
+            entries.extend(self.logbook[sh])
         return entries
 
 
