@@ -1,9 +1,28 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Jun 18 10:38:40 2015
+factory.py - main module for the FDF package.
 
+Classes
+-------
+Machine - main class for the FDF package
+Shot - shot container class
+Logbook - logbook connection class
+Container - diagnostic container class
+Node - mdsplus signal node class
+FdfError - error class for FDF package
+
+Usage
+-----
+>>> import fdf
+>>> nstx = fdf.Machine('nstx')
+>>> nstx.s140000.logbook()
+>>> nstx.addshots(xp=1048)
+>>> nstx.s140000.mpts.plot()
+
+Created on Thu Jun 18 10:38:40 2015
 @author: ktritz
 """
+
 import xml.etree.ElementTree as ET
 import os
 import fdf_globals
@@ -18,21 +37,9 @@ import pymssql
 
 
 FDF_DIR = fdf_globals.FDF_DIR
+MDS_SERVERS = fdf_globals.MDS_SERVERS
+LOGBOOK_CREDENTIALS = fdf_globals.LOGBOOK_CREDENTIALS
 
-MDS_SERVERS = {
-    'nstx': 'skylark.pppl.gov:8501'
-}
-
-LOGBOOK_CREDENTIALS = {
-    'nstx': {
-        'server': 'sql2008.pppl.gov\sql2008',
-        'username': os.getenv('USER') or os.getenv('USERNAME'),
-        'password': 'pfcworld',
-        'database': 'nstxlogs',
-        'port': '62917',
-        'table': 'entries'
-    }
-}
 
 
 class Machine(MutableMapping):
@@ -67,10 +74,10 @@ class Machine(MutableMapping):
         
         if self._name not in LOGBOOK_CREDENTIALS \
             or self._name not in MDS_SERVERS:
-                txt = 'Unknown machine: {}.'.format(self._name.upper())
-                txt = txt + '  Available machines are:'
+                txt = '\n{} is not a valid machine.\n'.format(self._name.upper())
+                txt = txt + 'Valid machines are:\n'
                 for machine in LOGBOOK_CREDENTIALS:
-                    txt = txt + ' {}'.format(machine.upper())
+                    txt = txt + '  {}\n'.format(machine.upper())
                 raise FdfError(txt)
         
         self._logbook = Logbook(name=self._name, root=self)
@@ -267,7 +274,7 @@ class Shot(MutableMapping):
             print('************************************')
 
 
-class Logbook():
+class Logbook(object):
     
     def __init__(self, name='nstx', root=None):
         self._name = name.lower()
@@ -671,7 +678,7 @@ class FdfError(Exception):
     def __init__(self, message=''):
         self.message = message
     def __str__(self):
-        return repr(self.message)
+        return self.message
 
 
 if __name__ == '__main__':
