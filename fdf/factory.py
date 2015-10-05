@@ -6,8 +6,10 @@ Created on Thu Jun 18 10:38:40 2015
 """
 import xml.etree.ElementTree as ET
 import os
-from fdf_globals import *
+import fdf_globals
 from fdf_signal import Signal
+from fdf_exceptions import FdfMachineError, FdfLogbookError, \
+    FdfLogbookCursorError
 import numpy as np
 import modules
 from collections import MutableMapping, OrderedDict
@@ -16,21 +18,11 @@ import types
 import inspect
 import pymssql
 
-# changed nstx server to skylark.pppl.gov - ds 9/30/2015
-mds_servers = {
-    'nstx': 'skylark.pppl.gov:8501'
-}
 
-logbook_parameters = {
-    'nstx': {
-        'server': 'sql2008.pppl.gov\sql2008',
-        'username': os.getenv('USER') or os.getenv('USERNAME'),
-        'password': 'pfcworld',
-        'database': 'nstxlogs',
-        'port': '62917',
-        'table': 'entries'
-    }
-}
+FDF_DIR = fdf_globals.FDF_DIR
+MDS_SERVERS = fdf_globals.MDS_SERVERS
+LOGBOOK_CREDENTIALS = fdf_globals.LOGBOOK_CREDENTIALS
+
 
 class Machine(MutableMapping):
     '''Factory root class that contains shot objects and MDS access methods.
@@ -61,13 +53,18 @@ class Machine(MutableMapping):
         self._shots = {}
         self._classlist = {}
         self._name = name.lower()
+        
+        if self._name not in LOGBOOK_CREDENTIALS \
+            or self._name not in MDS_SERVERS:
+                raise FdfMachineError(self._name)
+        
         self._logbook = Logbook(name=self._name, root=self)
         self.s0 = Shot(0, root=self, parent=self)
 
         if len(self._connections) is 0:
             print('Precaching MDS server connections...')
             for _ in range(2):
-                self._connections[mds.Connection(mds_servers[name])] = None
+                self._connections[mds.Connection(MDS_SERVERS[name])] = None
             print('Finished.')
         
         # add shots
@@ -171,7 +168,9 @@ class Machine(MutableMapping):
         if shotlist and type(shotlist) is int:
             shots = shots.extend([shotlist])
         if date or xp:
-            shots = shots.extend(self._logbook.get_shotlist(date=date, xp=xp, verbose=verbose))
+            moreshots = self._logbook.get_shotlist(date=date, xp=xp, verbose=verbose)
+            if moreshots.any():
+                shots = shots.extend(moreshots)
         for shot in np.unique(shots):
             if shot not in self._shots:
                 self._shots[shot] = Shot(shot, root=self, parent=self)
@@ -255,15 +254,10 @@ class Logbook():
         self._name = name.lower()
         self._root = root
         
-        self._lbparams = logbook_parameters[self._name]
-        self._table = self._lbparams['table']
-        
-        self._shotlist_query_prefix = (
-            'SELECT DISTINCT rundate, shot, xp, voided '
-            'FROM {} WHERE voided IS null').format(self._table)
-        self._shot_query_prefix = (
-            'SELECT dbkey, username, rundate, shot, xp, topic, text, entered, voided '
-            'FROM {} WHERE voided IS null').format(self._table)
+        self._credentials = {}
+        self._table = ''
+        self._shotlist_query_prefix = ''
+        self._shot_query_prefix = ''
         
         self._logbook_connection = None
         self._make_logbook_connection()
@@ -273,44 +267,43 @@ class Logbook():
         self.logbook = {}
 
     def _make_logbook_connection(self):
+        self._credentials = LOGBOOK_CREDENTIALS[self._name]
+        self._table = self._credentials['table']
+        
+        self._shotlist_query_prefix = (
+            'SELECT DISTINCT rundate, shot, xp, voided '
+            'FROM {} WHERE voided IS null').format(self._table)
+        self._shot_query_prefix = (
+            'SELECT dbkey, username, rundate, shot, xp, topic, text, entered, voided '
+            'FROM {} WHERE voided IS null').format(self._table)
+            
         try:
             self._logbook_connection = pymssql.connect(
-                server=self._lbparams['server'], 
-                user=self._lbparams['username'],
-                password=self._lbparams['password'],
-                database=self._lbparams['database'],
-                port=self._lbparams['port'],
+                server=self._credentials['server'], 
+                user=self._credentials['username'],
+                password=self._credentials['password'],
+                database=self._credentials['database'],
+                port=self._credentials['port'],
                 as_dict=True)
         except:
             print('Attempting logbook server connection as drsmith')
             try:
                 self._logbook_connection = pymssql.connect(
-                    server=self._lbparams['server'], 
+                    server=self._credentials['server'], 
                     user='drsmith',
-                    password=self._lbparams['password'],
-                    database=self._lbparams['database'],
-                    port=self._lbparams['port'],
+                    password=self._credentials['password'],
+                    database=self._credentials['database'],
+                    port=self._credentials['port'],
                     as_dict=True)
             except:
-                print('FDF: cannot connect to {} logbook'.format(self._name.upper()))
-                pass
+                raise FdfLogbookError(self._name, self._credentials)
 
     def _get_cursor(self):
-        cursor = None
         try:
             cursor = self._logbook_connection.cursor()
             cursor.execute('SET ROWCOUNT 500')
         except:
-            # close connection if possible, then reopen connection and try again
-            if hasattr(self._logbook_connection, 'close'): # close connection
-                self._logbook_connection.close()
-            self._logbook_connection = None
-            self._make_logbook_connection()
-            try:
-                cursor = self._logbook_connection.cursor()
-            except:
-                print('FDF: cannot initiate cursor for {} logbook'.format(self._name.upper()))
-                pass
+            raise FdfLogbookCursorError()
         return cursor
 
     def _shot_query(self, shot=[]):
@@ -328,6 +321,7 @@ class Logbook():
     def get_shotlist(self, date=[], xp=[], verbose=False):
         # return list of shots for date and/or XP
         cursor = self._get_cursor()
+        
         shotlist = []   # start with empty shotlist
         
         date_list = date
@@ -373,7 +367,8 @@ class Logbook():
             self._shot_query(shot=shot)
         entries = []
         for sh in np.unique(shot):
-            entries.extend(self.logbook[sh])
+            if sh in self.logbook:
+                entries.extend(self.logbook[sh])
         return entries
 
 
@@ -649,10 +644,9 @@ class Node(object):
         self.mdspath = parse_mdspath(self, element)
 
 
-
 if __name__ == '__main__':
     nstx = Machine('nstx')
     nstx.s140000.logbook()
-    nstx.addshot(xp=1048, verbose=True)
+    #nstx.addshot(xp=1048, verbose=True)
     
 
