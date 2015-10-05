@@ -1,13 +1,13 @@
-# -*- coding: utf-8 -*-
+
 
 Add to-do items to list.  When complete, move to "complete" and add name/date
 
 
-- fdf-wide or Machine-wide verbose and/or debug
+> fdf-wide or Machine-wide verbose and/or debug
     e.g. >>> fdf.verbose(True)
     or >>> nstx.debug(True)
-- guidelines for docstrings
-- unit test strategy
+> develop/implement guidelines for docstrings
+> develop/implement unit test strategy
 
 
 
