@@ -179,13 +179,12 @@ class Machine(MutableMapping):
                 self._shots[shot] = Shot(shot, root=self, parent=self)
     
     def get_shotlist(self, date=[], xp=[], verbose=False):
-        # return an np.array of shots
+        # return a list of shots
         return self._logbook.get_shotlist(date=date, xp=xp, verbose=verbose)
     
-    def logbook(self, shot=[]):
+    def logbook(self, shot=[], date=[], xp=[]):
         # return a list of logbook entries (dictionaries)
-        # add xp and date keywords
-        return self._logbook.get_entries(self, shot=shot)
+        return self._logbook.get_entries(self, shot=shot, date=date, xp=xp)
         
 
 
@@ -332,9 +331,10 @@ class Logbook():
                 self.logbook[sh] = cursor.fetchall() # a list of logbook entries
     
     def get_shotlist(self, date=[], xp=[], verbose=False):
+        # return list of shots for date and/or XP
         cursor = self._get_cursor()
-        
         shotlist = []   # start with empty shotlist
+        
         date_list = date
         if not iterable(date_list):      # if it's just a single date
             date_list = [date_list]   # put it into a list
@@ -368,14 +368,16 @@ class Logbook():
         cursor.close()
         return np.unique(shotlist)
     
-    def get_entries(self, shot=[]):
-        # add xp and date keywords
+    def get_entries(self, shot=[], date=[], xp=[]):
+        # return list of lobgook entries (dictionaries) for shot(s)
         if shot and not iterable(shot):
             shot = [shot]
+        if xp or date:
+            shot.extend(self.get_shotlist(date=date, xp=xp))
         if shot:
             self._shot_query(shot=shot)
         entries = []
-        for sh in shot:
+        for sh in np.unique(shot):
             entries.extend(self.logbook[sh])
         return entries
 
