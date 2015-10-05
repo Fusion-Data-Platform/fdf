@@ -8,8 +8,6 @@ import xml.etree.ElementTree as ET
 import os
 import fdf_globals
 from fdf_signal import Signal
-from fdf_exceptions import FdfMachineError, FdfLogbookError, \
-    FdfLogbookCursorError
 import numpy as np
 import modules
 from collections import MutableMapping, OrderedDict
@@ -20,8 +18,21 @@ import pymssql
 
 
 FDF_DIR = fdf_globals.FDF_DIR
-MDS_SERVERS = fdf_globals.MDS_SERVERS
-LOGBOOK_CREDENTIALS = fdf_globals.LOGBOOK_CREDENTIALS
+
+MDS_SERVERS = {
+    'nstx': 'skylark.pppl.gov:8501'
+}
+
+LOGBOOK_CREDENTIALS = {
+    'nstx': {
+        'server': 'sql2008.pppl.gov\sql2008',
+        'username': os.getenv('USER') or os.getenv('USERNAME'),
+        'password': 'pfcworld',
+        'database': 'nstxlogs',
+        'port': '62917',
+        'table': 'entries'
+    }
+}
 
 
 class Machine(MutableMapping):
@@ -56,7 +67,11 @@ class Machine(MutableMapping):
         
         if self._name not in LOGBOOK_CREDENTIALS \
             or self._name not in MDS_SERVERS:
-                raise FdfMachineError(self._name)
+                txt = 'Unknown machine: {}.'.format(self._name.upper())
+                txt = txt + '  Available machines are:'
+                for machine in LOGBOOK_CREDENTIALS:
+                    txt = txt + ' {}'.format(machine.upper())
+                raise FdfError(txt)
         
         self._logbook = Logbook(name=self._name, root=self)
         self.s0 = Shot(0, root=self, parent=self)
@@ -64,7 +79,11 @@ class Machine(MutableMapping):
         if len(self._connections) is 0:
             print('Precaching MDS server connections...')
             for _ in range(2):
-                self._connections[mds.Connection(MDS_SERVERS[name])] = None
+                try:
+                    self._connections[mds.Connection(MDS_SERVERS[self._name])] = None
+                except:
+                    txt = 'MDSplus connection to {} failed.'.format(MDS_SERVERS[self._name])
+                    raise FdfError(txt)
             print('Finished.')
         
         # add shots
@@ -296,14 +315,18 @@ class Logbook():
                     port=self._credentials['port'],
                     as_dict=True)
             except:
-                raise FdfLogbookError(self._name, self._credentials)
+                txt = '{} logbook connection failed. '.format(self._name.upper())
+                txt = txt + 'Server credentials:'
+                for key in self._credentials:
+                    txt = txt + '  {0}:{1}'.format(key, self._credentials[key])
+                raise FdfError(txt)
 
     def _get_cursor(self):
         try:
             cursor = self._logbook_connection.cursor()
             cursor.execute('SET ROWCOUNT 500')
         except:
-            raise FdfLogbookCursorError()
+            raise FdfError('Cursor error.')
         return cursor
 
     def _shot_query(self, shot=[]):
@@ -642,6 +665,13 @@ class Node(object):
         self._parent = parent
         self._name = element.get('name')
         self.mdspath = parse_mdspath(self, element)
+
+
+class FdfError(Exception):
+    def __init__(self, message=''):
+        self.message = message
+    def __str__(self):
+        return repr(self.message)
 
 
 if __name__ == '__main__':
