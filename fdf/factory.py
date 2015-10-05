@@ -711,3 +711,11 @@ class Node(object):
         self._name = element.get('name')
         self.mdspath = parse_mdspath(self, element)
 
+if __name__ == '__main__':
+    nstx = Machine('nstx')
+    nstx.addshot(140000)
+    nstx.logbook(140000)
+    sl = nstx.get_shotlist(xp=1048, verbose=True)
+    nstx.addshot(xp=1048)
+    
+
