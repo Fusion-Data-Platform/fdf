@@ -7,12 +7,13 @@
 Fusion Data Framework
 ##########################
 
-.. include:: README.rst
+Fusion Data Framework (FDF) is a software framework and application library for data access, management, and visualization for magnetic fusion experiements.
 
 .. toctree::
     :maxdepth: 2
     
-    introduction
+    about
+    userguide
     LICENSE
     TODO
 

@@ -1,6 +1,6 @@
 =========================
-About FDF
+User Guide
 =========================
 
-.. include:: README.rst
+
 
