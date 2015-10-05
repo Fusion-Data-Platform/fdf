@@ -7,16 +7,14 @@
 Fusion Data Framework
 ##########################
 
-
-
-.. include:: _static/README.rst
-
+.. include:: README.rst
 
 .. toctree::
-   :maxdepth: 2
-   
-   introduction
-   fdfmodule
+    :maxdepth: 2
+    
+    introduction
+    LICENSE
+    TODO
 
 
 
