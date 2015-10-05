@@ -184,7 +184,7 @@ class Machine(MutableMapping):
     
     def logbook(self, shot=[], date=[], xp=[]):
         # return a list of logbook entries (dictionaries)
-        return self._logbook.get_entries(self, shot=shot, date=date, xp=xp)
+        return self._logbook.get_entries(shot=shot, date=date, xp=xp)
         
 
 
@@ -340,7 +340,7 @@ class Logbook():
             date_list = [date_list]   # put it into a list
         for date in date_list:
             query = ('{0} and rundate={1} ORDER BY shot ASC'.
-                     format(shotlist_query_prefix, date))
+                     format(self._shotlist_query_prefix, date))
             cursor.execute(query)
             rows = cursor.fetchall()
             if verbose:
@@ -355,7 +355,7 @@ class Logbook():
             xp_list = [xp_list]             # put it into a list
         for xp in xp_list:
             query = ('{0} and xp={1} ORDER BY shot ASC'.
-                     format(shotlist_query_prefix, xp))
+                     format(self._shotlist_query_prefix, xp))
             cursor.execute(query)
             rows = cursor.fetchall()
             if verbose:
@@ -710,3 +710,4 @@ class Node(object):
         self._parent = parent
         self._name = element.get('name')
         self.mdspath = parse_mdspath(self, element)
+
