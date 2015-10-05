@@ -61,6 +61,7 @@ class Machine(MutableMapping):
         self._shots = {}
         self._classlist = {}
         self._name = name.lower()
+        self._logbook = Logbook(name=self._name, root=self)
         self.s0 = Shot(0, root=self, parent=self)
 
         if len(self._connections) is 0:
@@ -68,9 +69,6 @@ class Machine(MutableMapping):
             for _ in range(2):
                 self._connections[mds.Connection(mds_servers[name])] = None
             print('Finished.')
-        
-        # establish logbook connection
-        self._logbook = Logbook(name=self._name, root=self)
         
         # add shots
         if shotlist or xp or date:
@@ -162,7 +160,7 @@ class Machine(MutableMapping):
                    if os.path.isdir(os.path.join(module_dir, module))]
         return modules
         
-    def addshot(self, shotlist=[], date=[], xp=[]):
+    def addshot(self, shotlist=[], date=[], xp=[], verbose=False):
         if not iterable(shotlist):
             shotlist = [shotlist]
         if not iterable(xp):
@@ -173,7 +171,7 @@ class Machine(MutableMapping):
         if shotlist and type(shotlist) is int:
             shots = shots.extend([shotlist])
         if date or xp:
-            shots = shots.extend(self._logbook.get_shotlist(date=date, xp=xp))
+            shots = shots.extend(self._logbook.get_shotlist(date=date, xp=xp, verbose=verbose))
         for shot in np.unique(shots):
             if shot not in self._shots:
                 self._shots[shot] = Shot(shot, root=self, parent=self)
@@ -181,82 +179,74 @@ class Machine(MutableMapping):
     def get_shotlist(self, date=[], xp=[], verbose=False):
         # return a list of shots
         return self._logbook.get_shotlist(date=date, xp=xp, verbose=verbose)
+
+
+class Shot(MutableMapping):
+
+    def __init__(self, shot, root=None, parent=None):
+        self.shot = shot
+        self._root = root
+        self._parent = parent
+        self._logbook = self._root._logbook
+        modules = root._get_modules()
+        self._signals = {module: Factory(module, root=root, shot=shot,
+                                         parent=self) for module in modules}
+        self.xp = self._get_xp()
+        self.date = self._get_date()
+
+    def __getattr__(self, name):
+        name_lower = name.lower()
+        try:
+            return self._signals[name_lower]
+        except:
+            pass
+
+    def __repr__(self):
+        return '<shot# {}>'.format(self.shot)
+
+    def __iter__(self):
+        # return iter(self._signals.values())
+        return iter(self._signals)
+
+    def __contains__(self, value):
+        return value in self._signals
+
+    def __len__(self):
+        return len(self._signals.keys())
+
+    def __delitem__(self, item):
+        pass
+
+    def __getitem__(self, item):
+        return self._signals[item]
+
+    def __setitem__(self, item, value):
+        pass
+
+    def __dir__(self):
+        return self._signals.keys()
     
-    def logbook(self, shot=[], date=[], xp=[]):
+    def _get_xp(self):
+        # query logbook for XP, return XP
+        return None
+    
+    def _get_date(self):
+        # query logbook for rundate, return rundate
+        return None
+    
+    def logbook(self):
         # return a list of logbook entries (dictionaries)
-        return self._logbook.get_entries(shot=shot, date=date, xp=xp)
-        
-
-
-#    def _make_logbook_connection(self):
-#        # added 9/30/2015 DRS
-#        try:
-#            self._logbook_connection = pymssql.connect(
-#                server=self._lbparams['server'], 
-#                user=self._lbparams['username'],
-#                password=self._lbparams['password'],
-#                database=self._lbparams['database'],
-#                port=self._lbparams['port'],
-#                as_dict=True)
-#        except:
-#            print('Connecting to Logbook server as drsmith')
-#            self._logbook_connection = pymssql.connect(
-#                server=self._lbparams['server'], 
-#                user='drsmith',
-#                password=self._lbparams['password'],
-#                database=self._lbparams['database'],
-#                port=self._lbparams['port'],
-#                as_dict=True)
-#
-#
-#    def get_shotlist(rundate=[], xp=[], verbose=False):
-#        cursor = self._logbook_connection.cursor()
-#        cursor.execute('SET ROWCOUNT 200')
-#    
-#        shotlist = []   # start with empty shotlist
-#        rundate_list = rundate
-#        if not iterable(rundate_list):      # if it's just a single date
-#            rundate_list = [rundate_list]   # put it into a list
-#        for rundate in rundate_list:
-#            query = ('{} and rundate={} ORDER BY shot ASC'.
-#                     format(shotlist_query_prefix, rundate))
-#            cursor.execute(query)
-#            rows = cursor.fetchall()
-#            if verbose:
-#                print('Rundate {}'.format(rundate))
-#                for row in rows:
-#                    print('   {shot} in XP {xp}'.format(**row))
-#            shotlist.extend([row['shot'] for row in rows  # add shots to shotlist
-#                            if row['shot'] is not None])
-#    
-#        xp_list = xp
-#        if not iterable(xp_list):           # if it's just a single xp
-#            xp_list = [xp_list]             # put it into a list
-#        for xp in xp_list:
-#            query = ('{} and xp={} ORDER BY shot ASC'.
-#                     format(shotlist_query_prefix, xp))
-#            cursor.execute(query)
-#            rows = cursor.fetchall()
-#            if verbose:
-#                print('XP {}'.format(xp))
-#                for row in rows:
-#                    print('   {shot} on rundate {rundate}'.format(**row))
-#            shotlist.extend([row['shot'] for row in rows  # add shots to shotlist
-#                            if row['shot'] is not None])
-#    
-#        cursor.close()
-#        return np.unique(shotlist)
-#
-#
-#    def get_xp_from_date(self, date):
-#        # added 9/30/2015 DRS
-#        # query logbook on date, return xp list
-#        return None
-#    
-#    def get_date_from_xp(self, xp):
-#        # added 9/30/2015 DRS
-#        # query logbook on xp, return date list
-#        return None
+        entries = self._logbook.get_entries(shot=self.shot)
+        if entries:
+            print('Logbook entries for {}'.format(self.shot))
+            for entry in entries:
+                print('************************************')
+                print(('{} on {} in XP {}\n'
+                    '{} in topic {}\n\n'
+                    '{}').format(entry['shot'], entry['rundate'], 
+                    entry['xp'], entry['username'], entry['topic'], 
+                    entry['text']))
+            print('************************************')
 
 
 class Logbook():
@@ -264,18 +254,23 @@ class Logbook():
     def __init__(self, name='nstx', root=None):
         self._name = name.lower()
         self._root = root
+        
         self._lbparams = logbook_parameters[self._name]
         self._table = self._lbparams['table']
-        self._logbook_connection = None
+        
         self._shotlist_query_prefix = (
             'SELECT DISTINCT rundate, shot, xp, voided '
             'FROM {} WHERE voided IS null').format(self._table)
         self._shot_query_prefix = (
             'SELECT dbkey, username, rundate, shot, xp, topic, text, entered, voided '
             'FROM {} WHERE voided IS null').format(self._table)
-        self.logbook = {} # dictionary: kw is shot, value is list of logbook entries
         
+        self._logbook_connection = None
         self._make_logbook_connection()
+        
+        # dict of cached logbook entries
+        # kw is shot, value is list of logbook entries
+        self.logbook = {}
 
     def _make_logbook_connection(self):
         try:
@@ -380,64 +375,6 @@ class Logbook():
         for sh in np.unique(shot):
             entries.extend(self.logbook[sh])
         return entries
-
-
-class Shot(MutableMapping):
-
-    def __init__(self, shot, root=None, parent=None):
-        self.shot = shot
-        self.xp = self._get_xp  # DRS 9/30/2015
-        self.date = self._get_date  # DRS 9/30/2015
-        self._root = root
-        self._parent = parent
-        modules = root._get_modules()
-        self._signals = {module: Factory(module, root=root, shot=shot,
-                                         parent=self) for module in modules}
-
-    def __getattr__(self, name):
-        name_lower = name.lower()
-        try:
-            return self._signals[name_lower]
-        except:
-            pass
-
-    def __repr__(self):
-        return '<shot# {}>'.format(self.shot)
-
-    def __iter__(self):
-        # return iter(self._signals.values())
-        return iter(self._signals)
-
-    def __contains__(self, value):
-        return value in self._signals
-
-    def __len__(self):
-        return len(self._signals.keys())
-
-    def __delitem__(self, item):
-        pass
-
-    def __getitem__(self, item):
-        return self._signals[item]
-
-    def __setitem__(self, item, value):
-        pass
-
-    def __dir__(self):
-        return self._signals.keys()
-    
-    def _get_xp(self):
-        # query logbook for XP, return XP
-        return None
-    
-    def _get_date(self):
-        # query logbook for rundate, return rundate
-        return None
-    
-    def logbook(self):
-        # added 9/30/2015 DRS
-        # query logbook for entries, return list of LogbookEntry
-        pass
 
 
 def Factory(module, root=None, shot=None, parent=None):
@@ -711,11 +648,11 @@ class Node(object):
         self._name = element.get('name')
         self.mdspath = parse_mdspath(self, element)
 
+
+
 if __name__ == '__main__':
     nstx = Machine('nstx')
-    nstx.addshot(140000)
-    nstx.logbook(140000)
-    sl = nstx.get_shotlist(xp=1048, verbose=True)
-    nstx.addshot(xp=1048)
+    nstx.s140000.logbook()
+    nstx.addshot(xp=1048, verbose=True)
     
 
