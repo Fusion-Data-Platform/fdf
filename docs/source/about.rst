@@ -1,15 +1,6 @@
-
-First About Section
+=========================
+About FDF
 =========================
 
+.. include:: README.rst
 
-A subsection
----------------------
-
-
-Another subsection
----------------------
-
-
-Second About Section
-=======================

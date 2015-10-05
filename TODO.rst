@@ -1,0 +1,18 @@
+==============================
+To-do List
+==============================
+
+Add to-do items to list.  When complete, move to "complete" and add date
+
+- fdf-wide or Machine-wide verbose and/or debug
+  e.g. ``>>> fdf.verbose(True)``
+  or ``>>> nstx.debug(True)``
+- develop/implement guidelines for docstrings
+- develop/implement unit test strategy
+
+
+Completed
+
+-
+
+
