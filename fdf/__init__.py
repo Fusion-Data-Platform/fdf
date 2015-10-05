@@ -12,6 +12,6 @@ __sub_mods__ = [".".join(_mod[1].split(".")[1:]) for _mod in
 from . import *
 from factory import Machine  # expose facotry.Machine at package-level (DRS 10/15)
                                # e.g. >>> nstx = fdf.Machine('nstx')
-
 for _module in __sub_mods__:
     _importlib.import_module("." + _module, package=__name__)
+

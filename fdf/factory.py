@@ -237,17 +237,16 @@ class Shot(MutableMapping):
     def logbook(self):
         # return a list of logbook entries (dictionaries)
         entries = self._logbook.get_entries(shot=self.shot)
-        for entry in entries:
+        if entries:
+            print('Logbook entries for {}'.format(self.shot))
+            for entry in entries:
+                print('************************************')
+                print(('{} on {} in XP {}\n'
+                    '{} in topic {}\n\n'
+                    '{}').format(entry['shot'], entry['rundate'], 
+                    entry['xp'], entry['username'], entry['topic'], 
+                    entry['text']))
             print('************************************')
-            print(('shot: {}\n'
-                'rundate: {}\n'
-                'xp: {}\n'
-                'author: {}\n'
-                'topic: {}\n'
-                'entry datetime: {}\n'
-                'text: {}\n').format(entry['shot'], entry['rundate'], 
-                entry['xp'], entry['username'], entry['topic'], 
-                entry['entered'], entry['text']))
 
 
 class Logbook():
