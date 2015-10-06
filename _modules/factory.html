@@ -127,15 +127,7 @@
 <span class="sd">* Logbook - logbook connection class</span>
 <span class="sd">* Container - diagnostic container class</span>
 <span class="sd">* Node - mdsplus signal node class</span>
-<span class="sd">* FdfError - error class for FDF package</span>
 
-<span class="sd">**Usage**::</span>
-
-<span class="sd">    &gt;&gt;&gt; import fdf</span>
-<span class="sd">    &gt;&gt;&gt; nstx = fdf.Machine(&#39;nstx&#39;)</span>
-<span class="sd">    &gt;&gt;&gt; nstx.s140000.logbook()</span>
-<span class="sd">    &gt;&gt;&gt; nstx.addshots(xp=1048)</span>
-<span class="sd">    &gt;&gt;&gt; nstx.s140000.mpts.plot()</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
@@ -165,23 +157,33 @@
 
 
 <div class="viewcode-block" id="Machine"><a class="viewcode-back" href="../package_reference.html#factory.Machine">[docs]</a><span class="k">class</span> <span class="nc">Machine</span><span class="p">(</span><span class="n">MutableMapping</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;Factory root class that contains shot objects and MDS access methods.</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Factory root class that contains shot objects and MDS access methods.</span>
 
-<span class="sd">    Basic class initialization is performed as follows:</span>
-<span class="sd">    &gt;&gt;&gt;nstx = Machine(name=&#39;nstx&#39;)</span>
+<span class="sd">    **Usage**::</span>
+<span class="sd">    </span>
+<span class="sd">        &gt;&gt;&gt; import fdf</span>
+<span class="sd">        &gt;&gt;&gt; nstx = fdf.Machine(&#39;nstx&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; nstx.s140000.logbook()</span>
+<span class="sd">        &gt;&gt;&gt; nstx.addshots(xp=1048)</span>
+<span class="sd">        &gt;&gt;&gt; nstx.s140000.mpts.plot()</span>
+<span class="sd">        </span>
+<span class="sd">    Machine class contains a model shot object: nstx.s0</span>
 
-<span class="sd">    the Machine class contains a model shot object: nstx.s0</span>
+<span class="sd">    Shot data can be accessed directly through the Machine class::</span>
+<span class="sd">    </span>
+<span class="sd">        &gt;&gt;&gt; nstx.s141398</span>
+<span class="sd">        &gt;&gt;&gt; nstx.s141399</span>
 
-<span class="sd">    shot data can be accessed directly through the Machine class:</span>
-<span class="sd">    &gt;&gt;&gt; nstx.s141398</span>
-<span class="sd">    &gt;&gt;&gt; nstx.s141399</span>
+<span class="sd">    Alternatively, a list of shot #&#39;s may be provided during initialization::</span>
+<span class="sd">    </span>
+<span class="sd">        &gt;&gt;&gt;nstx = Machine(name=&#39;nstx&#39;, shotlist=[141398, 141399])</span>
 
-<span class="sd">    alternatively, a list of shot #&#39;s may be provided during initialization:</span>
-<span class="sd">    &gt;&gt;&gt;nstx = Machine(name=&#39;nstx&#39;, shotlist=[141398, 141399])</span>
-
-<span class="sd">    or added later using the addshot method:</span>
-<span class="sd">    &gt;&gt;&gt;nstx.addshot([141398, 141399])</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    Or added later using the addshot method::</span>
+<span class="sd">    </span>
+<span class="sd">        &gt;&gt;&gt;nstx.addshot([141398, 141399])</span>
+<span class="sd">        </span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c"># Maintain a dictionary of cached MDS server connections to speed up</span>
     <span class="c"># access for multiple shots and trees. This is a static class variable</span>

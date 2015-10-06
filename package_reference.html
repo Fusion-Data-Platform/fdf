@@ -128,8 +128,14 @@
 <li>Logbook - logbook connection class</li>
 <li>Container - diagnostic container class</li>
 <li>Node - mdsplus signal node class</li>
-<li>FdfError - error class for FDF package</li>
 </ul>
+</div>
+<div class="section" id="class-machine">
+<h2>Class Machine<a class="headerlink" href="#class-machine" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="factory.Machine">
+<em class="property">class </em><code class="descclassname">factory.</code><code class="descname">Machine</code><span class="sig-paren">(</span><em>name='nstx'</em>, <em>shotlist=[]</em>, <em>xp=[]</em>, <em>date=[]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/factory.html#Machine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factory.Machine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Factory root class that contains shot objects and MDS access methods.</p>
 <p><strong>Usage</strong>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">fdf</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nstx</span> <span class="o">=</span> <span class="n">fdf</span><span class="o">.</span><span class="n">Machine</span><span class="p">(</span><span class="s">&#39;nstx&#39;</span><span class="p">)</span>
@@ -138,23 +144,20 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nstx</span><span class="o">.</span><span class="n">s140000</span><span class="o">.</span><span class="n">mpts</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
+<p>Machine class contains a model shot object: nstx.s0</p>
+<p>Shot data can be accessed directly through the Machine class:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nstx</span><span class="o">.</span><span class="n">s141398</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nstx</span><span class="o">.</span><span class="n">s141399</span>
+</pre></div>
 </div>
-<div class="section" id="class-machine">
-<h2>Class Machine<a class="headerlink" href="#class-machine" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="factory.Machine">
-<em class="property">class </em><code class="descclassname">factory.</code><code class="descname">Machine</code><span class="sig-paren">(</span><em>name='nstx'</em>, <em>shotlist=[]</em>, <em>xp=[]</em>, <em>date=[]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/factory.html#Machine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factory.Machine" title="Permalink to this definition">¶</a></dt>
-<dd><p>Factory root class that contains shot objects and MDS access methods.</p>
-<p>Basic class initialization is performed as follows:
-&gt;&gt;&gt;nstx = Machine(name=&#8217;nstx&#8217;)</p>
-<p>the Machine class contains a model shot object: nstx.s0</p>
-<p>shot data can be accessed directly through the Machine class:
-&gt;&gt;&gt; nstx.s141398
-&gt;&gt;&gt; nstx.s141399</p>
-<p>alternatively, a list of shot #&#8217;s may be provided during initialization:
-&gt;&gt;&gt;nstx = Machine(name=&#8217;nstx&#8217;, shotlist=[141398, 141399])</p>
-<p>or added later using the addshot method:
-&gt;&gt;&gt;nstx.addshot([141398, 141399])</p>
+<p>Alternatively, a list of shot #&#8217;s may be provided during initialization:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="go">&gt;&gt;&gt;nstx = Machine(name=&#39;nstx&#39;, shotlist=[141398, 141399])</span>
+</pre></div>
+</div>
+<p>Or added later using the addshot method:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="go">&gt;&gt;&gt;nstx.addshot([141398, 141399])</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
@@ -181,8 +184,6 @@
 <ul class="simple">
 <li>Signal - signal class for data objects</li>
 </ul>
-<p>Created on Tue Jun 23 2015</p>
-<p>&#64;author: hyuh</p>
 </div>
 <div class="section" id="class-signal">
 <h2>Class Signal<a class="headerlink" href="#class-signal" title="Permalink to this headline">¶</a></h2>
@@ -201,9 +202,7 @@ sig=fdf.Signal(units=&#8217;m/s&#8217;, axes=[&#8216;radius&#8217;,&#8217;time&#
 </div>
 <div class="section" id="module-fdf_globals">
 <span id="module-fdf-globals-py"></span><h2>Module fdf_globals.py<a class="headerlink" href="#module-fdf_globals" title="Permalink to this headline">¶</a></h2>
-<p>fdf_globals.py contains package-level constants</p>
-<p>Created on Thu Jun 18 11:18:16 2015</p>
-<p>&#64;author: ktritz</p>
+<p>Package-level constants and FdfError class</p>
 </div>
 </div>
 
