@@ -1,24 +1,26 @@
 # -*- coding: utf-8 -*-
 """
-factory.py - root module for the FDF package.
+Root module for the FDF package.
 
-Classes
--------
-Machine - root class for the FDF package
-Shot - shot container class
-Logbook - logbook connection class
-Container - diagnostic container class
-Node - mdsplus signal node class
-FdfError - error class for FDF package
+**Classes**
 
-Usage
------
->>> import fdf
->>> nstx = fdf.Machine('nstx')
->>> nstx.s140000.logbook()
->>> nstx.addshots(xp=1048)
->>> nstx.s140000.mpts.plot()
+* Machine - root class for the FDF package
+* Shot - shot container class
+* Logbook - logbook connection class
+* Container - diagnostic container class
+* Node - mdsplus signal node class
+* FdfError - error class for FDF package
 
+**Usage**::
+
+    >>> import fdf
+    >>> nstx = fdf.Machine('nstx')
+    >>> nstx.s140000.logbook()
+    >>> nstx.addshots(xp=1048)
+    >>> nstx.s140000.mpts.plot()
+"""
+
+"""
 Created on Thu Jun 18 10:38:40 2015
 @author: ktritz
 """
@@ -52,8 +54,8 @@ class Machine(MutableMapping):
     the Machine class contains a model shot object: nstx.s0
 
     shot data can be accessed directly through the Machine class:
-    >>>nstx.s141398
-    >>>nstx.s141399
+    >>> nstx.s141398
+    >>> nstx.s141399
 
     alternatively, a list of shot #'s may be provided during initialization:
     >>>nstx = Machine(name='nstx', shotlist=[141398, 141399])

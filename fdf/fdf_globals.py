@@ -10,12 +10,12 @@ import os
 
 
 FDF_DIR = os.path.dirname(os.path.abspath(__file__))
-"""path string: top-level directory for FDF package"""
+"""Path string: top-level directory for FDF package"""
 
 MDS_SERVERS = {
     'nstx': 'skylark.pppl.gov:8501'
 }
-"""dictionary: machine-name key paired to MDS server"""
+"""Dictionary: machine-name key paired to MDS server"""
 
 LOGBOOK_CREDENTIALS = {
     'nstx': {
@@ -27,12 +27,16 @@ LOGBOOK_CREDENTIALS = {
         'table': 'entries'
     }
 }
-"""dictionary: machine-name key paired with logbook login credentials"""
+"""Dictionary: machine-name key paired with logbook login credentials"""
 
 
 class FdfError(Exception):
     """
+    Error class for FDF package
     
+    Usage
+    -----
+    raise FdfError('my error message')
     """
     def __init__(self, message=''):
         self.message = message
