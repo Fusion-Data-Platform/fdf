@@ -1,0 +1,28 @@
+***************************
+Code Reference
+***************************
+
+
+Class Machine
+-----------------------
+.. autoclass:: factory.Machine
+    :members:
+
+
+Class Shot
+-----------------------
+.. autoclass:: factory.Shot
+    :members:
+
+
+Class Logbook
+-----------------------
+.. autoclass:: factory.Logbook
+    :members:
+
+
+Class Signal
+-----------------------
+.. autoclass:: fdf_signal.Signal
+    :members:
+
