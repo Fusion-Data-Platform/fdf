@@ -69,9 +69,9 @@ Finally, add your new fdf directory to the ``PYTHONPATH`` environment variable::
 You may want to add this action to your shell start-up files: .cshrc for csh/tcsh or .bash_profile bash.  In bash, use the export command to set ``PYTHONPATH``.
 
 
-**Workflow for FDF development**
+**Git workflow for FDF development**
 
-1) Create a development branch (here, we call it devbranch) and checkout the new branch::
+(1) Create a development branch (here, we call it devbranch) and checkout the new branch::
 
     [sunfire08:~] % cd fdf
     
@@ -92,9 +92,9 @@ You may want to add this action to your shell start-up files: .cshrc for csh/tcs
     master 
 
 
-Devbranch initializes as a copy of master.  ``git branch`` lists branches in your local repository, and the asterisk denotes the active branch.  You can switch local branches with ``git checkout <LocalBranchName>``.
+Devbranch initializes as a copy of master.  ``git branch`` lists branches in your local repository, and the asterisk denotes the active branch.  You can switch between local branches with ``git checkout <LocalBranchName>``.
 
-2) Push devbranch to the remote FDF repository at GitHub (you may need to enter your GitHub username and password)::
+(2) Push devbranch to the remote FDF repository at GitHub (you may need to enter your GitHub username and password)::
 
     [sunfire08:~/fdf] % git push origin devbranch
     Total 0 (delta 0), reused 0 (delta 0)
@@ -104,7 +104,7 @@ Devbranch initializes as a copy of master.  ``git branch`` lists branches in you
 devbranch is now listed in the FDF repository at GitHub.  ``origin`` is the alias for the remote GitHub repository.  You can view your remote repositories and aliases with ``git remote -v``.
 
 
-3) Proceed with FDF development within devbranch: commit changes, add/delete files, and push updates to GitHub.
+(3) Proceed with FDF development within devbranch: commit changes, add/delete files, and push updates to GitHub.
 
 As you complete small tasks, you should commit changes to your local repository with ``git commit -a -m '<mymessage>'``.  Also, each commit requires a short message describing the changes::
 
@@ -141,7 +141,7 @@ When you complete a large task, you should “push” changes to the devbranch o
 
 Again, "origin" signifies the branches on the remote GitHub repo.
 
-4) While you are working locally in devbranch, others may be modifying master at GitHub.  When you are ready to merge devbranch into master, you should first merge the latest version of master from GitHub into your local devbranch.  To retrieve the latest version of master from GitHub, use ``git fetch``::
+(4) While you are working locally in devbranch, others may be modifying master at GitHub.  When you are ready to merge devbranch into master, you should first merge the latest version of master from GitHub into your local devbranch.  To retrieve the latest version of master from GitHub, use ``git fetch``::
 
     [sunfire05:~/fdf] % git fetch origin master
     From https://github.com/Fusion-Data-Framework/fdf 

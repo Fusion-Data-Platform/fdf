@@ -171,39 +171,38 @@ fdf/
 </pre></div>
 </div>
 <p>You may want to add this action to your shell start-up files: .cshrc for csh/tcsh or .bash_profile bash.  In bash, use the export command to set <code class="docutils literal"><span class="pre">PYTHONPATH</span></code>.</p>
-<p><strong>Workflow for FDF development</strong></p>
+<p><strong>Git workflow for FDF development</strong></p>
 <ol class="arabic">
 <li><p class="first">Create a development branch (here, we call it devbranch) and checkout the new branch:</p>
 <div class="highlight-python"><div class="highlight"><pre>[sunfire08:~] % cd fdf
-
-[sunfire08:~/fdf] % git branch
-* master
-
-[sunfire08:~/fdf] % git branch devbranch
-
-[sunfire08:~/fdf] % git branch
-devbranch
-* master
-
-[sunfire08:~/fdf] % git checkout devbranch
-Switched to branch &#39;devbranch&#39;
-
-[sunfire08:~/fdf] % git branch
-* devbranch
-master
 </pre></div>
 </div>
+<p>[sunfire08:~/fdf] % git branch
+* master</p>
+<p>[sunfire08:~/fdf] % git branch devbranch</p>
+<p>[sunfire08:~/fdf] % git branch
+devbranch
+* master</p>
+<p>[sunfire08:~/fdf] % git checkout devbranch
+Switched to branch &#8216;devbranch&#8217;</p>
+<p>[sunfire08:~/fdf] % git branch
+* devbranch
+master</p>
 </li>
 </ol>
-<p>Devbranch initializes as a copy of master.  <code class="docutils literal"><span class="pre">git</span> <span class="pre">branch</span></code> lists branches in your local repository, and the asterisk denotes the active branch.  You can switch local branches with <code class="docutils literal"><span class="pre">git</span> <span class="pre">checkout</span> <span class="pre">&lt;LocalBranchName&gt;</span></code>.</p>
+<p>Devbranch initializes as a copy of master.  <code class="docutils literal"><span class="pre">git</span> <span class="pre">branch</span></code> lists branches in your local repository, and the asterisk denotes the active branch.  You can switch between local branches with <code class="docutils literal"><span class="pre">git</span> <span class="pre">checkout</span> <span class="pre">&lt;LocalBranchName&gt;</span></code>.</p>
 <ol class="arabic" start="2">
 <li><p class="first">Push devbranch to the remote FDF repository at GitHub (you may need to enter your GitHub username and password):</p>
 <div class="highlight-python"><div class="highlight"><pre>[sunfire08:~/fdf] % git push origin devbranch
-Total 0 (delta 0), reused 0 (delta 0)
-To https://github.com/Fusion-Data-Framework/fdf.git
- * [new branch]      devbranch -&gt; devbranch
 </pre></div>
 </div>
+<p>Total 0 (delta 0), reused 0 (delta 0)
+To <a class="reference external" href="https://github.com/Fusion-Data-Framework/fdf.git">https://github.com/Fusion-Data-Framework/fdf.git</a></p>
+<blockquote>
+<div><ul class="simple">
+<li>[new branch]      devbranch -&gt; devbranch</li>
+</ul>
+</div></blockquote>
 </li>
 </ol>
 <p>devbranch is now listed in the FDF repository at GitHub.  <code class="docutils literal"><span class="pre">origin</span></code> is the alias for the remote GitHub repository.  You can view your remote repositories and aliases with <code class="docutils literal"><span class="pre">git</span> <span class="pre">remote</span> <span class="pre">-v</span></code>.</p>
@@ -246,10 +245,10 @@ To https://github.com/Fusion-Data-Framework/fdf.git
 <ol class="arabic" start="4">
 <li><p class="first">While you are working locally in devbranch, others may be modifying master at GitHub.  When you are ready to merge devbranch into master, you should first merge the latest version of master from GitHub into your local devbranch.  To retrieve the latest version of master from GitHub, use <code class="docutils literal"><span class="pre">git</span> <span class="pre">fetch</span></code>:</p>
 <div class="highlight-python"><div class="highlight"><pre>[sunfire05:~/fdf] % git fetch origin master
-From https://github.com/Fusion-Data-Framework/fdf
-* branch            master     -&gt; FETCH_HEAD
 </pre></div>
 </div>
+<p>From <a class="reference external" href="https://github.com/Fusion-Data-Framework/fdf">https://github.com/Fusion-Data-Framework/fdf</a>
+* branch            master     -&gt; FETCH_HEAD</p>
 </li>
 </ol>
 <p>Next, verify that you are in devbranch and merge origin/master into devbranch:</p>
