@@ -69,10 +69,13 @@
 <li class="toctree-l1"><a class="reference internal" href="about.html">About FDF</a></li>
 <li class="toctree-l1"><a class="reference internal" href="userguide.html">User Guide</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">Code Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-factory">Module factory.py</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#class-machine">Class Machine</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#class-shot">Class Shot</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#class-logbook">Class Logbook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-fdf_signal">Module fdf_signal.py</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#class-signal">Class Signal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-fdf_globals">Module fdf_globals.py</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="LICENSE.html">License</a></li>
@@ -113,6 +116,27 @@
             
   <div class="section" id="code-reference">
 <h1>Code Reference<a class="headerlink" href="#code-reference" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-factory">
+<span id="module-factory-py"></span><h2>Module factory.py<a class="headerlink" href="#module-factory" title="Permalink to this headline">¶</a></h2>
+<p>Root module for the FDF package.</p>
+<p><strong>Classes</strong></p>
+<ul class="simple">
+<li>Machine - root class for the FDF package</li>
+<li>Shot - shot container class</li>
+<li>Logbook - logbook connection class</li>
+<li>Container - diagnostic container class</li>
+<li>Node - mdsplus signal node class</li>
+<li>FdfError - error class for FDF package</li>
+</ul>
+<p><strong>Usage</strong>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">fdf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nstx</span> <span class="o">=</span> <span class="n">fdf</span><span class="o">.</span><span class="n">Machine</span><span class="p">(</span><span class="s">&#39;nstx&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nstx</span><span class="o">.</span><span class="n">s140000</span><span class="o">.</span><span class="n">logbook</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nstx</span><span class="o">.</span><span class="n">addshots</span><span class="p">(</span><span class="n">xp</span><span class="o">=</span><span class="mi">1048</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nstx</span><span class="o">.</span><span class="n">s140000</span><span class="o">.</span><span class="n">mpts</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
 <div class="section" id="class-machine">
 <h2>Class Machine<a class="headerlink" href="#class-machine" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
@@ -148,6 +172,18 @@
 <dd></dd></dl>
 
 </div>
+<div class="section" id="module-fdf_signal">
+<span id="module-fdf-signal-py"></span><h2>Module fdf_signal.py<a class="headerlink" href="#module-fdf_signal" title="Permalink to this headline">¶</a></h2>
+<p>fdf-signals.py - module containing Signal class</p>
+<div class="section" id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Signal - signal class for data objects</li>
+</ul>
+<p>Created on Tue Jun 23 2015</p>
+<p>&#64;author: hyuh</p>
+</div>
+</div>
 <div class="section" id="class-signal">
 <h2>Class Signal<a class="headerlink" href="#class-signal" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
@@ -162,6 +198,12 @@ default axes order=[time, space]
 sig=fdf.Signal(units=&#8217;m/s&#8217;, axes=[&#8216;radius&#8217;,&#8217;time&#8217;], axes_values=[radiusSignal, timeSignal])</p>
 </dd></dl>
 
+</div>
+<div class="section" id="module-fdf_globals">
+<span id="module-fdf-globals-py"></span><h2>Module fdf_globals.py<a class="headerlink" href="#module-fdf_globals" title="Permalink to this headline">¶</a></h2>
+<p>fdf_globals.py contains package-level constants</p>
+<p>Created on Thu Jun 18 11:18:16 2015</p>
+<p>&#64;author: ktritz</p>
 </div>
 </div>
 

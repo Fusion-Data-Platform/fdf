@@ -3,6 +3,11 @@ Code Reference
 ***************************
 
 
+Module factory.py
+-----------------------
+.. automodule:: factory
+
+
 Class Machine
 -----------------------
 .. autoclass:: factory.Machine
@@ -21,8 +26,19 @@ Class Logbook
     :members:
 
 
+Module fdf_signal.py
+-----------------------
+.. automodule:: fdf_signal
+
+
 Class Signal
 -----------------------
 .. autoclass:: fdf_signal.Signal
     :members:
+
+
+Module fdf_globals.py
+-----------------------
+.. automodule:: fdf_globals
+
 
