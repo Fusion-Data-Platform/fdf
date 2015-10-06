@@ -187,7 +187,8 @@ class Machine(MutableMapping):
         if self._modules is None:
             module_dir = os.path.join(FDF_DIR, 'modules')
             self._modules = [module for module in os.listdir(module_dir)
-                        if os.path.isdir(os.path.join(module_dir, module))]
+                        if os.path.isdir(os.path.join(module_dir, module)) and
+                        module[0] is not '_']
         return self._modules
 
     def addshot(self, shotlist=[], date=[], xp=[], verbose=False):

@@ -46,7 +46,7 @@ class Signal(np.ndarray):
         #name is name of signal...e.g. Te
         #__doc__ for the signal...decriptor (filled in when? XML/MDSvalue?)
         if verbose:
-            print 'Called __new__:'
+            print('Called __new__:')
         obj = np.asanyarray(input_array).view(cls).copy()
         #arr = np.asanyarray(input_array).view(cls)
         #print '__new__: type(arr) %s' % type(arr)
@@ -60,8 +60,8 @@ class Signal(np.ndarray):
         #obj = np.ndarray.__new__(cls, shape=arr.shape, buffer=arr, dtype=arr.dtype)
 
         if verbose:
-            print '__new__: type(obj) %s' % type(obj)
-            print '__new__: setting attributes'
+            print('__new__: type(obj) %s' % type(obj))
+            print('__new__: setting attributes')
         obj.units = units
         obj.axes = axes
         obj._parent = parent
@@ -74,7 +74,7 @@ class Signal(np.ndarray):
         #obj.mdstree = mdstree
         #obj.mdsnode = mdsnode
         #obj.mdsshot = mdsshot
-        for key,value in kwargs.iteritems():
+        for key,value in iter(kwargs.items()):
             setattr(obj,key,value)
 
         #Initiate slic attribute to hold slice index info
@@ -138,7 +138,7 @@ class Signal(np.ndarray):
                                 setattr(self,axis,getattr(obj, axis, None))
                         except: #must not have a len(), e.g. int type
                             if self._verbose:
-                                print 'slic does not have length, skipping attribute assignment'
+                                print('slic does not have length, skipping attribute assignment')
                             pass
                     else:
                         setattr(self,axis,getattr(obj, axis, None))
@@ -147,11 +147,11 @@ class Signal(np.ndarray):
 
     def __array_wrap__(self, out_arr, context=None):
         if self._verbose:
-            print 'Called __array_wrap__:'
-            print '__array_wrap__: self is %s' % type(self)
-            print '__array_wrap__:  arr is %s' % type(out_arr)
+            print('Called __array_wrap__:')
+            print('__array_wrap__: self is %s' % type(self))
+            print('__array_wrap__:  arr is %s' % type(out_arr))
             # then just call the parent
-            print context
+            print(context)
         return np.ndarray.__array_wrap__(self, out_arr, context)
 
     def __getitem__(self,index):
@@ -160,14 +160,14 @@ class Signal(np.ndarray):
         must have the slic attribute
         '''
         if self._verbose:
-            print 'Called __getitem__:'
+            print('Called __getitem__:')
             self.slic=index
             #print '   index is type %s' % type(index)
-            print '__getitem__: index is ', index
-            print '__getitem__: self.slic is ', index
+            print('__getitem__: index is ', index)
+            print('__getitem__: self.slic is ', index)
             #print '__getitem__: new is type %s' % type(new)
-            print '__getitem__: self is type %s' % type(self)
-            print '__getitem__: self has len %s ' % len(self)
+            print('__getitem__: self is type %s' % type(self))
+            print('__getitem__: self has len %s ' % len(self))
 
 
         #Get the data
@@ -197,7 +197,7 @@ class Signal(np.ndarray):
 
     def __getslice__(self, start, stop):
         if self._verbose:
-            print 'Called __getslice__:'
+            print('Called __getslice__:')
         """This solves a subtle bug, where __getitem__ is not called, and all
         the dimensional checking not done, when a slice of only the first
         dimension is taken, e.g. a[1:3]. From the Python docs:
@@ -281,11 +281,11 @@ class Signal(np.ndarray):
             self.mdsshot=getattr(self, 'mdsshot')
         """
         #assumes the mdsconnect() method on root creates root.mdsclient
-        print 'Called _mdsgetdata_thin:'
+        print('Called _mdsgetdata_thin:')
         try:
-            print '_mdsgetdataThin: mdsnode is %s' % self.mdsnode
-            print '_mdsgetdataThin: mdstree is %s' % self.mdstree
-            print '_mdsgetdataThin: mdsshot is %s' % self.mdsshot
+            print('_mdsgetdataThin: mdsnode is %s' % self.mdsnode)
+            print('_mdsgetdataThin: mdstree is %s' % self.mdstree)
+            print('_mdsgetdataThin: mdsshot is %s' % self.mdsshot)
 
             data=self.root._mdsget(self.mdsshot, self.mdstree, self.mdsnode)
             self.resize(data.shape,refcheck=0)
@@ -318,7 +318,7 @@ class RootContainer(object):
             except AttributeError:
                 newConnection=mds.Connection(self.mds_servers['nstx'])
                 newConnection.openTree(tree,shotnum)
-                print '_mdsget: newConnection is %s' % newConnection
+                print('_mdsget: newConnection is %s' % newConnection)
                 self.mdsConnectionsList.__setitem__(shotTree, newConnection)
                 return self.mdsConnectionsList[shotTree].get(node).data()
             except:

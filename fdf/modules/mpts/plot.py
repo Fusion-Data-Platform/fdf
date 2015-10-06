@@ -4,7 +4,7 @@ Created on Fri Jul 31 11:50:21 2015
 
 @author: ktritz
 ====
-2015-Sep-1:  jcschmitt: added option to plot single timeslice using keyword 
+2015-Sep-1:  jcschmitt: added option to plot single timeslice using keyword
                         option 'timeslice'
 """
 
@@ -30,24 +30,24 @@ def plot(signal, overwrite=False, timeslice=None):
                      fontsize=20, horizontalalignment='center')
         plt.show()
     elif timeslice is not None:
-        # Plot the data for a single or multple timeslice; 
+        # Plot the data for a single or multple timeslice;
         #    plot all radial locations
         r = signal.radius[:]
         t = signal.time[:]
         signal[:]
         ind_nearest_timeslice = None
         print("The following time slices are requested")
-        print timeslice
+        print(timeslice)
         # Find the index of the nearest timeslice - does not assume that
         # t is uniform, but does assume it contains unique time entries
         #[print("Timeslice: %f" % (timeslice)) for ts in timeslice]
         if isinstance(timeslice, list):
-            # timeslice is a list of times 
+            # timeslice is a list of times
             ind_nearest_timeslice = [np.argmin( abs( ts - t)) for ts in timeslice]
         else:
             # timeslice is only a single number
-            ind_nearest_timeslice = np.argmin( abs( timeslice - t )) 
-        print ind_nearest_timeslice
+            ind_nearest_timeslice = np.argmin( abs( timeslice - t ))
+        print(ind_nearest_timeslice)
         plt.plot(r, signal[:].T[:, ind_nearest_timeslice])
     else:
         # Plot contour plot for either te or ne for all time and radii
