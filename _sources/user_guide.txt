@@ -5,7 +5,7 @@
 User Guide
 *****************************************
 
-This guide is for people who want to use FDF on the PPPL Linux cluster.  If you wish to contribute to the FDF code repository (https://github.com/Fusion-Data-Framework/fdf), see :ref:'developer-guide'.
+This guide is for people who want to use FDF on the PPPL Linux cluster.  If you wish to contribute to the FDF code repository (https://github.com/Fusion-Data-Framework/fdf), see :ref:`developer-guide`.
 
 .. only:: latex
     
