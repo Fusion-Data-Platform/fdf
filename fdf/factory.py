@@ -45,6 +45,7 @@ FdfError = fdf_globals.FdfError
 
 
 
+
 class Machine(MutableMapping):
     '''Factory root class that contains shot objects and MDS access methods.
 
@@ -95,7 +96,7 @@ class Machine(MutableMapping):
                     txt = 'MDSplus connection to {} failed.'.format(MDS_SERVERS[self._name])
                     raise FdfError(txt)
             print('Finished.')
-        
+
         # add shots
         if shotlist or xp or date:
             self.addshot(shotlist=shotlist, xp=xp, date=date)
@@ -185,7 +186,7 @@ class Machine(MutableMapping):
         modules = [module for module in os.listdir(module_dir)
                    if os.path.isdir(os.path.join(module_dir, module))]
         return modules
-        
+
     def addshot(self, shotlist=[], date=[], xp=[], verbose=False):
         if not iterable(shotlist):
             shotlist = [shotlist]
@@ -194,16 +195,15 @@ class Machine(MutableMapping):
         if not iterable(date):
             date = [date]
         shots = []
-        if shotlist and type(shotlist) is int:
-            shots = shots.extend([shotlist])
+        if shotlist:
+            shots.extend([shotlist])
         if date or xp:
-            moreshots = self._logbook.get_shotlist(date=date, xp=xp, verbose=verbose)
-            if moreshots.any():
-                shots = shots.extend(moreshots)
+            shots.extend(self._logbook.get_shotlist(date=date, xp=xp,
+                                                    verbose=verbose))
         for shot in np.unique(shots):
             if shot not in self._shots:
                 self._shots[shot] = Shot(shot, root=self, parent=self)
-    
+
     def get_shotlist(self, date=[], xp=[], verbose=False):
         # return a list of shots
         return self._logbook.get_shotlist(date=date, xp=xp, verbose=verbose)
@@ -253,15 +253,15 @@ class Shot(MutableMapping):
 
     def __dir__(self):
         return self._signals.keys()
-    
+
     def _get_xp(self):
         # query logbook for XP, return XP
         return None
-    
+
     def _get_date(self):
         # query logbook for rundate, return rundate
         return None
-    
+
     def logbook(self):
         # return a list of logbook entries (dictionaries)
         entries = self._logbook.get_entries(shot=self.shot)
@@ -269,11 +269,9 @@ class Shot(MutableMapping):
             print('Logbook entries for {}'.format(self.shot))
             for entry in entries:
                 print('************************************')
-                print(('{} on {} in XP {}\n'
-                    '{} in topic {}\n\n'
-                    '{}').format(entry['shot'], entry['rundate'], 
-                    entry['xp'], entry['username'], entry['topic'], 
-                    entry['text']))
+                print(('{shot} on {rundate} in XP {xp}\n'
+                       '{username} in topic {topic}\n\n'
+                       '{text}').format(**entry))
             print('************************************')
 
 
@@ -290,7 +288,7 @@ class Logbook(object):
         
         self._logbook_connection = None
         self._make_logbook_connection()
-        
+
         # dict of cached logbook entries
         # kw is shot, value is list of logbook entries
         self.logbook = {}
@@ -308,7 +306,7 @@ class Logbook(object):
             
         try:
             self._logbook_connection = pymssql.connect(
-                server=self._credentials['server'], 
+                server=self._credentials['server'],
                 user=self._credentials['username'],
                 password=self._credentials['password'],
                 database=self._credentials['database'],
@@ -346,17 +344,17 @@ class Logbook(object):
         for sh in shot:
             if sh not in self.logbook:
                 query = ('{0} and shot={1} '
-                    'ORDER BY shot ASC, entered ASC'
-                    ).format(self._shot_query_prefix, sh)
+                         'ORDER BY shot ASC, entered ASC'
+                         ).format(self._shot_query_prefix, sh)
                 cursor.execute(query)
-                self.logbook[sh] = cursor.fetchall() # a list of logbook entries
-    
+                self.logbook[sh] = cursor.fetchall()  # list of logbook entries
+
     def get_shotlist(self, date=[], xp=[], verbose=False):
         # return list of shots for date and/or XP
         cursor = self._get_cursor()
         
         shotlist = []   # start with empty shotlist
-        
+
         date_list = date
         if not iterable(date_list):      # if it's just a single date
             date_list = [date_list]   # put it into a list
@@ -371,7 +369,7 @@ class Logbook(object):
                     print('   {shot} in XP {xp}'.format(**row))
             shotlist.extend([row['shot'] for row in rows  # add shots to shotlist
                             if row['shot'] is not None])
-        
+
         xp_list = xp
         if not iterable(xp_list):           # if it's just a single xp
             xp_list = [xp_list]             # put it into a list
@@ -386,10 +384,10 @@ class Logbook(object):
                     print('   {shot} on date {rundate}'.format(**row))
             shotlist.extend([row['shot'] for row in rows  # add shots to shotlist
                             if row['shot'] is not None])
-        
+
         cursor.close()
         return np.unique(shotlist)
-    
+
     def get_entries(self, shot=[], date=[], xp=[]):
         # return list of lobgook entries (dictionaries) for shot(s)
         if shot and not iterable(shot):
@@ -525,8 +523,8 @@ def init_class(cls, module_tree, **kwargs):
 
     for read_only in ['root', 'diagnostic']:
         try:
-             setattr(cls, '_'+read_only, kwargs[read_only])
-             print(cls._name, read_only, kwargs.get(read_only, 'Not there'))
+            setattr(cls, '_'+read_only, kwargs[read_only])
+            print(cls._name, read_only, kwargs.get(read_only, 'Not there'))
         except:
             pass
 
@@ -536,6 +534,7 @@ def init_class(cls, module_tree, **kwargs):
             setattr(cls, item, getitem)
 
     parse_method(cls, module_tree)
+
 
 def parse_method(obj, module_tree):
     diagnostic = modules.__getattribute__(obj._diagnostic)
@@ -566,7 +565,7 @@ def parse_signal(obj, element):
         error = parse_error(obj, element)
         signal_dict = [{'name': name, 'units': units, 'axes': axes,
                         'mdsnode': mdspath, 'mdstree': mdstree,
-                        'dim_of': dim_of, 'error': error, 'parent':obj,
+                        'dim_of': dim_of, 'error': error, 'parent': obj,
                         '_transpose': transpose}]
     else:
         num = int(num)
@@ -579,15 +578,14 @@ def parse_signal(obj, element):
             mdstree = parse_mdstree(obj, element)
             error = parse_error(obj, element)
             signal_dict.append({'name': name, 'units': units, 'axes': axes,
-                        'mdsnode': mdspath, 'mdstree': mdstree,
-                        'dim_of': dim_of, 'error': error, 'parent':obj,
-                        '_transpose': transpose})
+                                'mdsnode': mdspath, 'mdstree': mdstree,
+                                'dim_of': dim_of, 'error': error,
+                                'parent': obj, '_transpose': transpose})
     return signal_dict
 
 
 def parse_axes(obj, element):
     axes = []
-    refs = []
     transpose = None
     time_ind = 0
     try:
@@ -605,6 +603,7 @@ def parse_axes(obj, element):
 
     return axes, transpose
 
+
 def parse_refs(obj, element, transpose=None):
     refs = None
     try:
@@ -615,6 +614,7 @@ def parse_refs(obj, element, transpose=None):
         pass
 
     return refs
+
 
 def parse_units(obj, element):
     units = element.get('units')
@@ -691,4 +691,3 @@ if __name__ == '__main__':
     nstx.s140000.logbook()
     #nstx.addshot(xp=1048, verbose=True)
     
-
