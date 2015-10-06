@@ -6,7 +6,7 @@ Fusion Data Framework
 #####################################
 
 .. only:: html
-    .. include: html_preamble.rst
+    .. include:: html_preamble.rst
 
 .. toctree::
     :maxdepth: 5
