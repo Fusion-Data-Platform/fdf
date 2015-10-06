@@ -1,11 +1,12 @@
 .. Restructured Text (RST) Syntax Primer: http://sphinx-doc.org/rest.html
 
 
+.. _user-guide:
 *****************************************
 User Guide
 *****************************************
 
-This guide is for people who want to use FDF on the PPPL Linux cluster.  If you wish to contribute to the FDF code repository (https://github.com/Fusion-Data-Framework/fdf), see the developer guide.
+This guide is for people who want to use FDF on the PPPL Linux cluster.  If you wish to contribute to the FDF project as a developer, see the developer guide.
 
 .. only:: latex
     
@@ -15,7 +16,7 @@ This guide is for people who want to use FDF on the PPPL Linux cluster.  If you 
     
     `PDF Documentation <http://fusion-data-framework.github.io/fdf/_static/FusionDataFramework.pdf>`_ is also available.
 
-To use FDF on the PPPL Linux cluster (portal.pppl.gov), load the module nstx/fdf (you may need to unload other nstx modules)::
+To use FDF on the PPPL Linux cluster, load the module nstx/fdf (you may need to unload other nstx modules)::
 
     [sunfire06:~] % module load nstx/fdf
 
@@ -44,4 +45,5 @@ Finally, you can launch python and import the FDF package::
     >>> import fdf
     >>>
 
+See Usage Examples to learn about the capabilities of FDF.
 

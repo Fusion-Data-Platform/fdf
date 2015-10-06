@@ -5,15 +5,23 @@
 Developer Guide
 *****************************************
 
-This guide is for people who want to contribute to the FDF code repository while working within the PPPL Linux cluster environment.  If you simply want to use FDF on the PPPL Linux cluster, see the user guide.
+This guide is for developers who want to contribute to the FDF project, and this guide describes the development workflow on the PPPL Linux cluster.  If you simply want to use FDF on the PPPL Linux cluster, see the user guide.
+
+.. only:: latex
+    
+    HTML documentation is also available: http://fusion-data-framework.github.io/fdf/
+
+.. only:: html
+    
+    `PDF Documentation <http://fusion-data-framework.github.io/fdf/_static/FusionDataFramework.pdf>`_ is also available.
 
 The FDF code repository is hosted on GitHub: https://github.com/Fusion-Data-Framework/fdf
 
-To participate in the FDF project as a developer, you must create a GitHub account.  The FDF project uses Git for collaborative development, version control, and GitHub communication.
+To participate in the FDF project as a developer, you must create a GitHub account.  The FDF project uses GitHub and Git for collaborative development and version control.
 
 **Configure Git**
 
-On the Linux cluster at PPPL (portal.pppl.gov), load the module git/1.8.0.2::
+On the PPPL Linux cluster, load the module git/1.8.0.2 (on Red Hat 6 systems, use git/2.4.2)::
 
     [sunfire08:~] % module avail git
     --------------------- /usr/pppl/Modules/modulefiles -------------------
@@ -26,7 +34,7 @@ On the Linux cluster at PPPL (portal.pppl.gov), load the module git/1.8.0.2::
     1) torque/2.5.2      3) ppplcluster/1.1
     2) moab/5.4.0        4) git/1.8.0.2
 
-On portalr6 (the Red Hat 6 cluster at PPPL) use git/2.4.2.  You may want to add the module load command to your shell start-up files: .cshrc for csh/tcsh or .bash_profile for bash.
+You may want to add the module load command to your shell start-up files: ~/.cshrc for csh/tcsh or ~/.bash_profile for bash.
 
 Next, you must configure Git with your name and email (the same email associated with your GitHub account)::
 
@@ -41,7 +49,7 @@ You can inspect your Git configuration in the file ~/.gitconfig.  For more infor
 
 **Clone the FDF repository**
 
-Git clones repositories into a new directory in your current directory.  Now you can clone the FDF repository located at https://github.com/Fusion-Data-Framework/fdf.git to your local directory (you may need to enter your GitHub username and password)::
+Git clones repositories into a new directory in your current directory.  In the right column of the FDF repo page (https://github.com/Fusion-Data-Framework/fdf), you can find the HTTPS URL (https://github.com/Fusion-Data-Framework/fdf.git) to clone FDF to your local directory ::
 
     [sunfire08:~] % ls -d fdf
     ls: fdf: No such file or directory
@@ -56,22 +64,21 @@ Git clones repositories into a new directory in your current directory.  Now you
     [sunfire08:~] % ls -d fdf
     fdf/
 
-The URL for cloning can be found in the right column of the FDF repository page: https://github.com/Fusion-Data-Framework/fdf.
-
-The cloning example above uses the HTTPS method, but cloning via SSH is also feasible: https://help.github.com/articles/set-up-git/#next-steps-authenticating-with-github-from-git
+Cloning via SSH is also feasible: https://help.github.com/articles/set-up-git/#next-steps-authenticating-with-github-from-git
 
 Finally, add your new fdf directory to the ``PYTHONPATH`` environment variable::
 
     [sunfire08:~] % setenv PYTHONPATH ${HOME}/fdf:$PYTHONPATH
+
     [sunfire08:~] % echo $PYTHONPATH
     /u/drsmith/fdf:<other directories>
 
-You may want to add this action to your shell start-up files: .cshrc for csh/tcsh or .bash_profile bash.  In bash, use the export command to set ``PYTHONPATH``.
+You may want to add this action to your shell start-up files, as described above.  In bash, use the export command to set ``PYTHONPATH``.
 
 
 **Git workflow for FDF development**
 
-(1) Create a development branch (here, we call it devbranch) and checkout the new branch::
+\(1) Create a development branch (here, we call it devbranch) and checkout the new branch::
 
     [sunfire08:~] % cd fdf
     
@@ -94,7 +101,7 @@ You may want to add this action to your shell start-up files: .cshrc for csh/tcs
 
 Devbranch initializes as a copy of master.  ``git branch`` lists branches in your local repository, and the asterisk denotes the active branch.  You can switch between local branches with ``git checkout <LocalBranchName>``.
 
-(2) Push devbranch to the remote FDF repository at GitHub (you may need to enter your GitHub username and password)::
+\(2) Push devbranch to the remote FDF repository at GitHub (you may need to enter your GitHub username and password)::
 
     [sunfire08:~/fdf] % git push origin devbranch
     Total 0 (delta 0), reused 0 (delta 0)
@@ -104,7 +111,7 @@ Devbranch initializes as a copy of master.  ``git branch`` lists branches in you
 devbranch is now listed in the FDF repository at GitHub.  ``origin`` is the alias for the remote GitHub repository.  You can view your remote repositories and aliases with ``git remote -v``.
 
 
-(3) Proceed with FDF development within devbranch: commit changes, add/delete files, and push updates to GitHub.
+\(3) Proceed with FDF development within devbranch: commit changes, add/delete files, and push updates to GitHub.
 
 As you complete small tasks, you should commit changes to your local repository with ``git commit -a -m '<mymessage>'``.  Also, each commit requires a short message describing the changes::
 
@@ -141,7 +148,7 @@ When you complete a large task, you should “push” changes to the devbranch o
 
 Again, "origin" signifies the branches on the remote GitHub repo.
 
-(4) While you are working locally in devbranch, others may be modifying master at GitHub.  When you are ready to merge devbranch into master, you should first merge the latest version of master from GitHub into your local devbranch.  To retrieve the latest version of master from GitHub, use ``git fetch``::
+\(4) While you are working locally in devbranch, others may be modifying master at GitHub.  When you are ready to merge devbranch into master, you should first merge the latest version of master from GitHub into your local devbranch.  To retrieve the latest version of master from GitHub, use ``git fetch``::
 
     [sunfire05:~/fdf] % git fetch origin master
     From https://github.com/Fusion-Data-Framework/fdf 
