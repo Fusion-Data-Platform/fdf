@@ -5,7 +5,7 @@
 User Guide
 *****************************************
 
-This guide is for people who want to use FDF on the PPPL Linux cluster.  If you wish to contribute to the FDF project as a developer, see :ref:`developer-guide`.
+This guide is for people who want to use FDF on the PPPL Linux cluster.  If you wish to contribute to the FDF project as a developer, see the developer guide.
 
 .. only:: latex
     
@@ -44,5 +44,5 @@ Finally, you can launch python and import the FDF package::
     >>> import fdf
     >>>
 
-See :ref:`usage-examples` to learn about the capabilities of FDF.
+See Usage Examples to learn about the capabilities of FDF.
 
