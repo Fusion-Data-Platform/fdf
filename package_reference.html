@@ -34,7 +34,7 @@
               href="about.html"/>
     <link rel="top" title="Fusion Data Framework 0.0.0 documentation" href="index.html"/>
         <link rel="next" title="License" href="LICENSE.html"/>
-        <link rel="prev" title="User Guide" href="userguide.html"/> 
+        <link rel="prev" title="Usage Examples" href="usage_examples.html"/> 
 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
@@ -67,9 +67,20 @@
           
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="about.html">About FDF</a></li>
-<li class="toctree-l1"><a class="reference internal" href="userguide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started_guide.html">Getting Started Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="getting_started_guide.html#user-guide">User Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started_guide.html#developer-guide">Developer Guide</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="usage_examples.html">Usage Examples</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">Package Reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#module-factory">Module factory.py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#class-machine">Class Machine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#class-shot">Class Shot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#class-logbook">Class Logbook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-fdf_signal">Module fdf_signal.py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#class-signal">Class Signal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-fdf_globals">Module fdf_globals.py</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="LICENSE.html">License</a></li>
@@ -130,8 +141,9 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nstx</span><span class="o">.</span><span class="n">s140000</span><span class="o">.</span><span class="n">mpts</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
+</div>
 <div class="section" id="class-machine">
-<h3>Class Machine<a class="headerlink" href="#class-machine" title="Permalink to this headline">¶</a></h3>
+<h2>Class Machine<a class="headerlink" href="#class-machine" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="factory.Machine">
 <em class="property">class </em><code class="descclassname">factory.</code><code class="descname">Machine</code><span class="sig-paren">(</span><em>name='nstx'</em>, <em>shotlist=[]</em>, <em>xp=[]</em>, <em>date=[]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/factory.html#Machine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factory.Machine" title="Permalink to this definition">¶</a></dt>
@@ -150,7 +162,7 @@
 
 </div>
 <div class="section" id="class-shot">
-<h3>Class Shot<a class="headerlink" href="#class-shot" title="Permalink to this headline">¶</a></h3>
+<h2>Class Shot<a class="headerlink" href="#class-shot" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="factory.Shot">
 <em class="property">class </em><code class="descclassname">factory.</code><code class="descname">Shot</code><span class="sig-paren">(</span><em>shot</em>, <em>root=None</em>, <em>parent=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/factory.html#Shot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factory.Shot" title="Permalink to this definition">¶</a></dt>
@@ -158,7 +170,7 @@
 
 </div>
 <div class="section" id="class-logbook">
-<h3>Class Logbook<a class="headerlink" href="#class-logbook" title="Permalink to this headline">¶</a></h3>
+<h2>Class Logbook<a class="headerlink" href="#class-logbook" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="factory.Logbook">
 <em class="property">class </em><code class="descclassname">factory.</code><code class="descname">Logbook</code><span class="sig-paren">(</span><em>name='nstx'</em>, <em>root=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/factory.html#Logbook"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factory.Logbook" title="Permalink to this definition">¶</a></dt>
@@ -166,7 +178,7 @@
 
 </div>
 <div class="section" id="module-fdf_signal">
-<span id="module-fdf-signal-py"></span><h3>Module fdf_signal.py<a class="headerlink" href="#module-fdf_signal" title="Permalink to this headline">¶</a></h3>
+<span id="module-fdf-signal-py"></span><h2>Module fdf_signal.py<a class="headerlink" href="#module-fdf_signal" title="Permalink to this headline">¶</a></h2>
 <p>fdf-signals.py - module containing Signal class</p>
 <p><strong>Classes</strong></p>
 <ul class="simple">
@@ -176,7 +188,7 @@
 <p>&#64;author: hyuh</p>
 </div>
 <div class="section" id="class-signal">
-<h3>Class Signal<a class="headerlink" href="#class-signal" title="Permalink to this headline">¶</a></h3>
+<h2>Class Signal<a class="headerlink" href="#class-signal" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="fdf_signal.Signal">
 <em class="property">class </em><code class="descclassname">fdf_signal.</code><code class="descname">Signal</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fdf_signal.html#Signal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fdf_signal.Signal" title="Permalink to this definition">¶</a></dt>
@@ -191,11 +203,10 @@ sig=fdf.Signal(units=&#8217;m/s&#8217;, axes=[&#8216;radius&#8217;,&#8217;time&#
 
 </div>
 <div class="section" id="module-fdf_globals">
-<span id="module-fdf-globals-py"></span><h3>Module fdf_globals.py<a class="headerlink" href="#module-fdf_globals" title="Permalink to this headline">¶</a></h3>
+<span id="module-fdf-globals-py"></span><h2>Module fdf_globals.py<a class="headerlink" href="#module-fdf_globals" title="Permalink to this headline">¶</a></h2>
 <p>fdf_globals.py contains package-level constants</p>
 <p>Created on Thu Jun 18 11:18:16 2015</p>
 <p>&#64;author: ktritz</p>
-</div>
 </div>
 </div>
 
@@ -208,7 +219,7 @@ sig=fdf.Signal(units=&#8217;m/s&#8217;, axes=[&#8216;radius&#8217;,&#8217;time&#
         <a href="LICENSE.html" class="btn btn-neutral float-right" title="License">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="userguide.html" class="btn btn-neutral" title="User Guide"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="usage_examples.html" class="btn btn-neutral" title="Usage Examples"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

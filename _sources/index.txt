@@ -15,7 +15,8 @@ Documentation: `PDF <http://fusion-data-framework.github.io/fdf/_static/FusionDa
     :maxdepth: 5
     
     about.rst
-    userguide.rst
+    getting_started_guide.rst
+    usage_examples.rst
     package_reference.rst
     LICENSE.rst
 
