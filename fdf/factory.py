@@ -9,15 +9,7 @@ Root module for the FDF package.
 * Logbook - logbook connection class
 * Container - diagnostic container class
 * Node - mdsplus signal node class
-* FdfError - error class for FDF package
 
-**Usage**::
-
-    >>> import fdf
-    >>> nstx = fdf.Machine('nstx')
-    >>> nstx.s140000.logbook()
-    >>> nstx.addshots(xp=1048)
-    >>> nstx.s140000.mpts.plot()
 """
 
 """
@@ -47,23 +39,33 @@ FdfError = fdf_globals.FdfError
 
 
 class Machine(MutableMapping):
-    '''Factory root class that contains shot objects and MDS access methods.
+    """
+    Factory root class that contains shot objects and MDS access methods.
 
-    Basic class initialization is performed as follows:
-    >>>nstx = Machine(name='nstx')
+    **Usage**::
+    
+        >>> import fdf
+        >>> nstx = fdf.Machine('nstx')
+        >>> nstx.s140000.logbook()
+        >>> nstx.addshots(xp=1048)
+        >>> nstx.s140000.mpts.plot()
+        
+    Machine class contains a model shot object: nstx.s0
 
-    the Machine class contains a model shot object: nstx.s0
+    Shot data can be accessed directly through the Machine class::
+    
+        >>> nstx.s141398
+        >>> nstx.s141399
 
-    shot data can be accessed directly through the Machine class:
-    >>> nstx.s141398
-    >>> nstx.s141399
+    Alternatively, a list of shot #'s may be provided during initialization::
+    
+        >>> nstx = Machine(name='nstx', shotlist=[141398, 141399])
 
-    alternatively, a list of shot #'s may be provided during initialization:
-    >>>nstx = Machine(name='nstx', shotlist=[141398, 141399])
-
-    or added later using the addshot method:
-    >>>nstx.addshot([141398, 141399])
-    '''
+    Or added later using the addshot method::
+    
+        >>> nstx.addshot([141398, 141399])
+        
+    """
 
     # Maintain a dictionary of cached MDS server connections to speed up
     # access for multiple shots and trees. This is a static class variable

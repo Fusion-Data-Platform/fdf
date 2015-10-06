@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-fdf_globals.py contains package-level constants
+Package-level constants and FdfError class
+"""
 
+"""
 Created on Thu Jun 18 11:18:16 2015
 
 @author: ktritz
@@ -34,9 +36,10 @@ class FdfError(Exception):
     """
     Error class for FDF package
     
-    Usage
-    -----
+    **Usage**::
+    
     raise FdfError('my error message')
+    
     """
     def __init__(self, message=''):
         self.message = message
