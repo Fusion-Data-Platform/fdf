@@ -116,24 +116,24 @@
   <h1>Source code for factory</h1><div class="highlight"><pre>
 <span class="c"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">factory.py - root module for the FDF package.</span>
+<span class="sd">Root module for the FDF package.</span>
 
-<span class="sd">Classes</span>
-<span class="sd">-------</span>
-<span class="sd">Machine - root class for the FDF package</span>
-<span class="sd">Shot - shot container class</span>
-<span class="sd">Logbook - logbook connection class</span>
-<span class="sd">Container - diagnostic container class</span>
-<span class="sd">Node - mdsplus signal node class</span>
-<span class="sd">FdfError - error class for FDF package</span>
+<span class="sd">**Classes**</span>
 
-<span class="sd">Usage</span>
-<span class="sd">-----</span>
-<span class="sd">&gt;&gt;&gt; import fdf</span>
-<span class="sd">&gt;&gt;&gt; nstx = fdf.Machine(&#39;nstx&#39;)</span>
-<span class="sd">&gt;&gt;&gt; nstx.s140000.logbook()</span>
-<span class="sd">&gt;&gt;&gt; nstx.addshots(xp=1048)</span>
-<span class="sd">&gt;&gt;&gt; nstx.s140000.mpts.plot()</span>
+<span class="sd">* Machine - root class for the FDF package</span>
+<span class="sd">* Shot - shot container class</span>
+<span class="sd">* Logbook - logbook connection class</span>
+<span class="sd">* Container - diagnostic container class</span>
+<span class="sd">* Node - mdsplus signal node class</span>
+<span class="sd">* FdfError - error class for FDF package</span>
+
+<span class="sd">Usage::</span>
+
+<span class="sd">    &gt;&gt;&gt; import fdf</span>
+<span class="sd">    &gt;&gt;&gt; nstx = fdf.Machine(&#39;nstx&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; nstx.s140000.logbook()</span>
+<span class="sd">    &gt;&gt;&gt; nstx.addshots(xp=1048)</span>
+<span class="sd">    &gt;&gt;&gt; nstx.s140000.mpts.plot()</span>
 
 <span class="sd">Created on Thu Jun 18 10:38:40 2015</span>
 <span class="sd">@author: ktritz</span>
@@ -168,8 +168,8 @@
 <span class="sd">    the Machine class contains a model shot object: nstx.s0</span>
 
 <span class="sd">    shot data can be accessed directly through the Machine class:</span>
-<span class="sd">    &gt;&gt;&gt;nstx.s141398</span>
-<span class="sd">    &gt;&gt;&gt;nstx.s141399</span>
+<span class="sd">    &gt;&gt;&gt; nstx.s141398</span>
+<span class="sd">    &gt;&gt;&gt; nstx.s141399</span>
 
 <span class="sd">    alternatively, a list of shot #&#39;s may be provided during initialization:</span>
 <span class="sd">    &gt;&gt;&gt;nstx = Machine(name=&#39;nstx&#39;, shotlist=[141398, 141399])</span>
