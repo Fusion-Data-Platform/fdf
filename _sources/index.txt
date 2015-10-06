@@ -14,7 +14,7 @@ Repository: https://github.com/Fusion-Data-Framework/fdf
 Documentation: `PDF <http://fusion-data-framework.github.io/fdf/_static/FusionDataFramework.pdf>`_
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 3
     
     about.rst
     userguide.rst
