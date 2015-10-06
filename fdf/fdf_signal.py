@@ -1,8 +1,8 @@
 """
 fdf-signals.py - module containing Signal class
 
-Classes
--------
+**Classes**
+
 * Signal - signal class for data objects
 
 Created on Tue Jun 23 2015

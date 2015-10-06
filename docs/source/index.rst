@@ -1,30 +1,28 @@
-.. Fusion Data Framework documentation master file, created by
-   sphinx-quickstart on Fri Jul 10 17:43:56 2015.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+.. Restructured Text (RST) Syntax Primer: http://sphinx-doc.org/rest.html
 
-##########################
+
+#####################################
 Fusion Data Framework
-##########################
+#####################################
 
-Fusion Data Framework (FDF) is a data access, management, and visualization framework for magnetic fusion experiments.
-
-Repository: https://github.com/Fusion-Data-Framework/fdf
-
-Documentation: `PDF <http://fusion-data-framework.github.io/fdf/_static/FusionDataFramework.pdf>`_
+.. only:: html
+    
+    .. include:: html_preamble.rst
 
 .. toctree::
     :maxdepth: 5
     
     about.rst
-    userguide.rst
-    code_reference.rst
+    user_guide.rst
+    developer_guide.rst
+    usage_examples.rst
+    package_reference.rst
     LICENSE.rst
 
 
-*************************
+*****************************************
 Indices and tables
-*************************
+*****************************************
 
 * :ref:`genindex`
 * :ref:`modindex`
