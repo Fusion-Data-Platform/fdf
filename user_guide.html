@@ -118,9 +118,9 @@
             
   <div class="section" id="user-guide">
 <h1>User Guide<a class="headerlink" href="#user-guide" title="Permalink to this headline">¶</a></h1>
-<p>This guide is for people who want to use FDF on the PPPL Linux cluster.  If you wish to contribute to the FDF code repository (<a class="reference external" href="https://github.com/Fusion-Data-Framework/fdf">https://github.com/Fusion-Data-Framework/fdf</a>), see <span class="xref std std-ref">developer-guide</span>.</p>
+<p>This guide is for people who want to use FDF on the PPPL Linux cluster.  If you wish to contribute to the FDF code repository (<a class="reference external" href="https://github.com/Fusion-Data-Framework/fdf">https://github.com/Fusion-Data-Framework/fdf</a>), see the developer guide.</p>
 <p><a class="reference external" href="http://fusion-data-framework.github.io/fdf/_static/FusionDataFramework.pdf">PDF Documentation</a> is available.</p>
-<p>To use FDF on the PPPL Linux cluster (<code class="docutils literal"><span class="pre">portal.pppl.gov</span></code>), load the module nstx/fdf (you may need to unload other nstx modules):</p>
+<p>To use FDF on the PPPL Linux cluster (portal.pppl.gov), load the module nstx/fdf (you may need to unload other nstx modules):</p>
 <div class="highlight-python"><div class="highlight"><pre>[sunfire06:~] % module load nstx/fdf
 [sunfire06:~] % module list
 Currently Loaded Modulefiles:
@@ -130,12 +130,12 @@ Currently Loaded Modulefiles:
 4) freetds/0.91      8) nstx/idldirs
 </pre></div>
 </div>
-<p>Verify that python points to <code class="docutils literal"><span class="pre">/p/fdf/anaconda/bin/python</span></code>:</p>
+<p>Verify that python points to /p/fdf/anaconda/bin/python:</p>
 <div class="highlight-python"><div class="highlight"><pre>[sunfire06:~] % which python
 /p/fdf/anaconda/bin/python
 </pre></div>
 </div>
-<p>If python does not point to <code class="docutils literal"><span class="pre">/p/fdf/anaconda/bin/python</span></code>, then PATH contains to a different python distribution ahead of <code class="docutils literal"><span class="pre">/p/fdf/anaconda/bin</span></code>.  In this case, you need to modify PATH so <code class="docutils literal"><span class="pre">/p/fdf/anaconda/bin</span></code> is the first python distribution in PATH.</p>
+<p>If python does not point to /p/fdf/anaconda/bin/python, then PATH contains to a different python distribution ahead of /p/fdf/anaconda/bin.  In this case, you need to modify PATH so /p/fdf/anaconda/bin is the first python distribution in PATH.</p>
 <p>Finally, you can launch python and import the FDF package:</p>
 <div class="highlight-python"><div class="highlight"><pre>[sunfire06:~] % python
 Python 2.7.10 |Anaconda 2.3.0 (64-bit)| (default, Sep 15 2015, 14:50:01)
