@@ -1,6 +1,9 @@
-***************************
-Code Reference
-***************************
+.. RST Syntax Primer: http://sphinx-doc.org/rest.html
+
+
+*****************************************
+Package Reference
+*****************************************
 
 
 Module factory.py
