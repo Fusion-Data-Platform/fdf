@@ -145,13 +145,9 @@ Currently Loaded Modulefiles:
 <div class="highlight-python"><div class="highlight"><pre>[sunfire08:~] % git config --global core.editor nedit
 </pre></div>
 </div>
-<p>You can view your Git configuration file:</p>
-<div class="highlight-python"><div class="highlight"><pre>[sunfire08:~] % git config --list
-</pre></div>
-</div>
-<p>For more information about Git configuration, see <a class="reference external" href="https://help.github.com/articles/set-up-git/">https://help.github.com/articles/set-up-git/</a> or <a class="reference external" href="https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup">https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup</a></p>
+<p>You can inspect your Git configuration in the file ~/.gitconfig.  For more information about Git configuration, see <a class="reference external" href="https://help.github.com/articles/set-up-git/">https://help.github.com/articles/set-up-git/</a> or <a class="reference external" href="https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup">https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup</a></p>
 <p><strong>Clone the FDF repository</strong></p>
-<p>Git clones repositories into a new directory in your current directory.  Clone the FDF repository located at <a class="reference external" href="https://github.com/Fusion-Data-Framework/fdf.git">https://github.com/Fusion-Data-Framework/fdf.git</a>.  You may need to enter your GitHub username and password.:</p>
+<p>Git clones repositories into a new directory in your current directory.  Now you can clone the FDF repository located at <a class="reference external" href="https://github.com/Fusion-Data-Framework/fdf.git">https://github.com/Fusion-Data-Framework/fdf.git</a> (you may need to enter your GitHub username and password):</p>
 <div class="highlight-python"><div class="highlight"><pre>[sunfire08:~] % ls -d fdf
 ls: fdf: No such file or directory
 
@@ -166,9 +162,9 @@ Resolving deltas: 100% (279/279), done.
 fdf/
 </pre></div>
 </div>
-<p>The cloning URL can be found in the right column of the FDF repository page: <a class="reference external" href="https://github.com/Fusion-Data-Framework/fdf">https://github.com/Fusion-Data-Framework/fdf</a>.</p>
+<p>The URL for cloning can be found in the right column of the FDF repository page: <a class="reference external" href="https://github.com/Fusion-Data-Framework/fdf">https://github.com/Fusion-Data-Framework/fdf</a>.</p>
 <p>The cloning example above uses the HTTPS method, but cloning via SSH is also feasible: <a class="reference external" href="https://help.github.com/articles/set-up-git/#next-steps-authenticating-with-github-from-git">https://help.github.com/articles/set-up-git/#next-steps-authenticating-with-github-from-git</a></p>
-<p>Finally, add the fdf directory to the environment variable PYTHONPATH.  You may want to add this action to your shell start-up files (.cshrc for csh/tcsh or .bash_profile bash):</p>
+<p>Finally, add your new fdf directory to the PYTHONPATH environment variable (you may want to add this action to your shell start-up files: .cshrc for csh/tcsh or .bash_profile bash):</p>
 <div class="highlight-python"><div class="highlight"><pre>[sunfire08:~] % setenv PYTHONPATH ${HOME}/fdf:$PYTHONPATH
 [sunfire08:~] % echo $PYTHONPATH
 /u/drsmith/fdf:&lt;other directories&gt;

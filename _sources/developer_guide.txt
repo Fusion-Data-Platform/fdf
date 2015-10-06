@@ -37,15 +37,11 @@ Also, we recommend setting an editor (e.g. vi, emacs, nedit) for Git comments::
 
     [sunfire08:~] % git config --global core.editor nedit
 
-You can view your Git configuration file::
-
-    [sunfire08:~] % git config --list
-
-For more information about Git configuration, see https://help.github.com/articles/set-up-git/ or https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup
+You can inspect your Git configuration in the file ~/.gitconfig.  For more information about Git configuration, see https://help.github.com/articles/set-up-git/ or https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup
 
 **Clone the FDF repository**
 
-Git clones repositories into a new directory in your current directory.  Clone the FDF repository located at https://github.com/Fusion-Data-Framework/fdf.git.  You may need to enter your GitHub username and password.::
+Git clones repositories into a new directory in your current directory.  Now you can clone the FDF repository located at https://github.com/Fusion-Data-Framework/fdf.git (you may need to enter your GitHub username and password)::
 
     [sunfire08:~] % ls -d fdf
     ls: fdf: No such file or directory
@@ -60,11 +56,11 @@ Git clones repositories into a new directory in your current directory.  Clone t
     [sunfire08:~] % ls -d fdf
     fdf/
 
-The cloning URL can be found in the right column of the FDF repository page: https://github.com/Fusion-Data-Framework/fdf.
+The URL for cloning can be found in the right column of the FDF repository page: https://github.com/Fusion-Data-Framework/fdf.
 
 The cloning example above uses the HTTPS method, but cloning via SSH is also feasible: https://help.github.com/articles/set-up-git/#next-steps-authenticating-with-github-from-git
 
-Finally, add the fdf directory to the environment variable PYTHONPATH.  You may want to add this action to your shell start-up files (.cshrc for csh/tcsh or .bash_profile bash)::
+Finally, add your new fdf directory to the PYTHONPATH environment variable (you may want to add this action to your shell start-up files: .cshrc for csh/tcsh or .bash_profile bash)::
 
     [sunfire08:~] % setenv PYTHONPATH ${HOME}/fdf:$PYTHONPATH
     [sunfire08:~] % echo $PYTHONPATH
