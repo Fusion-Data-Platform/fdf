@@ -604,7 +604,7 @@ def parse_axes(obj, element):
         if 'time' in axes:
             time_ind = axes.index('time')
             if time_ind is not 0:
-                transpose = range(len(axes))
+                transpose = list(range(len(axes)))
                 transpose.pop(time_ind)
                 transpose.insert(0, time_ind)
                 axes.pop(time_ind)

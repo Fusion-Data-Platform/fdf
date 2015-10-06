@@ -183,7 +183,10 @@ class Signal(np.ndarray):
 
 
     def __getattr__(self, attribute):
-        if not hasattr(self, '_parent') or self._parent is None:
+        if attribute is '_parent':
+            raise AttributeError("'{}' object has no attribute '{}'".format(
+                                 type(self), attribute))
+        if self._parent is None:
             raise AttributeError("'{}' object has no attribute '{}'".format(
                                  type(self), attribute))
         attr = getattr(self._parent, attribute)
