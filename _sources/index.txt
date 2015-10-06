@@ -18,6 +18,7 @@ Documentation: `PDF <http://fusion-data-framework.github.io/fdf/_static/FusionDa
     
     about.rst
     userguide.rst
+    module.rst
     LICENSE.rst
 
 .. automodule:: factory
