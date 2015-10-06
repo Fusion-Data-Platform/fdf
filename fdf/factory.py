@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-factory.py - main module for the FDF package.
+factory.py - root module for the FDF package.
 
 Classes
 -------
-Machine - main class for the FDF package
+Machine - root class for the FDF package
 Shot - shot container class
 Logbook - logbook connection class
 Container - diagnostic container class
@@ -39,6 +39,7 @@ import pymssql
 FDF_DIR = fdf_globals.FDF_DIR
 MDS_SERVERS = fdf_globals.MDS_SERVERS
 LOGBOOK_CREDENTIALS = fdf_globals.LOGBOOK_CREDENTIALS
+FdfError = fdf_globals.FdfError
 
 
 
@@ -212,7 +213,7 @@ class Shot(MutableMapping):
         self.shot = shot
         self._root = root
         self._parent = parent
-        self._logbook = self._root._logbook
+        self._logbook = root._logbook
         modules = root._get_modules()
         self._signals = {module: Factory(module, root=root, shot=shot,
                                          parent=self) for module in modules}
@@ -403,6 +404,9 @@ class Logbook(object):
 
 
 def Factory(module, root=None, shot=None, parent=None):
+    """
+    Factory method
+    """
     try:
         module = module.lower()
         module_path = os.path.join(FDF_DIR, 'modules', module)
@@ -425,6 +429,9 @@ def Factory(module, root=None, shot=None, parent=None):
 
 
 class Container(object):
+    """
+    Container class
+    """
     _instances = {}
     _classes = {}
 
@@ -668,17 +675,13 @@ def iterable(obj):
 
 
 class Node(object):
+    """
+    Node class
+    """
     def __init__(self, element, parent=None):
         self._parent = parent
         self._name = element.get('name')
         self.mdspath = parse_mdspath(self, element)
-
-
-class FdfError(Exception):
-    def __init__(self, message=''):
-        self.message = message
-    def __str__(self):
-        return self.message
 
 
 if __name__ == '__main__':
