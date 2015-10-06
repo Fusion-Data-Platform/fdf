@@ -5,15 +5,15 @@
 Developer Guide
 *****************************************
 
-This guide is for people who want to ontribute to the FDF code repository. If you simply want to use FDF on the PPPL Linux cluster, see the user guide.
+This guide is for people who want to contribute to the FDF code repository while working within the PPPL Linux cluster environment.  If you simply want to use FDF on the PPPL Linux cluster, see the user guide.
 
 The FDF code repository is hosted on GitHub: https://github.com/Fusion-Data-Framework/fdf
 
-To participate in the FDF project as a developer, you must create a GitHub account.  On the PPPL Linux cluster, we use Git for collaborative development, version control, and communicating with GitHub.
+To participate in the FDF project as a developer, you must create a GitHub account.  The FDF project uses Git for collaborative development, version control, and GitHub communication.
 
 **Configure Git**
 
-On the portal cluster at PPPL (portal.pppl.gov), load the module git/1.8.0.2::
+On the Linux cluster at PPPL (portal.pppl.gov), load the module git/1.8.0.2::
 
     [sunfire08:~] % module avail git
     --------------------- /usr/pppl/Modules/modulefiles -------------------
@@ -26,7 +26,7 @@ On the portal cluster at PPPL (portal.pppl.gov), load the module git/1.8.0.2::
     1) torque/2.5.2      3) ppplcluster/1.1
     2) moab/5.4.0        4) git/1.8.0.2
 
-On portalr6, the Red Hat 6 cluster at PPPL, use git/2.4.2.  You may want to add the module load command to your shell start-up files: .cshrc for csh/tcsh or .bash_profile for bash.
+On portalr6 (the Red Hat 6 cluster at PPPL) use git/2.4.2.  You may want to add the module load command to your shell start-up files: .cshrc for csh/tcsh or .bash_profile for bash.
 
 Next, you must configure Git with your name and email (the same email associated with your GitHub account)::
 
@@ -60,13 +60,13 @@ The URL for cloning can be found in the right column of the FDF repository page:
 
 The cloning example above uses the HTTPS method, but cloning via SSH is also feasible: https://help.github.com/articles/set-up-git/#next-steps-authenticating-with-github-from-git
 
-Finally, add your new fdf directory to the ``PYTHONPATH`` environment variable (you may want to add this action to your shell start-up files: .cshrc for csh/tcsh or .bash_profile bash)::
+Finally, add your new fdf directory to the ``PYTHONPATH`` environment variable::
 
     [sunfire08:~] % setenv PYTHONPATH ${HOME}/fdf:$PYTHONPATH
     [sunfire08:~] % echo $PYTHONPATH
     /u/drsmith/fdf:<other directories>
 
-In bash, use the export command to set ``PYTHONPATH``.
+You may want to add this action to your shell start-up files: .cshrc for csh/tcsh or .bash_profile bash.  In bash, use the export command to set ``PYTHONPATH``.
 
 
 

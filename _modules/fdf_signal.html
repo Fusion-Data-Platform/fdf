@@ -164,7 +164,7 @@
         <span class="c">#name is name of signal...e.g. Te</span>
         <span class="c">#__doc__ for the signal...decriptor (filled in when? XML/MDSvalue?)</span>
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="k">print</span> <span class="s">&#39;Called __new__:&#39;</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&#39;Called __new__:&#39;</span><span class="p">)</span>
         <span class="n">obj</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">(</span><span class="n">input_array</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">cls</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="c">#arr = np.asanyarray(input_array).view(cls)</span>
         <span class="c">#print &#39;__new__: type(arr) %s&#39; % type(arr)</span>
@@ -178,8 +178,8 @@
         <span class="c">#obj = np.ndarray.__new__(cls, shape=arr.shape, buffer=arr, dtype=arr.dtype)</span>
 
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="k">print</span> <span class="s">&#39;__new__: type(obj) </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
-            <span class="k">print</span> <span class="s">&#39;__new__: setting attributes&#39;</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&#39;__new__: type(obj) </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&#39;__new__: setting attributes&#39;</span><span class="p">)</span>
         <span class="n">obj</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="n">units</span>
         <span class="n">obj</span><span class="o">.</span><span class="n">axes</span> <span class="o">=</span> <span class="n">axes</span>
         <span class="n">obj</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="n">parent</span>
@@ -192,7 +192,7 @@
         <span class="c">#obj.mdstree = mdstree</span>
         <span class="c">#obj.mdsnode = mdsnode</span>
         <span class="c">#obj.mdsshot = mdsshot</span>
-        <span class="k">for</span> <span class="n">key</span><span class="p">,</span><span class="n">value</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span><span class="n">value</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
             <span class="nb">setattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="n">key</span><span class="p">,</span><span class="n">value</span><span class="p">)</span>
 
         <span class="c">#Initiate slic attribute to hold slice index info</span>
@@ -256,7 +256,7 @@
                                 <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">axis</span><span class="p">,</span><span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
                         <span class="k">except</span><span class="p">:</span> <span class="c">#must not have a len(), e.g. int type</span>
                             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">:</span>
-                                <span class="k">print</span> <span class="s">&#39;slic does not have length, skipping attribute assignment&#39;</span>
+                                <span class="k">print</span><span class="p">(</span><span class="s">&#39;slic does not have length, skipping attribute assignment&#39;</span><span class="p">)</span>
                             <span class="k">pass</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">axis</span><span class="p">,</span><span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
@@ -265,11 +265,11 @@
 
     <span class="k">def</span> <span class="nf">__array_wrap__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">out_arr</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">:</span>
-            <span class="k">print</span> <span class="s">&#39;Called __array_wrap__:&#39;</span>
-            <span class="k">print</span> <span class="s">&#39;__array_wrap__: self is </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-            <span class="k">print</span> <span class="s">&#39;__array_wrap__:  arr is </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">out_arr</span><span class="p">)</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&#39;Called __array_wrap__:&#39;</span><span class="p">)</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&#39;__array_wrap__: self is </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&#39;__array_wrap__:  arr is </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">out_arr</span><span class="p">))</span>
             <span class="c"># then just call the parent</span>
-            <span class="k">print</span> <span class="n">context</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="o">.</span><span class="n">__array_wrap__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">out_arr</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">index</span><span class="p">):</span>
@@ -278,14 +278,14 @@
 <span class="sd">        must have the slic attribute</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">:</span>
-            <span class="k">print</span> <span class="s">&#39;Called __getitem__:&#39;</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&#39;Called __getitem__:&#39;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">slic</span><span class="o">=</span><span class="n">index</span>
             <span class="c">#print &#39;   index is type %s&#39; % type(index)</span>
-            <span class="k">print</span> <span class="s">&#39;__getitem__: index is &#39;</span><span class="p">,</span> <span class="n">index</span>
-            <span class="k">print</span> <span class="s">&#39;__getitem__: self.slic is &#39;</span><span class="p">,</span> <span class="n">index</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&#39;__getitem__: index is &#39;</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&#39;__getitem__: self.slic is &#39;</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
             <span class="c">#print &#39;__getitem__: new is type %s&#39; % type(new)</span>
-            <span class="k">print</span> <span class="s">&#39;__getitem__: self is type </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-            <span class="k">print</span> <span class="s">&#39;__getitem__: self has len </span><span class="si">%s</span><span class="s"> &#39;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&#39;__getitem__: self is type </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&#39;__getitem__: self has len </span><span class="si">%s</span><span class="s"> &#39;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
 
 
         <span class="c">#Get the data</span>
@@ -301,7 +301,10 @@
 
 
     <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;_parent&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">attribute</span> <span class="ow">is</span> <span class="s">&#39;_parent&#39;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;&#39;{}&#39; object has no attribute &#39;{}&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                                 <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="n">attribute</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;&#39;{}&#39; object has no attribute &#39;{}&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                                  <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="n">attribute</span><span class="p">))</span>
         <span class="n">attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parent</span><span class="p">,</span> <span class="n">attribute</span><span class="p">)</span>
@@ -315,7 +318,7 @@
 
     <span class="k">def</span> <span class="nf">__getslice__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">:</span>
-            <span class="k">print</span> <span class="s">&#39;Called __getslice__:&#39;</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&#39;Called __getslice__:&#39;</span><span class="p">)</span>
         <span class="sd">&quot;&quot;&quot;This solves a subtle bug, where __getitem__ is not called, and all</span>
 <span class="sd">        the dimensional checking not done, when a slice of only the first</span>
 <span class="sd">        dimension is taken, e.g. a[1:3]. From the Python docs:</span>
@@ -399,11 +402,11 @@
 <span class="sd">            self.mdsshot=getattr(self, &#39;mdsshot&#39;)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c">#assumes the mdsconnect() method on root creates root.mdsclient</span>
-        <span class="k">print</span> <span class="s">&#39;Called _mdsgetdata_thin:&#39;</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&#39;Called _mdsgetdata_thin:&#39;</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="k">print</span> <span class="s">&#39;_mdsgetdataThin: mdsnode is </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">mdsnode</span>
-            <span class="k">print</span> <span class="s">&#39;_mdsgetdataThin: mdstree is </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">mdstree</span>
-            <span class="k">print</span> <span class="s">&#39;_mdsgetdataThin: mdsshot is </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">mdsshot</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&#39;_mdsgetdataThin: mdsnode is </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">mdsnode</span><span class="p">)</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&#39;_mdsgetdataThin: mdstree is </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">mdstree</span><span class="p">)</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&#39;_mdsgetdataThin: mdsshot is </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">mdsshot</span><span class="p">)</span>
 
             <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">_mdsget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mdsshot</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mdstree</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mdsnode</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span><span class="n">refcheck</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
@@ -436,7 +439,7 @@
             <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
                 <span class="n">newConnection</span><span class="o">=</span><span class="n">mds</span><span class="o">.</span><span class="n">Connection</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mds_servers</span><span class="p">[</span><span class="s">&#39;nstx&#39;</span><span class="p">])</span>
                 <span class="n">newConnection</span><span class="o">.</span><span class="n">openTree</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span><span class="n">shotnum</span><span class="p">)</span>
-                <span class="k">print</span> <span class="s">&#39;_mdsget: newConnection is </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">newConnection</span>
+                <span class="k">print</span><span class="p">(</span><span class="s">&#39;_mdsget: newConnection is </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">newConnection</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">mdsConnectionsList</span><span class="o">.</span><span class="n">__setitem__</span><span class="p">(</span><span class="n">shotTree</span><span class="p">,</span> <span class="n">newConnection</span><span class="p">)</span>
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mdsConnectionsList</span><span class="p">[</span><span class="n">shotTree</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">node</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="p">()</span>
             <span class="k">except</span><span class="p">:</span>
