@@ -161,6 +161,7 @@
 
 
 
+
 <div class="viewcode-block" id="Machine"><a class="viewcode-back" href="../code_reference.html#factory.Machine">[docs]</a><span class="k">class</span> <span class="nc">Machine</span><span class="p">(</span><span class="n">MutableMapping</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Factory root class that contains shot objects and MDS access methods.</span>
 
@@ -211,7 +212,7 @@
                     <span class="n">txt</span> <span class="o">=</span> <span class="s">&#39;MDSplus connection to {} failed.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">MDS_SERVERS</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">])</span>
                     <span class="k">raise</span> <span class="n">FdfError</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span>
             <span class="k">print</span><span class="p">(</span><span class="s">&#39;Finished.&#39;</span><span class="p">)</span>
-        
+
         <span class="c"># add shots</span>
         <span class="k">if</span> <span class="n">shotlist</span> <span class="ow">or</span> <span class="n">xp</span> <span class="ow">or</span> <span class="n">date</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">addshot</span><span class="p">(</span><span class="n">shotlist</span><span class="o">=</span><span class="n">shotlist</span><span class="p">,</span> <span class="n">xp</span><span class="o">=</span><span class="n">xp</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="n">date</span><span class="p">)</span>
@@ -301,7 +302,7 @@
         <span class="n">modules</span> <span class="o">=</span> <span class="p">[</span><span class="n">module</span> <span class="k">for</span> <span class="n">module</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">module_dir</span><span class="p">)</span>
                    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">module_dir</span><span class="p">,</span> <span class="n">module</span><span class="p">))]</span>
         <span class="k">return</span> <span class="n">modules</span>
-        
+
     <span class="k">def</span> <span class="nf">addshot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shotlist</span><span class="o">=</span><span class="p">[],</span> <span class="n">date</span><span class="o">=</span><span class="p">[],</span> <span class="n">xp</span><span class="o">=</span><span class="p">[],</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">iterable</span><span class="p">(</span><span class="n">shotlist</span><span class="p">):</span>
             <span class="n">shotlist</span> <span class="o">=</span> <span class="p">[</span><span class="n">shotlist</span><span class="p">]</span>
@@ -310,16 +311,15 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">iterable</span><span class="p">(</span><span class="n">date</span><span class="p">):</span>
             <span class="n">date</span> <span class="o">=</span> <span class="p">[</span><span class="n">date</span><span class="p">]</span>
         <span class="n">shots</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">if</span> <span class="n">shotlist</span> <span class="ow">and</span> <span class="nb">type</span><span class="p">(</span><span class="n">shotlist</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">int</span><span class="p">:</span>
-            <span class="n">shots</span> <span class="o">=</span> <span class="n">shots</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">shotlist</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">shotlist</span><span class="p">:</span>
+            <span class="n">shots</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">shotlist</span><span class="p">])</span>
         <span class="k">if</span> <span class="n">date</span> <span class="ow">or</span> <span class="n">xp</span><span class="p">:</span>
-            <span class="n">moreshots</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logbook</span><span class="o">.</span><span class="n">get_shotlist</span><span class="p">(</span><span class="n">date</span><span class="o">=</span><span class="n">date</span><span class="p">,</span> <span class="n">xp</span><span class="o">=</span><span class="n">xp</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">moreshots</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
-                <span class="n">shots</span> <span class="o">=</span> <span class="n">shots</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">moreshots</span><span class="p">)</span>
+            <span class="n">shots</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_logbook</span><span class="o">.</span><span class="n">get_shotlist</span><span class="p">(</span><span class="n">date</span><span class="o">=</span><span class="n">date</span><span class="p">,</span> <span class="n">xp</span><span class="o">=</span><span class="n">xp</span><span class="p">,</span>
+                                                    <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">shot</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">shots</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">shot</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shots</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_shots</span><span class="p">[</span><span class="n">shot</span><span class="p">]</span> <span class="o">=</span> <span class="n">Shot</span><span class="p">(</span><span class="n">shot</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
-    
+
     <span class="k">def</span> <span class="nf">get_shotlist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="p">[],</span> <span class="n">xp</span><span class="o">=</span><span class="p">[],</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="c"># return a list of shots</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logbook</span><span class="o">.</span><span class="n">get_shotlist</span><span class="p">(</span><span class="n">date</span><span class="o">=</span><span class="n">date</span><span class="p">,</span> <span class="n">xp</span><span class="o">=</span><span class="n">xp</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
@@ -369,15 +369,15 @@
 
     <span class="k">def</span> <span class="nf">__dir__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_signals</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-    
+
     <span class="k">def</span> <span class="nf">_get_xp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c"># query logbook for XP, return XP</span>
         <span class="k">return</span> <span class="bp">None</span>
-    
+
     <span class="k">def</span> <span class="nf">_get_date</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c"># query logbook for rundate, return rundate</span>
         <span class="k">return</span> <span class="bp">None</span>
-    
+
     <span class="k">def</span> <span class="nf">logbook</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c"># return a list of logbook entries (dictionaries)</span>
         <span class="n">entries</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logbook</span><span class="o">.</span><span class="n">get_entries</span><span class="p">(</span><span class="n">shot</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shot</span><span class="p">)</span>
@@ -385,11 +385,9 @@
             <span class="k">print</span><span class="p">(</span><span class="s">&#39;Logbook entries for {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shot</span><span class="p">))</span>
             <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">entries</span><span class="p">:</span>
                 <span class="k">print</span><span class="p">(</span><span class="s">&#39;************************************&#39;</span><span class="p">)</span>
-                <span class="k">print</span><span class="p">((</span><span class="s">&#39;{} on {} in XP {}</span><span class="se">\n</span><span class="s">&#39;</span>
-                    <span class="s">&#39;{} in topic {}</span><span class="se">\n\n</span><span class="s">&#39;</span>
-                    <span class="s">&#39;{}&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="s">&#39;shot&#39;</span><span class="p">],</span> <span class="n">entry</span><span class="p">[</span><span class="s">&#39;rundate&#39;</span><span class="p">],</span> 
-                    <span class="n">entry</span><span class="p">[</span><span class="s">&#39;xp&#39;</span><span class="p">],</span> <span class="n">entry</span><span class="p">[</span><span class="s">&#39;username&#39;</span><span class="p">],</span> <span class="n">entry</span><span class="p">[</span><span class="s">&#39;topic&#39;</span><span class="p">],</span> 
-                    <span class="n">entry</span><span class="p">[</span><span class="s">&#39;text&#39;</span><span class="p">]))</span>
+                <span class="k">print</span><span class="p">((</span><span class="s">&#39;{shot} on {rundate} in XP {xp}</span><span class="se">\n</span><span class="s">&#39;</span>
+                       <span class="s">&#39;{username} in topic {topic}</span><span class="se">\n\n</span><span class="s">&#39;</span>
+                       <span class="s">&#39;{text}&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">entry</span><span class="p">))</span>
             <span class="k">print</span><span class="p">(</span><span class="s">&#39;************************************&#39;</span><span class="p">)</span>
 
 </div>
@@ -406,7 +404,7 @@
         
         <span class="bp">self</span><span class="o">.</span><span class="n">_logbook_connection</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_make_logbook_connection</span><span class="p">()</span>
-        
+
         <span class="c"># dict of cached logbook entries</span>
         <span class="c"># kw is shot, value is list of logbook entries</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logbook</span> <span class="o">=</span> <span class="p">{}</span>
@@ -424,7 +422,7 @@
             
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_logbook_connection</span> <span class="o">=</span> <span class="n">pymssql</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
-                <span class="n">server</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_credentials</span><span class="p">[</span><span class="s">&#39;server&#39;</span><span class="p">],</span> 
+                <span class="n">server</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_credentials</span><span class="p">[</span><span class="s">&#39;server&#39;</span><span class="p">],</span>
                 <span class="n">user</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_credentials</span><span class="p">[</span><span class="s">&#39;username&#39;</span><span class="p">],</span>
                 <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_credentials</span><span class="p">[</span><span class="s">&#39;password&#39;</span><span class="p">],</span>
                 <span class="n">database</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_credentials</span><span class="p">[</span><span class="s">&#39;database&#39;</span><span class="p">],</span>
@@ -462,17 +460,17 @@
         <span class="k">for</span> <span class="n">sh</span> <span class="ow">in</span> <span class="n">shot</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">sh</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">logbook</span><span class="p">:</span>
                 <span class="n">query</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;{0} and shot={1} &#39;</span>
-                    <span class="s">&#39;ORDER BY shot ASC, entered ASC&#39;</span>
-                    <span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_shot_query_prefix</span><span class="p">,</span> <span class="n">sh</span><span class="p">)</span>
+                         <span class="s">&#39;ORDER BY shot ASC, entered ASC&#39;</span>
+                         <span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_shot_query_prefix</span><span class="p">,</span> <span class="n">sh</span><span class="p">)</span>
                 <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logbook</span><span class="p">[</span><span class="n">sh</span><span class="p">]</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span> <span class="c"># a list of logbook entries</span>
-    
+                <span class="bp">self</span><span class="o">.</span><span class="n">logbook</span><span class="p">[</span><span class="n">sh</span><span class="p">]</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>  <span class="c"># list of logbook entries</span>
+
     <span class="k">def</span> <span class="nf">get_shotlist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="p">[],</span> <span class="n">xp</span><span class="o">=</span><span class="p">[],</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="c"># return list of shots for date and/or XP</span>
         <span class="n">cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_cursor</span><span class="p">()</span>
         
         <span class="n">shotlist</span> <span class="o">=</span> <span class="p">[]</span>   <span class="c"># start with empty shotlist</span>
-        
+
         <span class="n">date_list</span> <span class="o">=</span> <span class="n">date</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">iterable</span><span class="p">(</span><span class="n">date_list</span><span class="p">):</span>      <span class="c"># if it&#39;s just a single date</span>
             <span class="n">date_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">date_list</span><span class="p">]</span>   <span class="c"># put it into a list</span>
@@ -487,7 +485,7 @@
                     <span class="k">print</span><span class="p">(</span><span class="s">&#39;   {shot} in XP {xp}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">row</span><span class="p">))</span>
             <span class="n">shotlist</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">row</span><span class="p">[</span><span class="s">&#39;shot&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span>  <span class="c"># add shots to shotlist</span>
                             <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;shot&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">])</span>
-        
+
         <span class="n">xp_list</span> <span class="o">=</span> <span class="n">xp</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">iterable</span><span class="p">(</span><span class="n">xp_list</span><span class="p">):</span>           <span class="c"># if it&#39;s just a single xp</span>
             <span class="n">xp_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">xp_list</span><span class="p">]</span>             <span class="c"># put it into a list</span>
@@ -502,10 +500,10 @@
                     <span class="k">print</span><span class="p">(</span><span class="s">&#39;   {shot} on date {rundate}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">row</span><span class="p">))</span>
             <span class="n">shotlist</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">row</span><span class="p">[</span><span class="s">&#39;shot&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span>  <span class="c"># add shots to shotlist</span>
                             <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;shot&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">])</span>
-        
+
         <span class="n">cursor</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">shotlist</span><span class="p">)</span>
-    
+
     <span class="k">def</span> <span class="nf">get_entries</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shot</span><span class="o">=</span><span class="p">[],</span> <span class="n">date</span><span class="o">=</span><span class="p">[],</span> <span class="n">xp</span><span class="o">=</span><span class="p">[]):</span>
         <span class="c"># return list of lobgook entries (dictionaries) for shot(s)</span>
         <span class="k">if</span> <span class="n">shot</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">iterable</span><span class="p">(</span><span class="n">shot</span><span class="p">):</span>
@@ -641,8 +639,8 @@
 
     <span class="k">for</span> <span class="n">read_only</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;root&#39;</span><span class="p">,</span> <span class="s">&#39;diagnostic&#39;</span><span class="p">]:</span>
         <span class="k">try</span><span class="p">:</span>
-             <span class="nb">setattr</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="s">&#39;_&#39;</span><span class="o">+</span><span class="n">read_only</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">read_only</span><span class="p">])</span>
-             <span class="k">print</span><span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="n">read_only</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">read_only</span><span class="p">,</span> <span class="s">&#39;Not there&#39;</span><span class="p">))</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="s">&#39;_&#39;</span><span class="o">+</span><span class="n">read_only</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">read_only</span><span class="p">])</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="n">read_only</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">read_only</span><span class="p">,</span> <span class="s">&#39;Not there&#39;</span><span class="p">))</span>
         <span class="k">except</span><span class="p">:</span>
             <span class="k">pass</span>
 
@@ -652,6 +650,7 @@
             <span class="nb">setattr</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">getitem</span><span class="p">)</span>
 
     <span class="n">parse_method</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">module_tree</span><span class="p">)</span>
+
 
 <span class="k">def</span> <span class="nf">parse_method</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">module_tree</span><span class="p">):</span>
     <span class="n">diagnostic</span> <span class="o">=</span> <span class="n">modules</span><span class="o">.</span><span class="n">__getattribute__</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">_diagnostic</span><span class="p">)</span>
@@ -682,7 +681,7 @@
         <span class="n">error</span> <span class="o">=</span> <span class="n">parse_error</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">element</span><span class="p">)</span>
         <span class="n">signal_dict</span> <span class="o">=</span> <span class="p">[{</span><span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span> <span class="s">&#39;units&#39;</span><span class="p">:</span> <span class="n">units</span><span class="p">,</span> <span class="s">&#39;axes&#39;</span><span class="p">:</span> <span class="n">axes</span><span class="p">,</span>
                         <span class="s">&#39;mdsnode&#39;</span><span class="p">:</span> <span class="n">mdspath</span><span class="p">,</span> <span class="s">&#39;mdstree&#39;</span><span class="p">:</span> <span class="n">mdstree</span><span class="p">,</span>
-                        <span class="s">&#39;dim_of&#39;</span><span class="p">:</span> <span class="n">dim_of</span><span class="p">,</span> <span class="s">&#39;error&#39;</span><span class="p">:</span> <span class="n">error</span><span class="p">,</span> <span class="s">&#39;parent&#39;</span><span class="p">:</span><span class="n">obj</span><span class="p">,</span>
+                        <span class="s">&#39;dim_of&#39;</span><span class="p">:</span> <span class="n">dim_of</span><span class="p">,</span> <span class="s">&#39;error&#39;</span><span class="p">:</span> <span class="n">error</span><span class="p">,</span> <span class="s">&#39;parent&#39;</span><span class="p">:</span> <span class="n">obj</span><span class="p">,</span>
                         <span class="s">&#39;_transpose&#39;</span><span class="p">:</span> <span class="n">transpose</span><span class="p">}]</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">num</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>
@@ -695,15 +694,14 @@
             <span class="n">mdstree</span> <span class="o">=</span> <span class="n">parse_mdstree</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">element</span><span class="p">)</span>
             <span class="n">error</span> <span class="o">=</span> <span class="n">parse_error</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">element</span><span class="p">)</span>
             <span class="n">signal_dict</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span> <span class="s">&#39;units&#39;</span><span class="p">:</span> <span class="n">units</span><span class="p">,</span> <span class="s">&#39;axes&#39;</span><span class="p">:</span> <span class="n">axes</span><span class="p">,</span>
-                        <span class="s">&#39;mdsnode&#39;</span><span class="p">:</span> <span class="n">mdspath</span><span class="p">,</span> <span class="s">&#39;mdstree&#39;</span><span class="p">:</span> <span class="n">mdstree</span><span class="p">,</span>
-                        <span class="s">&#39;dim_of&#39;</span><span class="p">:</span> <span class="n">dim_of</span><span class="p">,</span> <span class="s">&#39;error&#39;</span><span class="p">:</span> <span class="n">error</span><span class="p">,</span> <span class="s">&#39;parent&#39;</span><span class="p">:</span><span class="n">obj</span><span class="p">,</span>
-                        <span class="s">&#39;_transpose&#39;</span><span class="p">:</span> <span class="n">transpose</span><span class="p">})</span>
+                                <span class="s">&#39;mdsnode&#39;</span><span class="p">:</span> <span class="n">mdspath</span><span class="p">,</span> <span class="s">&#39;mdstree&#39;</span><span class="p">:</span> <span class="n">mdstree</span><span class="p">,</span>
+                                <span class="s">&#39;dim_of&#39;</span><span class="p">:</span> <span class="n">dim_of</span><span class="p">,</span> <span class="s">&#39;error&#39;</span><span class="p">:</span> <span class="n">error</span><span class="p">,</span>
+                                <span class="s">&#39;parent&#39;</span><span class="p">:</span> <span class="n">obj</span><span class="p">,</span> <span class="s">&#39;_transpose&#39;</span><span class="p">:</span> <span class="n">transpose</span><span class="p">})</span>
     <span class="k">return</span> <span class="n">signal_dict</span>
 
 
 <span class="k">def</span> <span class="nf">parse_axes</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
     <span class="n">axes</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">refs</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">transpose</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">time_ind</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="k">try</span><span class="p">:</span>
@@ -721,6 +719,7 @@
 
     <span class="k">return</span> <span class="n">axes</span><span class="p">,</span> <span class="n">transpose</span>
 
+
 <span class="k">def</span> <span class="nf">parse_refs</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">element</span><span class="p">,</span> <span class="n">transpose</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="n">refs</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="k">try</span><span class="p">:</span>
@@ -731,6 +730,7 @@
         <span class="k">pass</span>
 
     <span class="k">return</span> <span class="n">refs</span>
+
 
 <span class="k">def</span> <span class="nf">parse_units</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
     <span class="n">units</span> <span class="o">=</span> <span class="n">element</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;units&#39;</span><span class="p">)</span>
