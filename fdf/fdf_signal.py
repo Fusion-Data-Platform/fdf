@@ -1,4 +1,10 @@
 """
+fdf-signals.py - module containing Signal class
+
+Classes
+-------
+* Signal - signal class for data objects
+
 Created on Tue Jun 23 2015
 
 @author: hyuh
@@ -8,8 +14,15 @@ import MDSplus as mds
 from collections import OrderedDict
 import inspect
 import types
+import fdf_globals
+
+MDS_SERVERS = fdf_globals.MDS_SERVERS
+# TODO: implement MDS_SERVERS in place of hard-coded MDS server
+FdfError = fdf_globals.FdfError
+
 
 class MdsError(Exception):
+    # TODO: implement FdfError from fdf_globals
     pass
 
 class Signal(np.ndarray):
@@ -280,7 +293,7 @@ class Signal(np.ndarray):
         except:
             raise MdsError('Error populating signal from MDSplus')
 
-class RootContainer():
+class RootContainer(object):
     mds_servers = {
         'nstx': 'skylark:8501'
         }
@@ -311,7 +324,7 @@ class RootContainer():
             except:
                 raise MdsError('Error opening tree or making MDS server connection')
 
-class shotContainer():
+class shotContainer(object):
     def __init__(self,shotnum=140000,tree='activespec',**kwargs):
         self.mdsshot=shotnum
         self.mdstree=tree

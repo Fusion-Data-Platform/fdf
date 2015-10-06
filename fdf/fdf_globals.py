@@ -1,18 +1,46 @@
 # -*- coding: utf-8 -*-
 """
+fdf_globals.py contains package-level constants
+
 Created on Thu Jun 18 11:18:16 2015
 
 @author: ktritz
 """
 import os
 
-#if 'linux' in os.sys.platform:
-#    FDF_DIR = './fdf/'
-#elif 'win32' in os.sys.platform:
-#    FDF_DIR = '.\\fdf\\'
 
-# fixed bug where fdf crashed with script outside of fdf directory (DRS 10/5/15)
 FDF_DIR = os.path.dirname(os.path.abspath(__file__))
+"""Path string: top-level directory for FDF package"""
 
-# is FDF_MDS_SERVER used anywhere  -ds 8/9/15
-#FDF_MDS_SERVER = 'skylark.pppl.gov:8501'
+MDS_SERVERS = {
+    'nstx': 'skylark.pppl.gov:8501'
+}
+"""Dictionary: machine-name key paired to MDS server"""
+
+LOGBOOK_CREDENTIALS = {
+    'nstx': {
+        'server': 'sql2008.pppl.gov\sql2008',
+        'username': os.getenv('USER') or os.getenv('USERNAME'),
+        'password': 'pfcworld',
+        'database': 'nstxlogs',
+        'port': '62917',
+        'table': 'entries'
+    }
+}
+"""Dictionary: machine-name key paired with logbook login credentials"""
+
+
+class FdfError(Exception):
+    """
+    Error class for FDF package
+    
+    Usage
+    -----
+    raise FdfError('my error message')
+    """
+    def __init__(self, message=''):
+        self.message = message
+    def __str__(self):
+        return self.message
+
+
