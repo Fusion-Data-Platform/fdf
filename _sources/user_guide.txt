@@ -5,7 +5,7 @@
 User Guide
 *****************************************
 
-This guide is for people who want to use FDF without contributing to the FDF project.
+This guide is for people who want to use FDF without contributing to the FDF code repository (https://github.com/Fusion-Data-Framework/fdf).
 
 .. only:: latex
     
