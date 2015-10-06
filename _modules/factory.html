@@ -1,0 +1,867 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>factory &mdash; Fusion Data Framework 0.0.0 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="author" title="About these documents"
+              href="../about.html"/>
+    <link rel="top" title="Fusion Data Framework 0.0.0 documentation" href="../index.html"/>
+        <link rel="up" title="Module code" href="index.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+          <a href="../index.html" class="fa fa-home"> Fusion Data Framework</a>
+        
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../about.html">About FDF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../userguide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../module.html">Modules and classes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../module.html#module-factory">Module factory.py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../module.html#class-machine">Class Machine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../module.html#class-shot">Class Shot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../module.html#class-logbook">Class Logbook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../module.html#module-fdf_signal">Module fdf_signal.py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../module.html#class-signal">Class Signal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../module.html#module-fdf_globals">Module fdf_globals.py</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../LICENSE.html">License</a></li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">Fusion Data Framework</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index.html">Module code</a> &raquo;</li>
+      
+    <li>factory</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <h1>Source code for factory</h1><div class="highlight"><pre>
+<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">factory.py - root module for the FDF package.</span>
+
+<span class="sd">Classes</span>
+<span class="sd">-------</span>
+<span class="sd">Machine - root class for the FDF package</span>
+<span class="sd">Shot - shot container class</span>
+<span class="sd">Logbook - logbook connection class</span>
+<span class="sd">Container - diagnostic container class</span>
+<span class="sd">Node - mdsplus signal node class</span>
+<span class="sd">FdfError - error class for FDF package</span>
+
+<span class="sd">Usage</span>
+<span class="sd">-----</span>
+<span class="sd">&gt;&gt;&gt; import fdf</span>
+<span class="sd">&gt;&gt;&gt; nstx = fdf.Machine(&#39;nstx&#39;)</span>
+<span class="sd">&gt;&gt;&gt; nstx.s140000.logbook()</span>
+<span class="sd">&gt;&gt;&gt; nstx.addshots(xp=1048)</span>
+<span class="sd">&gt;&gt;&gt; nstx.s140000.mpts.plot()</span>
+
+<span class="sd">Created on Thu Jun 18 10:38:40 2015</span>
+<span class="sd">@author: ktritz</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">xml.etree.ElementTree</span> <span class="kn">as</span> <span class="nn">ET</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">fdf_globals</span>
+<span class="kn">from</span> <span class="nn">fdf_signal</span> <span class="kn">import</span> <span class="n">Signal</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">modules</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">MutableMapping</span><span class="p">,</span> <span class="n">OrderedDict</span>
+<span class="kn">import</span> <span class="nn">MDSplus</span> <span class="kn">as</span> <span class="nn">mds</span>
+<span class="kn">import</span> <span class="nn">types</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">import</span> <span class="nn">pymssql</span>
+
+
+<span class="n">FDF_DIR</span> <span class="o">=</span> <span class="n">fdf_globals</span><span class="o">.</span><span class="n">FDF_DIR</span>
+<span class="n">MDS_SERVERS</span> <span class="o">=</span> <span class="n">fdf_globals</span><span class="o">.</span><span class="n">MDS_SERVERS</span>
+<span class="n">LOGBOOK_CREDENTIALS</span> <span class="o">=</span> <span class="n">fdf_globals</span><span class="o">.</span><span class="n">LOGBOOK_CREDENTIALS</span>
+<span class="n">FdfError</span> <span class="o">=</span> <span class="n">fdf_globals</span><span class="o">.</span><span class="n">FdfError</span>
+
+
+
+<div class="viewcode-block" id="Machine"><a class="viewcode-back" href="../module.html#factory.Machine">[docs]</a><span class="k">class</span> <span class="nc">Machine</span><span class="p">(</span><span class="n">MutableMapping</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Factory root class that contains shot objects and MDS access methods.</span>
+
+<span class="sd">    Basic class initialization is performed as follows:</span>
+<span class="sd">    &gt;&gt;&gt;nstx = Machine(name=&#39;nstx&#39;)</span>
+
+<span class="sd">    the Machine class contains a model shot object: nstx.s0</span>
+
+<span class="sd">    shot data can be accessed directly through the Machine class:</span>
+<span class="sd">    &gt;&gt;&gt;nstx.s141398</span>
+<span class="sd">    &gt;&gt;&gt;nstx.s141399</span>
+
+<span class="sd">    alternatively, a list of shot #&#39;s may be provided during initialization:</span>
+<span class="sd">    &gt;&gt;&gt;nstx = Machine(name=&#39;nstx&#39;, shotlist=[141398, 141399])</span>
+
+<span class="sd">    or added later using the addshot method:</span>
+<span class="sd">    &gt;&gt;&gt;nstx.addshot([141398, 141399])</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="c"># Maintain a dictionary of cached MDS server connections to speed up</span>
+    <span class="c"># access for multiple shots and trees. This is a static class variable</span>
+    <span class="c"># to avoid proliferation of MDS server connections</span>
+    <span class="n">_connections</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+    <span class="n">_parent</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;nstx&#39;</span><span class="p">,</span> <span class="n">shotlist</span><span class="o">=</span><span class="p">[],</span> <span class="n">xp</span><span class="o">=</span><span class="p">[],</span> <span class="n">date</span><span class="o">=</span><span class="p">[]):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_shots</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_classlist</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">LOGBOOK_CREDENTIALS</span> \
+            <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">MDS_SERVERS</span><span class="p">:</span>
+                <span class="n">txt</span> <span class="o">=</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">{} is not a valid machine.</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span>
+                <span class="n">txt</span> <span class="o">=</span> <span class="n">txt</span> <span class="o">+</span> <span class="s">&#39;Valid machines are:</span><span class="se">\n</span><span class="s">&#39;</span>
+                <span class="k">for</span> <span class="n">machine</span> <span class="ow">in</span> <span class="n">LOGBOOK_CREDENTIALS</span><span class="p">:</span>
+                    <span class="n">txt</span> <span class="o">=</span> <span class="n">txt</span> <span class="o">+</span> <span class="s">&#39;  {}</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">machine</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span>
+                <span class="k">raise</span> <span class="n">FdfError</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logbook</span> <span class="o">=</span> <span class="n">Logbook</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">s0</span> <span class="o">=</span> <span class="n">Shot</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_connections</span><span class="p">)</span> <span class="ow">is</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&#39;Precaching MDS server connections...&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_connections</span><span class="p">[</span><span class="n">mds</span><span class="o">.</span><span class="n">Connection</span><span class="p">(</span><span class="n">MDS_SERVERS</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">])]</span> <span class="o">=</span> <span class="bp">None</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="n">txt</span> <span class="o">=</span> <span class="s">&#39;MDSplus connection to {} failed.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">MDS_SERVERS</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">])</span>
+                    <span class="k">raise</span> <span class="n">FdfError</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&#39;Finished.&#39;</span><span class="p">)</span>
+        
+        <span class="c"># add shots</span>
+        <span class="k">if</span> <span class="n">shotlist</span> <span class="ow">or</span> <span class="n">xp</span> <span class="ow">or</span> <span class="n">date</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">addshot</span><span class="p">(</span><span class="n">shotlist</span><span class="o">=</span><span class="n">shotlist</span><span class="p">,</span> <span class="n">xp</span><span class="o">=</span><span class="n">xp</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="n">date</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">shot</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;s&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;&#39;{}&#39; object has no attribute &#39;{}&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                                 <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="n">name</span><span class="p">))</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">shot</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shots</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_shots</span><span class="p">[</span><span class="n">shot</span><span class="p">]</span> <span class="o">=</span> <span class="n">Shot</span><span class="p">(</span><span class="n">shot</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shots</span><span class="p">[</span><span class="n">shot</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&#39;&lt;machine {}&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># return iter(self._shots.values())</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_shots</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shots</span>
+
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_shots</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_shots</span><span class="o">.</span><span class="n">__delitem__</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">item</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">s0</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shots</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">__dir__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">shotlist</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;s0&#39;</span><span class="p">]</span>
+        <span class="n">shotlist</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s">&#39;s{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">shot</span><span class="p">)</span> <span class="k">for</span> <span class="n">shot</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shots</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">shotlist</span>
+
+    <span class="k">def</span> <span class="nf">_get_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shot</span><span class="p">,</span> <span class="n">tree</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">connection</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connections</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connections</span><span class="p">[</span><span class="n">connection</span><span class="p">]</span> <span class="o">==</span> <span class="p">(</span><span class="n">shot</span><span class="p">,</span> <span class="n">tree</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_connections</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">connection</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_connections</span><span class="p">[</span><span class="n">connection</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">shot</span><span class="p">,</span> <span class="n">tree</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">connection</span>
+        <span class="n">connection</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connections</span><span class="o">.</span><span class="n">popitem</span><span class="p">(</span><span class="n">last</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">connection</span><span class="o">.</span><span class="n">closeAllTrees</span><span class="p">()</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="n">connection</span><span class="o">.</span><span class="n">openTree</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="n">shot</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_connections</span><span class="p">[</span><span class="n">connection</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">shot</span><span class="p">,</span> <span class="n">tree</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">connection</span>
+
+    <span class="k">def</span> <span class="nf">_get_mdsdata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">signal</span><span class="p">):</span>
+        <span class="c"># shot = base_container(signal)._parent.shot</span>
+        <span class="n">shot</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">shot</span>
+        <span class="k">if</span> <span class="n">shot</span> <span class="ow">is</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&#39;No MDS data exists for model tree&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">None</span>
+        <span class="n">connection</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_connection</span><span class="p">(</span><span class="n">shot</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">mdstree</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">mdsnode</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">signal</span><span class="o">.</span><span class="n">_raw_of</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">raw_of</span><span class="p">()</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">signal</span><span class="o">.</span><span class="n">_dim_of</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">dim_of</span><span class="p">()</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">value_of</span><span class="p">()</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">signal</span><span class="o">.</span><span class="n">_transpose</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">_transpose</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">return</span> <span class="n">data</span>
+
+    <span class="k">def</span> <span class="nf">_get_modules</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">module_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">FDF_DIR</span><span class="p">,</span> <span class="s">&#39;modules&#39;</span><span class="p">)</span>
+        <span class="n">modules</span> <span class="o">=</span> <span class="p">[</span><span class="n">module</span> <span class="k">for</span> <span class="n">module</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">module_dir</span><span class="p">)</span>
+                   <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">module_dir</span><span class="p">,</span> <span class="n">module</span><span class="p">))]</span>
+        <span class="k">return</span> <span class="n">modules</span>
+        
+    <span class="k">def</span> <span class="nf">addshot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shotlist</span><span class="o">=</span><span class="p">[],</span> <span class="n">date</span><span class="o">=</span><span class="p">[],</span> <span class="n">xp</span><span class="o">=</span><span class="p">[],</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">iterable</span><span class="p">(</span><span class="n">shotlist</span><span class="p">):</span>
+            <span class="n">shotlist</span> <span class="o">=</span> <span class="p">[</span><span class="n">shotlist</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">iterable</span><span class="p">(</span><span class="n">xp</span><span class="p">):</span>
+            <span class="n">xp</span> <span class="o">=</span> <span class="p">[</span><span class="n">xp</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">iterable</span><span class="p">(</span><span class="n">date</span><span class="p">):</span>
+            <span class="n">date</span> <span class="o">=</span> <span class="p">[</span><span class="n">date</span><span class="p">]</span>
+        <span class="n">shots</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">shotlist</span> <span class="ow">and</span> <span class="nb">type</span><span class="p">(</span><span class="n">shotlist</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">int</span><span class="p">:</span>
+            <span class="n">shots</span> <span class="o">=</span> <span class="n">shots</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">shotlist</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">date</span> <span class="ow">or</span> <span class="n">xp</span><span class="p">:</span>
+            <span class="n">moreshots</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logbook</span><span class="o">.</span><span class="n">get_shotlist</span><span class="p">(</span><span class="n">date</span><span class="o">=</span><span class="n">date</span><span class="p">,</span> <span class="n">xp</span><span class="o">=</span><span class="n">xp</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">moreshots</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+                <span class="n">shots</span> <span class="o">=</span> <span class="n">shots</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">moreshots</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">shot</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">shots</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">shot</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shots</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_shots</span><span class="p">[</span><span class="n">shot</span><span class="p">]</span> <span class="o">=</span> <span class="n">Shot</span><span class="p">(</span><span class="n">shot</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">get_shotlist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="p">[],</span> <span class="n">xp</span><span class="o">=</span><span class="p">[],</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="c"># return a list of shots</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logbook</span><span class="o">.</span><span class="n">get_shotlist</span><span class="p">(</span><span class="n">date</span><span class="o">=</span><span class="n">date</span><span class="p">,</span> <span class="n">xp</span><span class="o">=</span><span class="n">xp</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="Shot"><a class="viewcode-back" href="../module.html#factory.Shot">[docs]</a><span class="k">class</span> <span class="nc">Shot</span><span class="p">(</span><span class="n">MutableMapping</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shot</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shot</span> <span class="o">=</span> <span class="n">shot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_root</span> <span class="o">=</span> <span class="n">root</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="n">parent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logbook</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">_logbook</span>
+        <span class="n">modules</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">_get_modules</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_signals</span> <span class="o">=</span> <span class="p">{</span><span class="n">module</span><span class="p">:</span> <span class="n">Factory</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="n">root</span><span class="p">,</span> <span class="n">shot</span><span class="o">=</span><span class="n">shot</span><span class="p">,</span>
+                                         <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span> <span class="k">for</span> <span class="n">module</span> <span class="ow">in</span> <span class="n">modules</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_xp</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_date</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="n">name_lower</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_signals</span><span class="p">[</span><span class="n">name_lower</span><span class="p">]</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&#39;&lt;shot# {}&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shot</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># return iter(self._signals.values())</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_signals</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_signals</span>
+
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_signals</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_signals</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">__dir__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_signals</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="nf">_get_xp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># query logbook for XP, return XP</span>
+        <span class="k">return</span> <span class="bp">None</span>
+    
+    <span class="k">def</span> <span class="nf">_get_date</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># query logbook for rundate, return rundate</span>
+        <span class="k">return</span> <span class="bp">None</span>
+    
+    <span class="k">def</span> <span class="nf">logbook</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># return a list of logbook entries (dictionaries)</span>
+        <span class="n">entries</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logbook</span><span class="o">.</span><span class="n">get_entries</span><span class="p">(</span><span class="n">shot</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shot</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">entries</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&#39;Logbook entries for {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shot</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">entries</span><span class="p">:</span>
+                <span class="k">print</span><span class="p">(</span><span class="s">&#39;************************************&#39;</span><span class="p">)</span>
+                <span class="k">print</span><span class="p">((</span><span class="s">&#39;{} on {} in XP {}</span><span class="se">\n</span><span class="s">&#39;</span>
+                    <span class="s">&#39;{} in topic {}</span><span class="se">\n\n</span><span class="s">&#39;</span>
+                    <span class="s">&#39;{}&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="s">&#39;shot&#39;</span><span class="p">],</span> <span class="n">entry</span><span class="p">[</span><span class="s">&#39;rundate&#39;</span><span class="p">],</span> 
+                    <span class="n">entry</span><span class="p">[</span><span class="s">&#39;xp&#39;</span><span class="p">],</span> <span class="n">entry</span><span class="p">[</span><span class="s">&#39;username&#39;</span><span class="p">],</span> <span class="n">entry</span><span class="p">[</span><span class="s">&#39;topic&#39;</span><span class="p">],</span> 
+                    <span class="n">entry</span><span class="p">[</span><span class="s">&#39;text&#39;</span><span class="p">]))</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&#39;************************************&#39;</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="Logbook"><a class="viewcode-back" href="../module.html#factory.Logbook">[docs]</a><span class="k">class</span> <span class="nc">Logbook</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;nstx&#39;</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_root</span> <span class="o">=</span> <span class="n">root</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_credentials</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_table</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_shotlist_query_prefix</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_shot_query_prefix</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logbook_connection</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_make_logbook_connection</span><span class="p">()</span>
+        
+        <span class="c"># dict of cached logbook entries</span>
+        <span class="c"># kw is shot, value is list of logbook entries</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logbook</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span> <span class="nf">_make_logbook_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_credentials</span> <span class="o">=</span> <span class="n">LOGBOOK_CREDENTIALS</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_credentials</span><span class="p">[</span><span class="s">&#39;table&#39;</span><span class="p">]</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_shotlist_query_prefix</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s">&#39;SELECT DISTINCT rundate, shot, xp, voided &#39;</span>
+            <span class="s">&#39;FROM {} WHERE voided IS null&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_table</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_shot_query_prefix</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s">&#39;SELECT dbkey, username, rundate, shot, xp, topic, text, entered, voided &#39;</span>
+            <span class="s">&#39;FROM {} WHERE voided IS null&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_table</span><span class="p">)</span>
+            
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logbook_connection</span> <span class="o">=</span> <span class="n">pymssql</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+                <span class="n">server</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_credentials</span><span class="p">[</span><span class="s">&#39;server&#39;</span><span class="p">],</span> 
+                <span class="n">user</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_credentials</span><span class="p">[</span><span class="s">&#39;username&#39;</span><span class="p">],</span>
+                <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_credentials</span><span class="p">[</span><span class="s">&#39;password&#39;</span><span class="p">],</span>
+                <span class="n">database</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_credentials</span><span class="p">[</span><span class="s">&#39;database&#39;</span><span class="p">],</span>
+                <span class="n">port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_credentials</span><span class="p">[</span><span class="s">&#39;port&#39;</span><span class="p">],</span>
+                <span class="n">as_dict</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&#39;Attempting logbook server connection as drsmith&#39;</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_logbook_connection</span> <span class="o">=</span> <span class="n">pymssql</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+                    <span class="n">server</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_credentials</span><span class="p">[</span><span class="s">&#39;server&#39;</span><span class="p">],</span> 
+                    <span class="n">user</span><span class="o">=</span><span class="s">&#39;drsmith&#39;</span><span class="p">,</span>
+                    <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_credentials</span><span class="p">[</span><span class="s">&#39;password&#39;</span><span class="p">],</span>
+                    <span class="n">database</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_credentials</span><span class="p">[</span><span class="s">&#39;database&#39;</span><span class="p">],</span>
+                    <span class="n">port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_credentials</span><span class="p">[</span><span class="s">&#39;port&#39;</span><span class="p">],</span>
+                    <span class="n">as_dict</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">txt</span> <span class="o">=</span> <span class="s">&#39;{} logbook connection failed. &#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span>
+                <span class="n">txt</span> <span class="o">=</span> <span class="n">txt</span> <span class="o">+</span> <span class="s">&#39;Server credentials:&#39;</span>
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_credentials</span><span class="p">:</span>
+                    <span class="n">txt</span> <span class="o">=</span> <span class="n">txt</span> <span class="o">+</span> <span class="s">&#39;  {0}:{1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_credentials</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+                <span class="k">raise</span> <span class="n">FdfError</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_cursor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logbook_connection</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+            <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&#39;SET ROWCOUNT 500&#39;</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">FdfError</span><span class="p">(</span><span class="s">&#39;Cursor error.&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cursor</span>
+
+    <span class="k">def</span> <span class="nf">_shot_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shot</span><span class="o">=</span><span class="p">[]):</span>
+        <span class="n">cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_cursor</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">shot</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">iterable</span><span class="p">(</span><span class="n">shot</span><span class="p">):</span>
+            <span class="n">shot</span> <span class="o">=</span> <span class="p">[</span><span class="n">shot</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">sh</span> <span class="ow">in</span> <span class="n">shot</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">sh</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">logbook</span><span class="p">:</span>
+                <span class="n">query</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;{0} and shot={1} &#39;</span>
+                    <span class="s">&#39;ORDER BY shot ASC, entered ASC&#39;</span>
+                    <span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_shot_query_prefix</span><span class="p">,</span> <span class="n">sh</span><span class="p">)</span>
+                <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logbook</span><span class="p">[</span><span class="n">sh</span><span class="p">]</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span> <span class="c"># a list of logbook entries</span>
+    
+    <span class="k">def</span> <span class="nf">get_shotlist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="p">[],</span> <span class="n">xp</span><span class="o">=</span><span class="p">[],</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="c"># return list of shots for date and/or XP</span>
+        <span class="n">cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_cursor</span><span class="p">()</span>
+        
+        <span class="n">shotlist</span> <span class="o">=</span> <span class="p">[]</span>   <span class="c"># start with empty shotlist</span>
+        
+        <span class="n">date_list</span> <span class="o">=</span> <span class="n">date</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">iterable</span><span class="p">(</span><span class="n">date_list</span><span class="p">):</span>      <span class="c"># if it&#39;s just a single date</span>
+            <span class="n">date_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">date_list</span><span class="p">]</span>   <span class="c"># put it into a list</span>
+        <span class="k">for</span> <span class="n">date</span> <span class="ow">in</span> <span class="n">date_list</span><span class="p">:</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;{0} and rundate={1} ORDER BY shot ASC&#39;</span><span class="o">.</span>
+                     <span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_shotlist_query_prefix</span><span class="p">,</span> <span class="n">date</span><span class="p">))</span>
+            <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+            <span class="n">rows</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="k">print</span><span class="p">(</span><span class="s">&#39;date {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">date</span><span class="p">))</span>
+                <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
+                    <span class="k">print</span><span class="p">(</span><span class="s">&#39;   {shot} in XP {xp}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">row</span><span class="p">))</span>
+            <span class="n">shotlist</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">row</span><span class="p">[</span><span class="s">&#39;shot&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span>  <span class="c"># add shots to shotlist</span>
+                            <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;shot&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">])</span>
+        
+        <span class="n">xp_list</span> <span class="o">=</span> <span class="n">xp</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">iterable</span><span class="p">(</span><span class="n">xp_list</span><span class="p">):</span>           <span class="c"># if it&#39;s just a single xp</span>
+            <span class="n">xp_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">xp_list</span><span class="p">]</span>             <span class="c"># put it into a list</span>
+        <span class="k">for</span> <span class="n">xp</span> <span class="ow">in</span> <span class="n">xp_list</span><span class="p">:</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;{0} and xp={1} ORDER BY shot ASC&#39;</span><span class="o">.</span>
+                     <span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_shotlist_query_prefix</span><span class="p">,</span> <span class="n">xp</span><span class="p">))</span>
+            <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+            <span class="n">rows</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="k">print</span><span class="p">(</span><span class="s">&#39;XP {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">xp</span><span class="p">))</span>
+                <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
+                    <span class="k">print</span><span class="p">(</span><span class="s">&#39;   {shot} on date {rundate}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">row</span><span class="p">))</span>
+            <span class="n">shotlist</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">row</span><span class="p">[</span><span class="s">&#39;shot&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span>  <span class="c"># add shots to shotlist</span>
+                            <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;shot&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">])</span>
+        
+        <span class="n">cursor</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">shotlist</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">get_entries</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shot</span><span class="o">=</span><span class="p">[],</span> <span class="n">date</span><span class="o">=</span><span class="p">[],</span> <span class="n">xp</span><span class="o">=</span><span class="p">[]):</span>
+        <span class="c"># return list of lobgook entries (dictionaries) for shot(s)</span>
+        <span class="k">if</span> <span class="n">shot</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">iterable</span><span class="p">(</span><span class="n">shot</span><span class="p">):</span>
+            <span class="n">shot</span> <span class="o">=</span> <span class="p">[</span><span class="n">shot</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">xp</span> <span class="ow">or</span> <span class="n">date</span><span class="p">:</span>
+            <span class="n">shot</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_shotlist</span><span class="p">(</span><span class="n">date</span><span class="o">=</span><span class="n">date</span><span class="p">,</span> <span class="n">xp</span><span class="o">=</span><span class="n">xp</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">shot</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_shot_query</span><span class="p">(</span><span class="n">shot</span><span class="o">=</span><span class="n">shot</span><span class="p">)</span>
+        <span class="n">entries</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">sh</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">shot</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">sh</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">logbook</span><span class="p">:</span>
+                <span class="n">entries</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logbook</span><span class="p">[</span><span class="n">sh</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">entries</span>
+
+</div>
+<span class="k">def</span> <span class="nf">Factory</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">shot</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Factory method</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">module</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="n">module_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">FDF_DIR</span><span class="p">,</span> <span class="s">&#39;modules&#39;</span><span class="p">,</span> <span class="n">module</span><span class="p">)</span>
+        <span class="n">parse_tree</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">module_path</span><span class="p">,</span>
+                                           <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">module</span><span class="p">,</span> <span class="s">&#39;.xml&#39;</span><span class="p">])))</span>
+        <span class="n">module_tree</span> <span class="o">=</span> <span class="n">parse_tree</span><span class="o">.</span><span class="n">getroot</span><span class="p">()</span>
+        <span class="n">DiagnosticClassName</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s">&#39;Diagnostic&#39;</span><span class="p">,</span> <span class="n">module</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()])</span>
+        <span class="k">if</span> <span class="n">DiagnosticClassName</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">Container</span><span class="o">.</span><span class="n">_classes</span><span class="p">:</span>
+            <span class="n">DiagnosticClass</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">DiagnosticClassName</span><span class="p">,</span> <span class="p">(</span><span class="n">Container</span><span class="p">,),</span> <span class="p">{})</span>
+            <span class="n">init_class</span><span class="p">(</span><span class="n">DiagnosticClass</span><span class="p">,</span> <span class="n">module_tree</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="n">root</span><span class="p">,</span> <span class="n">diagnostic</span><span class="o">=</span><span class="n">module</span><span class="p">)</span>
+            <span class="n">Container</span><span class="o">.</span><span class="n">_classes</span><span class="p">[</span><span class="n">DiagnosticClassName</span><span class="p">]</span> <span class="o">=</span> <span class="n">DiagnosticClass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">DiagnosticClass</span> <span class="o">=</span> <span class="n">Container</span><span class="o">.</span><span class="n">_classes</span><span class="p">[</span><span class="n">DiagnosticClassName</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">DiagnosticClass</span><span class="p">(</span><span class="n">module_tree</span><span class="p">,</span> <span class="n">shot</span><span class="o">=</span><span class="n">shot</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&quot;{} not found in modules directory&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">module</span><span class="p">))</span>
+        <span class="k">raise</span>
+
+
+<span class="k">class</span> <span class="nc">Container</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Container class</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_instances</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">_classes</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_tree</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+        <span class="n">cls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span>
+
+        <span class="k">for</span> <span class="n">read_only</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;parent&#39;</span><span class="p">]:</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;_&#39;</span><span class="o">+</span><span class="n">read_only</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">read_only</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">shot</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;shot&#39;</span><span class="p">]</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">shot</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">cls</span><span class="o">.</span><span class="n">_instances</span><span class="p">[</span><span class="n">cls</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">shot</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">cls</span><span class="o">.</span><span class="n">_instances</span><span class="p">[</span><span class="n">cls</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">shot</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">module_tree</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">&#39;node&#39;</span><span class="p">):</span>
+            <span class="n">NodeClassName</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s">&#39;Node&#39;</span><span class="p">,</span> <span class="n">cls</span><span class="o">.</span><span class="n">_name</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()])</span>
+            <span class="k">if</span> <span class="n">NodeClassName</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cls</span><span class="o">.</span><span class="n">_classes</span><span class="p">:</span>
+                <span class="n">NodeClass</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">NodeClassName</span><span class="p">,</span> <span class="p">(</span><span class="n">Node</span><span class="p">,</span> <span class="n">cls</span><span class="p">),</span> <span class="p">{})</span>
+                <span class="n">cls</span><span class="o">.</span><span class="n">_classes</span><span class="p">[</span><span class="n">NodeClassName</span><span class="p">]</span> <span class="o">=</span> <span class="n">NodeClass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">NodeClass</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">_classes</span><span class="p">[</span><span class="n">NodeClassName</span><span class="p">]</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">),</span> <span class="n">NodeClass</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">module_tree</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">&#39;axis&#39;</span><span class="p">):</span>
+            <span class="n">signal_list</span> <span class="o">=</span> <span class="n">parse_signal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">signal_dict</span> <span class="ow">in</span> <span class="n">signal_list</span><span class="p">:</span>
+                <span class="n">SignalClassName</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s">&#39;Signal&#39;</span><span class="p">,</span> <span class="n">cls</span><span class="o">.</span><span class="n">_name</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()])</span>
+                <span class="k">if</span> <span class="n">SignalClassName</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cls</span><span class="o">.</span><span class="n">_classes</span><span class="p">:</span>
+                    <span class="n">SignalClass</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">SignalClassName</span><span class="p">,</span> <span class="p">(</span><span class="n">Signal</span><span class="p">,</span> <span class="n">cls</span><span class="p">),</span> <span class="p">{})</span>
+                    <span class="n">parse_method</span><span class="p">(</span><span class="n">SignalClass</span><span class="p">,</span> <span class="n">element</span><span class="p">)</span>
+                    <span class="n">cls</span><span class="o">.</span><span class="n">_classes</span><span class="p">[</span><span class="n">SignalClassName</span><span class="p">]</span> <span class="o">=</span> <span class="n">SignalClass</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">SignalClass</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">_classes</span><span class="p">[</span><span class="n">SignalClassName</span><span class="p">]</span>
+                <span class="n">SignalObj</span> <span class="o">=</span> <span class="n">SignalClass</span><span class="p">(</span><span class="o">**</span><span class="n">signal_dict</span><span class="p">)</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;_&#39;</span><span class="o">+</span><span class="n">signal_dict</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">],</span> <span class="n">SignalObj</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">branch</span> <span class="ow">in</span> <span class="n">module_tree</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">&#39;container&#39;</span><span class="p">):</span>
+            <span class="n">ContainerClassName</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s">&#39;Container&#39;</span><span class="p">,</span> <span class="n">branch</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()])</span>
+            <span class="k">if</span> <span class="n">ContainerClassName</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cls</span><span class="o">.</span><span class="n">_classes</span><span class="p">:</span>
+                <span class="n">ContainerClass</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">ContainerClassName</span><span class="p">,</span> <span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">Container</span><span class="p">),</span> <span class="p">{})</span>
+                <span class="n">init_class</span><span class="p">(</span><span class="n">ContainerClass</span><span class="p">,</span> <span class="n">branch</span><span class="p">)</span>
+                <span class="n">cls</span><span class="o">.</span><span class="n">_classes</span><span class="p">[</span><span class="n">ContainerClassName</span><span class="p">]</span> <span class="o">=</span> <span class="n">ContainerClass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ContainerClass</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">_classes</span><span class="p">[</span><span class="n">ContainerClassName</span><span class="p">]</span>
+            <span class="n">ContainerObj</span> <span class="o">=</span> <span class="n">ContainerClass</span><span class="p">(</span><span class="n">branch</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">branch</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">),</span> <span class="n">ContainerObj</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">module_tree</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">&#39;signal&#39;</span><span class="p">):</span>
+            <span class="n">signal_list</span> <span class="o">=</span> <span class="n">parse_signal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">signal_dict</span> <span class="ow">in</span> <span class="n">signal_list</span><span class="p">:</span>
+                <span class="n">SignalClassName</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s">&#39;Signal&#39;</span><span class="p">,</span> <span class="n">cls</span><span class="o">.</span><span class="n">_name</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()])</span>
+                <span class="k">if</span> <span class="n">SignalClassName</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cls</span><span class="o">.</span><span class="n">_classes</span><span class="p">:</span>
+                    <span class="n">SignalClass</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">SignalClassName</span><span class="p">,</span> <span class="p">(</span><span class="n">Signal</span><span class="p">,</span> <span class="n">cls</span><span class="p">),</span> <span class="p">{})</span>
+                    <span class="n">parse_method</span><span class="p">(</span><span class="n">SignalClass</span><span class="p">,</span> <span class="n">element</span><span class="p">)</span>
+                    <span class="n">cls</span><span class="o">.</span><span class="n">_classes</span><span class="p">[</span><span class="n">SignalClassName</span><span class="p">]</span> <span class="o">=</span> <span class="n">SignalClass</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">SignalClass</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">_classes</span><span class="p">[</span><span class="n">SignalClassName</span><span class="p">]</span>
+                <span class="n">SignalObj</span> <span class="o">=</span> <span class="n">SignalClass</span><span class="p">(</span><span class="o">**</span><span class="n">signal_dict</span><span class="p">)</span>
+                <span class="n">refs</span> <span class="o">=</span> <span class="n">parse_refs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">,</span> <span class="n">SignalObj</span><span class="o">.</span><span class="n">_transpose</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">refs</span><span class="p">:</span>
+                    <span class="n">refs</span> <span class="o">=</span> <span class="n">SignalObj</span><span class="o">.</span><span class="n">axes</span>
+                <span class="k">for</span> <span class="n">axis</span><span class="p">,</span> <span class="n">ref</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">SignalObj</span><span class="o">.</span><span class="n">axes</span><span class="p">,</span> <span class="n">refs</span><span class="p">):</span>
+                    <span class="nb">setattr</span><span class="p">(</span><span class="n">SignalObj</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;_&#39;</span><span class="o">+</span><span class="n">ref</span><span class="p">))</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">signal_dict</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">],</span> <span class="n">SignalObj</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;_parent&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;&#39;{}&#39; object has no attribute &#39;{}&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                                 <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="n">attribute</span><span class="p">))</span>
+        <span class="n">attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parent</span><span class="p">,</span> <span class="n">attribute</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">ismethod</span><span class="p">(</span><span class="n">attr</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">types</span><span class="o">.</span><span class="n">MethodType</span><span class="p">(</span><span class="n">attr</span><span class="o">.</span><span class="n">im_func</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">attr</span>
+
+
+<span class="k">def</span> <span class="nf">init_class</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">module_tree</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+    <span class="n">cls</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">module_tree</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">cls</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cls</span><span class="o">.</span><span class="n">_instances</span><span class="p">:</span>
+        <span class="n">cls</span><span class="o">.</span><span class="n">_instances</span><span class="p">[</span><span class="n">cls</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">read_only</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;root&#39;</span><span class="p">,</span> <span class="s">&#39;diagnostic&#39;</span><span class="p">]:</span>
+        <span class="k">try</span><span class="p">:</span>
+             <span class="nb">setattr</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="s">&#39;_&#39;</span><span class="o">+</span><span class="n">read_only</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">read_only</span><span class="p">])</span>
+             <span class="k">print</span><span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="n">read_only</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">read_only</span><span class="p">,</span> <span class="s">&#39;Not there&#39;</span><span class="p">))</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;mdstree&#39;</span><span class="p">,</span> <span class="s">&#39;mdspath&#39;</span><span class="p">,</span> <span class="s">&#39;units&#39;</span><span class="p">]:</span>
+        <span class="n">getitem</span> <span class="o">=</span> <span class="n">module_tree</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">getitem</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">getitem</span><span class="p">)</span>
+
+    <span class="n">parse_method</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">module_tree</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">parse_method</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">module_tree</span><span class="p">):</span>
+    <span class="n">diagnostic</span> <span class="o">=</span> <span class="n">modules</span><span class="o">.</span><span class="n">__getattribute__</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">_diagnostic</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="n">module_tree</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">&#39;method&#39;</span><span class="p">):</span>
+        <span class="n">method_text</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="n">text</span>
+        <span class="k">if</span> <span class="n">method_text</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">method_text</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">)</span>
+        <span class="n">module_file</span> <span class="o">=</span> <span class="n">diagnostic</span><span class="o">.</span><span class="n">__getattribute__</span><span class="p">(</span><span class="n">method_text</span><span class="p">)</span>
+        <span class="n">method_from_file</span> <span class="o">=</span> <span class="n">module_file</span><span class="o">.</span><span class="n">__getattribute__</span><span class="p">(</span><span class="n">method_text</span><span class="p">)</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">method</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">),</span> <span class="n">method_from_file</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">base_container</span><span class="p">(</span><span class="n">container</span><span class="p">):</span>
+    <span class="n">parent_container</span> <span class="o">=</span> <span class="n">container</span>
+    <span class="k">while</span> <span class="nb">type</span><span class="p">(</span><span class="n">parent_container</span><span class="o">.</span><span class="n">_parent</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">Shot</span><span class="p">:</span>
+        <span class="n">parent_container</span> <span class="o">=</span> <span class="n">parent_container</span><span class="o">.</span><span class="n">_parent</span>
+    <span class="k">return</span> <span class="n">parent_container</span>
+
+
+<span class="k">def</span> <span class="nf">parse_signal</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
+    <span class="n">units</span> <span class="o">=</span> <span class="n">parse_units</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">element</span><span class="p">)</span>
+    <span class="n">axes</span><span class="p">,</span> <span class="n">transpose</span> <span class="o">=</span> <span class="n">parse_axes</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">element</span><span class="p">)</span>
+    <span class="n">num</span> <span class="o">=</span> <span class="n">element</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;range&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">num</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">element</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">)</span>
+        <span class="n">mdspath</span><span class="p">,</span> <span class="n">dim_of</span> <span class="o">=</span> <span class="n">parse_mdspath</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">element</span><span class="p">)</span>
+        <span class="n">mdstree</span> <span class="o">=</span> <span class="n">parse_mdstree</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">element</span><span class="p">)</span>
+        <span class="n">error</span> <span class="o">=</span> <span class="n">parse_error</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">element</span><span class="p">)</span>
+        <span class="n">signal_dict</span> <span class="o">=</span> <span class="p">[{</span><span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span> <span class="s">&#39;units&#39;</span><span class="p">:</span> <span class="n">units</span><span class="p">,</span> <span class="s">&#39;axes&#39;</span><span class="p">:</span> <span class="n">axes</span><span class="p">,</span>
+                        <span class="s">&#39;mdsnode&#39;</span><span class="p">:</span> <span class="n">mdspath</span><span class="p">,</span> <span class="s">&#39;mdstree&#39;</span><span class="p">:</span> <span class="n">mdstree</span><span class="p">,</span>
+                        <span class="s">&#39;dim_of&#39;</span><span class="p">:</span> <span class="n">dim_of</span><span class="p">,</span> <span class="s">&#39;error&#39;</span><span class="p">:</span> <span class="n">error</span><span class="p">,</span> <span class="s">&#39;parent&#39;</span><span class="p">:</span><span class="n">obj</span><span class="p">,</span>
+                        <span class="s">&#39;_transpose&#39;</span><span class="p">:</span> <span class="n">transpose</span><span class="p">}]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">num</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>
+        <span class="n">signal_dict</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">digits</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">num</span><span class="o">-</span><span class="mi">1</span><span class="p">)))</span>
+        <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num</span><span class="p">):</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">element</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">index</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="n">digits</span><span class="p">))</span>
+            <span class="n">mdspath</span><span class="p">,</span> <span class="n">dim_of</span> <span class="o">=</span> <span class="n">parse_mdspath</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">element</span><span class="p">)</span>
+            <span class="n">mdspath</span> <span class="o">=</span> <span class="n">mdspath</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">index</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="n">digits</span><span class="p">))</span>
+            <span class="n">mdstree</span> <span class="o">=</span> <span class="n">parse_mdstree</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">element</span><span class="p">)</span>
+            <span class="n">error</span> <span class="o">=</span> <span class="n">parse_error</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">element</span><span class="p">)</span>
+            <span class="n">signal_dict</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span> <span class="s">&#39;units&#39;</span><span class="p">:</span> <span class="n">units</span><span class="p">,</span> <span class="s">&#39;axes&#39;</span><span class="p">:</span> <span class="n">axes</span><span class="p">,</span>
+                        <span class="s">&#39;mdsnode&#39;</span><span class="p">:</span> <span class="n">mdspath</span><span class="p">,</span> <span class="s">&#39;mdstree&#39;</span><span class="p">:</span> <span class="n">mdstree</span><span class="p">,</span>
+                        <span class="s">&#39;dim_of&#39;</span><span class="p">:</span> <span class="n">dim_of</span><span class="p">,</span> <span class="s">&#39;error&#39;</span><span class="p">:</span> <span class="n">error</span><span class="p">,</span> <span class="s">&#39;parent&#39;</span><span class="p">:</span><span class="n">obj</span><span class="p">,</span>
+                        <span class="s">&#39;_transpose&#39;</span><span class="p">:</span> <span class="n">transpose</span><span class="p">})</span>
+    <span class="k">return</span> <span class="n">signal_dict</span>
+
+
+<span class="k">def</span> <span class="nf">parse_axes</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
+    <span class="n">axes</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">refs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">transpose</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">time_ind</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">axes</span> <span class="o">=</span> <span class="p">[</span><span class="n">axis</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">axis</span> <span class="ow">in</span> <span class="n">element</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;axes&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;,&#39;</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="s">&#39;time&#39;</span> <span class="ow">in</span> <span class="n">axes</span><span class="p">:</span>
+            <span class="n">time_ind</span> <span class="o">=</span> <span class="n">axes</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s">&#39;time&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">time_ind</span> <span class="ow">is</span> <span class="ow">not</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">transpose</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">axes</span><span class="p">))</span>
+                <span class="n">transpose</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">time_ind</span><span class="p">)</span>
+                <span class="n">transpose</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">time_ind</span><span class="p">)</span>
+                <span class="n">axes</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">time_ind</span><span class="p">)</span>
+                <span class="n">axes</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s">&#39;time&#39;</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="n">axes</span><span class="p">,</span> <span class="n">transpose</span>
+
+<span class="k">def</span> <span class="nf">parse_refs</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">element</span><span class="p">,</span> <span class="n">transpose</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="n">refs</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">refs</span> <span class="o">=</span> <span class="p">[</span><span class="n">ref</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">ref</span> <span class="ow">in</span> <span class="n">element</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;axes_refs&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;,&#39;</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="n">transpose</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">refs</span> <span class="o">=</span> <span class="p">[</span><span class="n">refs</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">transpose</span><span class="p">]</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="n">refs</span>
+
+<span class="k">def</span> <span class="nf">parse_units</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
+    <span class="n">units</span> <span class="o">=</span> <span class="n">element</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;units&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">units</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">units</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">units</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+    <span class="k">return</span> <span class="n">units</span>
+
+
+<span class="k">def</span> <span class="nf">parse_error</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
+    <span class="n">error</span> <span class="o">=</span> <span class="n">element</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;error&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">error</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">mdspath</span> <span class="o">=</span> <span class="n">element</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;mdspath&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">mdspath</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">mdspath</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">mdspath</span>
+                <span class="n">error</span> <span class="o">=</span> <span class="s">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">mdspath</span><span class="p">,</span> <span class="n">error</span><span class="p">])</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">error</span> <span class="o">=</span> <span class="s">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">mdspath</span><span class="p">,</span> <span class="n">error</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">error</span>
+
+
+<span class="k">def</span> <span class="nf">parse_mdspath</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
+    <span class="n">mdspath</span> <span class="o">=</span> <span class="n">element</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;mdspath&#39;</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">dim_of</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;dim_of&#39;</span><span class="p">))</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">dim_of</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">if</span> <span class="n">mdspath</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">mdspath</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">mdspath</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+    <span class="k">if</span> <span class="n">mdspath</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">mdspath</span> <span class="o">=</span> <span class="s">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">mdspath</span><span class="p">,</span> <span class="n">element</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;mdsnode&#39;</span><span class="p">)])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">mdspath</span> <span class="o">=</span> <span class="n">element</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;mdsnode&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">mdspath</span><span class="p">,</span> <span class="n">dim_of</span>
+
+
+<span class="k">def</span> <span class="nf">parse_mdstree</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
+    <span class="n">mdstree</span> <span class="o">=</span> <span class="n">element</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;mdstree&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">mdstree</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">mdstree</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">mdstree</span>
+    <span class="k">return</span> <span class="n">mdstree</span>
+
+
+<span class="k">def</span> <span class="nf">iterable</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">iter</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span>
+        <span class="k">return</span> <span class="bp">True</span>
+    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">False</span>
+
+
+<span class="k">class</span> <span class="nc">Node</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Node class</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="n">parent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">element</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mdspath</span> <span class="o">=</span> <span class="n">parse_mdspath</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">nstx</span> <span class="o">=</span> <span class="n">Machine</span><span class="p">(</span><span class="s">&#39;nstx&#39;</span><span class="p">)</span>
+    <span class="n">nstx</span><span class="o">.</span><span class="n">s140000</span><span class="o">.</span><span class="n">logbook</span><span class="p">()</span>
+    <span class="c">#nstx.addshot(xp=1048, verbose=True)</span>
+    
+</pre></div>
+
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015, John Schmitt, David R. Smith, Kevin Tritz, Howard Yuh.
+    </p>
+  </div>
+
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.0.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

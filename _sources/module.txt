@@ -3,15 +3,41 @@ Modules and classes
 =========================
 
 
-factory.py module
+Module factory.py
 -----------------------
 .. automodule:: factory
 
-fdf_signal.py module
+
+Class Machine
+-----------------------
+.. autoclass:: Machine
+    :members:
+
+
+Class Shot
+-----------------------
+.. autoclass:: Shot
+    :members:
+
+
+Class Logbook
+-----------------------
+.. autoclass:: Logbook
+    :members:
+
+
+Module fdf_signal.py
 ---------------------------
 .. automodule:: fdf_signal
 
-fdf_globals.py module
+
+Class Signal
+-----------------------
+.. autoclass:: Signal
+    :members:
+
+
+Module fdf_globals.py
 ----------------------------
 .. automodule:: fdf_globals
 

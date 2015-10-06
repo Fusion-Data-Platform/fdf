@@ -1,0 +1,508 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>fdf_signal &mdash; Fusion Data Framework 0.0.0 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="author" title="About these documents"
+              href="../about.html"/>
+    <link rel="top" title="Fusion Data Framework 0.0.0 documentation" href="../index.html"/>
+        <link rel="up" title="Module code" href="index.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+          <a href="../index.html" class="fa fa-home"> Fusion Data Framework</a>
+        
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../about.html">About FDF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../userguide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../module.html">Modules and classes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../module.html#module-factory">Module factory.py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../module.html#class-machine">Class Machine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../module.html#class-shot">Class Shot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../module.html#class-logbook">Class Logbook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../module.html#module-fdf_signal">Module fdf_signal.py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../module.html#class-signal">Class Signal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../module.html#module-fdf_globals">Module fdf_globals.py</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../LICENSE.html">License</a></li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">Fusion Data Framework</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index.html">Module code</a> &raquo;</li>
+      
+    <li>fdf_signal</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <h1>Source code for fdf_signal</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">fdf-signals.py - module containing Signal class</span>
+
+<span class="sd">Classes</span>
+<span class="sd">-------</span>
+<span class="sd">Signal - signal class for data objects</span>
+
+<span class="sd">Created on Tue Jun 23 2015</span>
+
+<span class="sd">@author: hyuh</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">MDSplus</span> <span class="kn">as</span> <span class="nn">mds</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">import</span> <span class="nn">types</span>
+<span class="kn">import</span> <span class="nn">fdf_globals</span>
+
+<span class="n">MDS_SERVERS</span> <span class="o">=</span> <span class="n">fdf_globals</span><span class="o">.</span><span class="n">MDS_SERVERS</span>
+<span class="c"># TODO: implement MDS_SERVERS in place of hard-coded MDS server</span>
+<span class="n">FdfError</span> <span class="o">=</span> <span class="n">fdf_globals</span><span class="o">.</span><span class="n">FdfError</span>
+
+
+<span class="k">class</span> <span class="nc">MdsError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="c"># TODO: implement FdfError from fdf_globals</span>
+    <span class="k">pass</span>
+
+<div class="viewcode-block" id="Signal"><a class="viewcode-back" href="../module.html#fdf_signal.Signal">[docs]</a><span class="k">class</span> <span class="nc">Signal</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    sig=fdf.Signal(signal_ndarray, units=&#39;m/s&#39;, axes=[&#39;radius&#39;,&#39;time&#39;], axes_values=[ax1_1Darray, ax2_1Darray], axes_units=[&#39;s&#39;,&#39;cm&#39;]</span>
+
+<span class="sd">    e.g.:</span>
+<span class="sd">    mds.Signal(np.arange((20*10)).reshape((10,20)), units=&#39;keV&#39;, axes=[&#39;radius&#39;,&#39;time&#39;], axes_values=[100+np.arange(10)*5, np.arange(20)*0.1], axes_units=[&#39;s&#39;,&#39;cm&#39;])</span>
+
+<span class="sd">    or an empty signal:</span>
+<span class="sd">    s=mds.Signal()</span>
+<span class="sd">    default axes order=[time, space]</span>
+<span class="sd">    sig=fdf.Signal(units=&#39;m/s&#39;, axes=[&#39;radius&#39;,&#39;time&#39;], axes_values=[radiusSignal, timeSignal])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">input_array</span><span class="o">=</span><span class="p">[],</span> <span class="n">units</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">[],</span> <span class="n">axes_units</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">axes_values</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                <span class="n">name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">dim_of</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c">#maybe an **kwargs dict for more attr</span>
+        <span class="c">#name is name of signal...e.g. Te</span>
+        <span class="c">#__doc__ for the signal...decriptor (filled in when? XML/MDSvalue?)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&#39;Called __new__:&#39;</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">(</span><span class="n">input_array</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">cls</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="c">#arr = np.asanyarray(input_array).view(cls)</span>
+        <span class="c">#print &#39;__new__: type(arr) %s&#39; % type(arr)</span>
+        <span class="c">#obj = np.array(arr,copy=True)</span>
+        <span class="c">#obj = np.ndarray.__new__(cls, shape=arr.shape, buffer=arr,dtype=arr.dtype)</span>
+        <span class="c">#obj = np.ndarray.__new__(cls, shape=arr.shape, dtype=arr.dtype)</span>
+        <span class="c">#if input_array is not None:</span>
+        <span class="c">#    obj[:] = input_array</span>
+        <span class="c"># obj = np.asarray(input_array).view(cls)</span>
+        <span class="c">#arr = np.asarray(input_array)</span>
+        <span class="c">#obj = np.ndarray.__new__(cls, shape=arr.shape, buffer=arr, dtype=arr.dtype)</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&#39;__new__: type(obj) </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+            <span class="k">print</span> <span class="s">&#39;__new__: setting attributes&#39;</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="n">units</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">axes</span> <span class="o">=</span> <span class="n">axes</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="n">parent</span>
+        <span class="c">#obj._root = root</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">_dim_of</span> <span class="o">=</span> <span class="n">dim_of</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">_verbose</span> <span class="o">=</span> <span class="n">verbose</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">slic</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="c">#not necessary but can be defined</span>
+        <span class="c">#obj.mdstree = mdstree</span>
+        <span class="c">#obj.mdsnode = mdsnode</span>
+        <span class="c">#obj.mdsshot = mdsshot</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span><span class="n">value</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="n">key</span><span class="p">,</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="c">#Initiate slic attribute to hold slice index info</span>
+
+        <span class="k">try</span><span class="p">:</span>
+<span class="c">#            for i, axis in enumerate(axes):</span>
+<span class="c">#                print(name, axis)</span>
+<span class="c">#                setattr(obj, axis, axes_values[i])</span>
+            <span class="k">for</span> <span class="n">axis</span><span class="p">,</span> <span class="n">reference</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">axes</span><span class="p">,</span> <span class="n">axes_values</span><span class="p">):</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="n">reference</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">return</span> <span class="n">obj</span>
+
+<span class="c">#    def __array_prepare__(self, context=None):</span>
+<span class="c">#        print &#39;In __array_prepare__:&#39;</span>
+<span class="c">#        print &#39;   context is&#39; , context</span>
+
+    <span class="k">def</span> <span class="nf">__array_finalize__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+<span class="c">#        if self._verbose:</span>
+<span class="c">#            print &#39;Called __array_finalize__:&#39;</span>
+<span class="c">#            print &#39;__array_finalize__: self is type %s  &#39; % type(self)</span>
+<span class="c">#</span>
+<span class="c">#            try:</span>
+<span class="c">#                print &#39;__array_finalize__: self has len %s&#39; % len(self)</span>
+<span class="c">#            except:</span>
+<span class="c">#                print &#39;__array_finalize__: self has undefined len&#39;</span>
+<span class="c">#</span>
+<span class="c">#            print &#39;__array_finalize__: self hasattr(self,&quot;slic&quot;) is&#39;, hasattr(self,&#39;slic&#39;)</span>
+<span class="c">#            print &#39;__array_finalize__: obj is type %s&#39; % type(obj)</span>
+<span class="c">#            try:</span>
+<span class="c">#                print &#39;__array_finalize__: obj has len %s&#39; % len(obj)</span>
+<span class="c">#            except:</span>
+<span class="c">#                print &#39;__array_finalize__: obj has undefined len&#39;</span>
+<span class="c">#            print &#39;__array_finalize__: self hasattr(obj,&quot;slic&quot;) is&#39;, hasattr(obj,&#39;slic&#39;)</span>
+
+        <span class="k">if</span> <span class="n">obj</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="c">#simple copying over of attributes. Defaults to None so hasattr check skipped</span>
+        <span class="c">#if hasattr(obj,&#39;units&#39;):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s">&#39;units&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="c">#if hasattr(obj,&#39;axes_units&#39;):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">axes_units</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s">&#39;axes_units&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">axes</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s">&#39;axes&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s">&#39;_verbose&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_transpose</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s">&#39;_transpose&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="s">&#39;axes&#39;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">axes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">axis</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">axes</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="s">&#39;slic&#39;</span><span class="p">):</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">slic</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span>
+                                <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">slic</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">slice</span><span class="p">:</span>
+                                    <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">axis</span><span class="p">,</span><span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">axis</span><span class="p">)[</span><span class="n">obj</span><span class="o">.</span><span class="n">slic</span><span class="p">[</span><span class="n">i</span><span class="p">]])</span>
+                                <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">slic</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">tuple</span><span class="p">:</span>
+                                    <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">axis</span><span class="p">,</span><span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">axis</span><span class="p">)[</span><span class="n">obj</span><span class="o">.</span><span class="n">slic</span><span class="p">[</span><span class="n">i</span><span class="p">],])</span>
+                                <span class="k">else</span><span class="p">:</span>
+                                    <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">axis</span><span class="p">,</span><span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">axis</span><span class="p">)[</span><span class="n">obj</span><span class="o">.</span><span class="n">slic</span><span class="p">])</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">axis</span><span class="p">,</span><span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
+                        <span class="k">except</span><span class="p">:</span> <span class="c">#must not have a len(), e.g. int type</span>
+                            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">:</span>
+                                <span class="k">print</span> <span class="s">&#39;slic does not have length, skipping attribute assignment&#39;</span>
+                            <span class="k">pass</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">axis</span><span class="p">,</span><span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">slic</span><span class="o">=</span><span class="bp">None</span>
+
+
+    <span class="k">def</span> <span class="nf">__array_wrap__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">out_arr</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&#39;Called __array_wrap__:&#39;</span>
+            <span class="k">print</span> <span class="s">&#39;__array_wrap__: self is </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+            <span class="k">print</span> <span class="s">&#39;__array_wrap__:  arr is </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">out_arr</span><span class="p">)</span>
+            <span class="c"># then just call the parent</span>
+            <span class="k">print</span> <span class="n">context</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="o">.</span><span class="n">__array_wrap__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">out_arr</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">index</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        self must be Signal class for this to be called, so therefore</span>
+<span class="sd">        must have the slic attribute</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&#39;Called __getitem__:&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">slic</span><span class="o">=</span><span class="n">index</span>
+            <span class="c">#print &#39;   index is type %s&#39; % type(index)</span>
+            <span class="k">print</span> <span class="s">&#39;__getitem__: index is &#39;</span><span class="p">,</span> <span class="n">index</span>
+            <span class="k">print</span> <span class="s">&#39;__getitem__: self.slic is &#39;</span><span class="p">,</span> <span class="n">index</span>
+            <span class="c">#print &#39;__getitem__: new is type %s&#39; % type(new)</span>
+            <span class="k">print</span> <span class="s">&#39;__getitem__: self is type </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+            <span class="k">print</span> <span class="s">&#39;__getitem__: self has len </span><span class="si">%s</span><span class="s"> &#39;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+
+        <span class="c">#Get the data</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+<span class="c">#            try:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_root</span><span class="o">.</span><span class="n">_get_mdsdata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">refcheck</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">data</span>
+<span class="c">#            except:</span>
+<span class="c">#                print &#39;Something went wrong with getting data&#39;</span>
+        <span class="c">#Exec userfunc if method defined:</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">Signal</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__getitem__</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;_parent&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;&#39;{}&#39; object has no attribute &#39;{}&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                                 <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="n">attribute</span><span class="p">))</span>
+        <span class="n">attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parent</span><span class="p">,</span> <span class="n">attribute</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">ismethod</span><span class="p">(</span><span class="n">attr</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">types</span><span class="o">.</span><span class="n">MethodType</span><span class="p">(</span><span class="n">attr</span><span class="o">.</span><span class="n">im_func</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">attr</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__repr__</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__getslice__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&#39;Called __getslice__:&#39;</span>
+        <span class="sd">&quot;&quot;&quot;This solves a subtle bug, where __getitem__ is not called, and all</span>
+<span class="sd">        the dimensional checking not done, when a slice of only the first</span>
+<span class="sd">        dimension is taken, e.g. a[1:3]. From the Python docs:</span>
+<span class="sd">        Deprecated since version 2.0: Support slice objects as parameters</span>
+<span class="sd">        to the __getitem__() method. (However, built-in types in CPython</span>
+<span class="sd">        currently still implement __getslice__(). Therefore, you have to</span>
+<span class="sd">        override it in derived classes when implementing slicing.)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getitem__</span><span class="p">(</span><span class="nb">slice</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">slc</span> <span class="o">=</span> <span class="p">[</span><span class="nb">slice</span><span class="p">(</span><span class="bp">None</span><span class="p">)]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&#39;No axes present for signal {}.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">))</span>
+            <span class="k">return</span> <span class="bp">None</span>
+        <span class="k">for</span> <span class="n">kwarg</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">kwarg</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="p">:</span>
+                <span class="k">print</span><span class="p">(</span><span class="s">&#39;{} is not a valid axis.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">kwarg</span><span class="p">))</span>
+                <span class="k">return</span> <span class="bp">None</span>
+            <span class="n">axis</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">kwarg</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">axis_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kwarg</span><span class="p">)</span>
+                <span class="n">axis_inds</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">value</span><span class="o">-</span><span class="n">axis_value</span><span class="p">[:])</span><span class="o">.</span><span class="n">argmin</span><span class="p">()</span>
+                             <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">values</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+                <span class="n">axis_ind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">values</span><span class="o">-</span><span class="n">axis_value</span><span class="p">)</span><span class="o">.</span><span class="n">argmin</span><span class="p">()</span>
+                <span class="n">axis_inds</span> <span class="o">=</span> <span class="p">[</span><span class="n">axis_ind</span><span class="p">,</span> <span class="n">axis_ind</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">slc</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="n">axis_inds</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">axis_inds</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">slc</span><span class="p">]</span>
+
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    mdsclient = mds.Connection(&#39;skylark&#39;)</span>
+<span class="sd">    tree=&#39;mse&#39;</span>
+<span class="sd">    shotnum=129391</span>
+<span class="sd">    try:</span>
+<span class="sd">        skylark.openTree(tree, shotnum)</span>
+<span class="sd">    except mds.MdsException:</span>
+<span class="sd">        print(&#39;No tree data found for shot {0}&#39;.format(shotnum))</span>
+<span class="sd">        return</span>
+<span class="sd">    data = skylark.get(&#39;raw_of(&#39; + channel + &#39;)&#39;).value</span>
+<span class="sd">    time = skylark.get(&#39;dim_of(&#39; + channel + &#39;)&#39;).value</span>
+<span class="sd">    skylark.closeAllTrees()</span>
+
+<span class="sd">    Sample Signal:</span>
+
+<span class="sd">    nodeMpts=&#39;\\TS_BEST:&#39;</span>
+<span class="sd">    nodeMptsTime=&#39;\\TS_BEST:TS_TIMES&#39;</span>
+<span class="sd">    nodeMptsRadius=&#39;\\TS_BEST:FIT_RADII&#39;</span>
+<span class="sd">    nodeMptsRadiusError=&#39;\\TS_BEST:FIT_R_WIDTH&#39;</span>
+<span class="sd">    nodeMptsTe=&#39;\\TS_BEST:FIT_TE&#39;</span>
+<span class="sd">    nodeMptsTeError=&#39;\\TS_BEST:FIT_TE_ERR&#39;</span>
+
+<span class="sd">    Right now, a single mds.Connection, but maybe we can setup a multiple conn cache?</span>
+<span class="sd">    e.g. an OrderedDict of n connections using a treeshotnum (&#39;140000activespec&#39;) as a key called mdsConnectionsList</span>
+<span class="sd">    try:</span>
+<span class="sd">    mdsConnectionsList[shottree]</span>
+<span class="sd">    except:</span>
+<span class="sd">    Then using oldestConnection=mdsConnectionsList.popitem(last=False) we can get the oldest connection.</span>
+<span class="sd">    newConnection=oldestConnection[1].openTree(newtree,newshotnum)</span>
+<span class="sd">    newTreeShotnum=str(newshotnum).strip()+newtree.lower()</span>
+<span class="sd">    mdsConnectionsList.__setitem__(newTreeShotnum, newConnection). OrderedDict automatically knows this new entry is newest.</span>
+
+<span class="sd">    Note: Be careful as Python treats backslashes as escape chars. Use a double \\ to denote a backslash</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_mdsgetdataThin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        This is the signal method to fill in its own data</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This is all done with __getattr__ now.</span>
+<span class="sd">        When an attribute is not found, it looks up the parent tree</span>
+
+<span class="sd">        if self.mdstree is None:</span>
+<span class="sd">            self.mdstree=getattr(self, &#39;mdstree&#39;)</span>
+<span class="sd">            #make __getattr__ search parent tree</span>
+<span class="sd">        if self.mdsshot is None:</span>
+<span class="sd">            self.mdsshot=getattr(self, &#39;mdsshot&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c">#assumes the mdsconnect() method on root creates root.mdsclient</span>
+        <span class="k">print</span> <span class="s">&#39;Called _mdsgetdata_thin:&#39;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&#39;_mdsgetdataThin: mdsnode is </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">mdsnode</span>
+            <span class="k">print</span> <span class="s">&#39;_mdsgetdataThin: mdstree is </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">mdstree</span>
+            <span class="k">print</span> <span class="s">&#39;_mdsgetdataThin: mdsshot is </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">mdsshot</span>
+
+            <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">_mdsget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mdsshot</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mdstree</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mdsnode</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span><span class="n">refcheck</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="p">[:]</span><span class="o">=</span><span class="n">data</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">MdsError</span><span class="p">(</span><span class="s">&#39;Error populating signal from MDSplus&#39;</span><span class="p">)</span>
+</div>
+<span class="k">class</span> <span class="nc">RootContainer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="n">mds_servers</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s">&#39;nstx&#39;</span><span class="p">:</span> <span class="s">&#39;skylark:8501&#39;</span>
+        <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mdsConnectionsMax</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mdsConnectionsList</span><span class="o">=</span><span class="n">OrderedDict</span><span class="p">({</span><span class="n">x</span><span class="p">:</span> <span class="bp">None</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">)})</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span><span class="n">value</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">key</span><span class="p">,</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_mdsget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">shotnum</span><span class="p">,</span><span class="n">tree</span><span class="p">,</span><span class="n">node</span><span class="p">):</span>
+        <span class="n">shotTree</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">shotnum</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">+</span><span class="n">tree</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">connection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mdsConnectionsList</span><span class="p">[</span><span class="n">shotTree</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">connection</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">node</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">oldestConnection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mdsConnectionsList</span><span class="o">.</span><span class="n">popitem</span><span class="p">(</span><span class="n">last</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">oldestConnection</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">closeAllTrees</span>
+                <span class="n">oldestConnection</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">openTree</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span><span class="n">shotnum</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">mdsConnectionsList</span><span class="o">.</span><span class="n">__setitem__</span><span class="p">(</span><span class="n">shotTree</span><span class="p">,</span> <span class="n">oldestConnection</span><span class="p">)</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mdsConnectionsList</span><span class="p">[</span><span class="n">shotTree</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">node</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="n">newConnection</span><span class="o">=</span><span class="n">mds</span><span class="o">.</span><span class="n">Connection</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mds_servers</span><span class="p">[</span><span class="s">&#39;nstx&#39;</span><span class="p">])</span>
+                <span class="n">newConnection</span><span class="o">.</span><span class="n">openTree</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span><span class="n">shotnum</span><span class="p">)</span>
+                <span class="k">print</span> <span class="s">&#39;_mdsget: newConnection is </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">newConnection</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">mdsConnectionsList</span><span class="o">.</span><span class="n">__setitem__</span><span class="p">(</span><span class="n">shotTree</span><span class="p">,</span> <span class="n">newConnection</span><span class="p">)</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mdsConnectionsList</span><span class="p">[</span><span class="n">shotTree</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">node</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="p">()</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">MdsError</span><span class="p">(</span><span class="s">&#39;Error opening tree or making MDS server connection&#39;</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">shotContainer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">shotnum</span><span class="o">=</span><span class="mi">140000</span><span class="p">,</span><span class="n">tree</span><span class="o">=</span><span class="s">&#39;activespec&#39;</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mdsshot</span><span class="o">=</span><span class="n">shotnum</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mdstree</span><span class="o">=</span><span class="n">tree</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span><span class="n">value</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">key</span><span class="p">,</span><span class="n">value</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015, John Schmitt, David R. Smith, Kevin Tritz, Howard Yuh.
+    </p>
+  </div>
+
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.0.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

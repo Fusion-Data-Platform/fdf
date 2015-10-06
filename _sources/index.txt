@@ -21,10 +21,6 @@ Documentation: `PDF <http://fusion-data-framework.github.io/fdf/_static/FusionDa
     module.rst
     LICENSE.rst
 
-.. automodule:: factory
-.. automodule:: fdf_signal
-.. automodule:: fdf_globals
-
 
 *************************
 Indices and tables

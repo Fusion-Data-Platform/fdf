@@ -68,9 +68,13 @@
 <li class="toctree-l1"><a class="reference internal" href="about.html">About FDF</a></li>
 <li class="toctree-l1"><a class="reference internal" href="userguide.html">User Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module.html">Modules and classes</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module.html#module-factory">factory.py module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="module.html#module-fdf_signal">fdf_signal.py module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="module.html#module-fdf_globals">fdf_globals.py module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module.html#module-factory">Module factory.py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module.html#class-machine">Class Machine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module.html#class-shot">Class Shot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module.html#class-logbook">Class Logbook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module.html#module-fdf_signal">Module fdf_signal.py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module.html#class-signal">Class Signal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module.html#module-fdf_globals">Module fdf_globals.py</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="LICENSE.html">License</a></li>
@@ -119,46 +123,18 @@
 <li class="toctree-l1"><a class="reference internal" href="about.html">About FDF</a></li>
 <li class="toctree-l1"><a class="reference internal" href="userguide.html">User Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module.html">Modules and classes</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module.html#module-factory">factory.py module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="module.html#module-fdf_signal">fdf_signal.py module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="module.html#module-fdf_globals">fdf_globals.py module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module.html#module-factory">Module factory.py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module.html#class-machine">Class Machine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module.html#class-shot">Class Shot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module.html#class-logbook">Class Logbook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module.html#module-fdf_signal">Module fdf_signal.py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module.html#class-signal">Class Signal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module.html#module-fdf_globals">Module fdf_globals.py</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="LICENSE.html">License</a></li>
 </ul>
 </div>
-<span class="target" id="module-factory"></span><p>factory.py - root module for the FDF package.</p>
-<div class="section" id="classes">
-<h2>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h2>
-<p>Machine - root class for the FDF package
-Shot - shot container class
-Logbook - logbook connection class
-Container - diagnostic container class
-Node - mdsplus signal node class
-FdfError - error class for FDF package</p>
-</div>
-<div class="section" id="usage">
-<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">fdf</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nstx</span> <span class="o">=</span> <span class="n">fdf</span><span class="o">.</span><span class="n">Machine</span><span class="p">(</span><span class="s">&#39;nstx&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nstx</span><span class="o">.</span><span class="n">s140000</span><span class="o">.</span><span class="n">logbook</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nstx</span><span class="o">.</span><span class="n">addshots</span><span class="p">(</span><span class="n">xp</span><span class="o">=</span><span class="mi">1048</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nstx</span><span class="o">.</span><span class="n">s140000</span><span class="o">.</span><span class="n">mpts</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-</pre></div>
-</div>
-<p>Created on Thu Jun 18 10:38:40 2015
-&#64;author: ktritz</p>
-</div>
-<span class="target" id="module-fdf_signal"></span><p>fdf-signals.py - module containing Signal class</p>
-<div class="section" id="id1">
-<h2>Classes<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
-<p>Signal - signal class for data objects</p>
-<p>Created on Tue Jun 23 2015</p>
-<p>&#64;author: hyuh</p>
-</div>
-<span class="target" id="module-fdf_globals"></span><p>fdf_globals.py contains package-level constants</p>
-<p>Created on Thu Jun 18 11:18:16 2015</p>
-<p>&#64;author: ktritz</p>
 <div class="section" id="indices-and-tables">
 <h2>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
