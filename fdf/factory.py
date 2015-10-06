@@ -76,7 +76,7 @@ class Machine(MutableMapping):
         self._shots = {}
         self._classlist = {}
         self._name = name.lower()
-        
+
         if self._name not in LOGBOOK_CREDENTIALS \
             or self._name not in MDS_SERVERS:
                 txt = '\n{} is not a valid machine.\n'.format(self._name.upper())
@@ -84,7 +84,7 @@ class Machine(MutableMapping):
                 for machine in LOGBOOK_CREDENTIALS:
                     txt = txt + '  {}\n'.format(machine.upper())
                 raise FdfError(txt)
-        
+
         self._logbook = Logbook(name=self._name, root=self)
         self.s0 = Shot(0, root=self, parent=self)
 
@@ -279,16 +279,16 @@ class Shot(MutableMapping):
 
 
 class Logbook(object):
-    
+
     def __init__(self, name='nstx', root=None):
         self._name = name.lower()
         self._root = root
-        
+
         self._credentials = {}
         self._table = ''
         self._shotlist_query_prefix = ''
         self._shot_query_prefix = ''
-        
+
         self._logbook_connection = None
         self._make_logbook_connection()
 
@@ -299,14 +299,14 @@ class Logbook(object):
     def _make_logbook_connection(self):
         self._credentials = LOGBOOK_CREDENTIALS[self._name]
         self._table = self._credentials['table']
-        
+
         self._shotlist_query_prefix = (
             'SELECT DISTINCT rundate, shot, xp, voided '
             'FROM {} WHERE voided IS null').format(self._table)
         self._shot_query_prefix = (
             'SELECT dbkey, username, rundate, shot, xp, topic, text, entered, voided '
             'FROM {} WHERE voided IS null').format(self._table)
-            
+
         try:
             self._logbook_connection = pymssql.connect(
                 server=self._credentials['server'],
@@ -319,7 +319,7 @@ class Logbook(object):
             print('Attempting logbook server connection as drsmith')
             try:
                 self._logbook_connection = pymssql.connect(
-                    server=self._credentials['server'], 
+                    server=self._credentials['server'],
                     user='drsmith',
                     password=self._credentials['password'],
                     database=self._credentials['database'],
@@ -355,7 +355,7 @@ class Logbook(object):
     def get_shotlist(self, date=[], xp=[], verbose=False):
         # return list of shots for date and/or XP
         cursor = self._get_cursor()
-        
+
         shotlist = []   # start with empty shotlist
 
         date_list = date
@@ -409,14 +409,12 @@ _tree_dict = {}
 
 
 def Factory(module, root=None, shot=None, parent=None):
-<<<<<<< HEAD
     global _tree_dict
 
-=======
     """
     Factory method
     """
->>>>>>> origin/master
+
     try:
         module = module.lower()
         if module not in _tree_dict:
@@ -712,4 +710,4 @@ if __name__ == '__main__':
     nstx = Machine('nstx')
     nstx.s140000.logbook()
     #nstx.addshot(xp=1048, verbose=True)
-    
+
