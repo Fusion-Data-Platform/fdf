@@ -5,19 +5,20 @@
 User Guide
 *****************************************
 
-This guide is for people who want to use FDF without contributing to the FDF project.
+This guide is for people who want to use FDF on the PPPL Linux cluster.  If you wish to contribute to the FDF code repository (https://github.com/Fusion-Data-Framework/fdf), see the developer guide.
 
 .. only:: latex
     
-    HTML documentation is available here: http://fusion-data-framework.github.io/fdf/
+    HTML documentation is also available: http://fusion-data-framework.github.io/fdf/
 
 .. only:: html
     
-    `PDF Documentation <http://fusion-data-framework.github.io/fdf/_static/FusionDataFramework.pdf>`_ is available.
+    `PDF Documentation <http://fusion-data-framework.github.io/fdf/_static/FusionDataFramework.pdf>`_ is also available.
 
-To use FDF on the PPPL Linux cluster (``portal.pppl.gov``), load the module nstx/fdf (you may need to unload other nstx modules)::
+To use FDF on the PPPL Linux cluster (portal.pppl.gov), load the module nstx/fdf (you may need to unload other nstx modules)::
 
     [sunfire06:~] % module load nstx/fdf
+
     [sunfire06:~] % module list
     Currently Loaded Modulefiles:
     1) torque/2.5.2      5) idl/8.2           9) java/v1.6
@@ -30,7 +31,7 @@ Verify that python points to ``/p/fdf/anaconda/bin/python``::
     [sunfire06:~] % which python
     /p/fdf/anaconda/bin/python
 
-If python does not point to ``/p/fdf/anaconda/bin/python``, then PATH contains to a different python distribution ahead of ``/p/fdf/anaconda/bin``.  In this case, you need to modify PATH so ``/p/fdf/anaconda/bin`` is the first python distribution in PATH.
+If python does not point to ``/p/fdf/anaconda/bin/python``, then PATH contains to a different python distribution.  In this case, you need to modify PATH so ``/p/fdf/anaconda/bin`` is the first python distribution in PATH.
 
 Finally, you can launch python and import the FDF package::
 
@@ -42,3 +43,5 @@ Finally, you can launch python and import the FDF package::
     Please check out: http://continuum.io/thanks and https://anaconda.org
     >>> import fdf
     >>>
+
+

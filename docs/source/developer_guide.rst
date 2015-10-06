@@ -1,7 +1,73 @@
 .. Restructured Text (RST) Syntax Primer: http://sphinx-doc.org/rest.html
 
-
+.. _developer-guide:
 *****************************************
 Developer Guide
 *****************************************
+
+This guide is for people who want to ontribute to the FDF code repository. If you simply want to use FDF on the PPPL Linux cluster, see the user guide.
+
+The FDF code repository is hosted on GitHub: https://github.com/Fusion-Data-Framework/fdf
+
+To participate in the FDF project as a developer, you must create a GitHub account.  On the PPPL Linux cluster, we use Git for collaborative development, version control, and communicating with GitHub.
+
+**Configure Git**
+
+On the portal cluster at PPPL (portal.pppl.gov), load the module git/1.8.0.2::
+
+    [sunfire08:~] % module avail git
+    --------------------- /usr/pppl/Modules/modulefiles -------------------
+    git/1.7.4.1(default)     git/1.8.0.2      git/2.4.2
+    
+    [sunfire08:~] % module load git/1.8.0.2
+    
+    [sunfire08:~] % module list
+    Currently Loaded Modulefiles:
+    1) torque/2.5.2      3) ppplcluster/1.1
+    2) moab/5.4.0        4) git/1.8.0.2
+
+On portalr6, the Red Hat 6 cluster at PPPL, use git/2.4.2.  You may want to add the module load command to your shell start-up files: .cshrc for csh/tcsh or .bash_profile for bash.
+
+Next, you must configure Git with your name and email (the same email associated with your GitHub account)::
+
+    [sunfire08:~] % git config --global user.name "John Doe"
+    [sunfire08:~] % git config --global user.email "JohnDoe@email.com"
+
+Also, we recommend setting an editor (e.g. vi, emacs, nedit) for Git comments::
+
+    [sunfire08:~] % git config --global core.editor nedit
+
+You can inspect your Git configuration in the file ~/.gitconfig.  For more information about Git configuration, see https://help.github.com/articles/set-up-git/ or https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup
+
+**Clone the FDF repository**
+
+Git clones repositories into a new directory in your current directory.  Now you can clone the FDF repository located at https://github.com/Fusion-Data-Framework/fdf.git to your local directory (you may need to enter your GitHub username and password)::
+
+    [sunfire08:~] % ls -d fdf
+    ls: fdf: No such file or directory
+    
+    [sunfire08:~] % git clone https://github.com/Fusion-Data-Framework/fdf.git
+    Cloning into 'fdf'...
+    remote: Counting objects: 619, done.
+    remote: Total 619 (delta 0), reused 0 (delta 0), pack-reused 619
+    Receiving objects: 100% (619/619), 783.01 KiB, done.
+    Resolving deltas: 100% (279/279), done.
+    
+    [sunfire08:~] % ls -d fdf
+    fdf/
+
+The URL for cloning can be found in the right column of the FDF repository page: https://github.com/Fusion-Data-Framework/fdf.
+
+The cloning example above uses the HTTPS method, but cloning via SSH is also feasible: https://help.github.com/articles/set-up-git/#next-steps-authenticating-with-github-from-git
+
+Finally, add your new fdf directory to the ``PYTHONPATH`` environment variable (you may want to add this action to your shell start-up files: .cshrc for csh/tcsh or .bash_profile bash)::
+
+    [sunfire08:~] % setenv PYTHONPATH ${HOME}/fdf:$PYTHONPATH
+    [sunfire08:~] % echo $PYTHONPATH
+    /u/drsmith/fdf:<other directories>
+
+In bash, use the export command to set ``PYTHONPATH``.
+
+
+
 
