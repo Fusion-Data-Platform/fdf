@@ -118,11 +118,11 @@
             
   <div class="section" id="id1">
 <h1>Developer Guide<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
-<p>This guide is for people who want to contribute to the FDF code repository while working within the PPPL Linux cluster environment.  If you simply want to use FDF on the PPPL Linux cluster, see the user guide.</p>
+<p>This guide is for developers who want to contribute to the FDF project, and this guide describes the development workflow on the PPPL Linux cluster.  If you simply want to use FDF on the PPPL Linux cluster, see the user guide.</p>
 <p>The FDF code repository is hosted on GitHub: <a class="reference external" href="https://github.com/Fusion-Data-Framework/fdf">https://github.com/Fusion-Data-Framework/fdf</a></p>
 <p>To participate in the FDF project as a developer, you must create a GitHub account.  The FDF project uses Git for collaborative development, version control, and GitHub communication.</p>
 <p><strong>Configure Git</strong></p>
-<p>On the Linux cluster at PPPL (portal.pppl.gov), load the module git/1.8.0.2:</p>
+<p>On the PPPL Linux cluster, load the module git/1.8.0.2 (on Red Hat 6 systems, use git/2.4.2):</p>
 <div class="highlight-python"><div class="highlight"><pre>[sunfire08:~] % module avail git
 --------------------- /usr/pppl/Modules/modulefiles -------------------
 git/1.7.4.1(default)     git/1.8.0.2      git/2.4.2
@@ -135,7 +135,7 @@ Currently Loaded Modulefiles:
 2) moab/5.4.0        4) git/1.8.0.2
 </pre></div>
 </div>
-<p>On portalr6 (the Red Hat 6 cluster at PPPL) use git/2.4.2.  You may want to add the module load command to your shell start-up files: .cshrc for csh/tcsh or .bash_profile for bash.</p>
+<p>You may want to add the module load command to your shell start-up files: .cshrc for csh/tcsh or .bash_profile for bash.</p>
 <p>Next, you must configure Git with your name and email (the same email associated with your GitHub account):</p>
 <div class="highlight-python"><div class="highlight"><pre>[sunfire08:~] % git config --global user.name &quot;John Doe&quot;
 [sunfire08:~] % git config --global user.email &quot;JohnDoe@email.com&quot;
@@ -147,7 +147,7 @@ Currently Loaded Modulefiles:
 </div>
 <p>You can inspect your Git configuration in the file ~/.gitconfig.  For more information about Git configuration, see <a class="reference external" href="https://help.github.com/articles/set-up-git/">https://help.github.com/articles/set-up-git/</a> or <a class="reference external" href="https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup">https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup</a></p>
 <p><strong>Clone the FDF repository</strong></p>
-<p>Git clones repositories into a new directory in your current directory.  Now you can clone the FDF repository located at <a class="reference external" href="https://github.com/Fusion-Data-Framework/fdf.git">https://github.com/Fusion-Data-Framework/fdf.git</a> to your local directory (you may need to enter your GitHub username and password):</p>
+<p>Git clones repositories into a new directory in your current directory.  In the right column of the FDF repo page (<a class="reference external" href="https://github.com/Fusion-Data-Framework/fdf">https://github.com/Fusion-Data-Framework/fdf</a>), you can find the HTTPS URL (<a class="reference external" href="https://github.com/Fusion-Data-Framework/fdf.git">https://github.com/Fusion-Data-Framework/fdf.git</a>) to clone FDF to your local directory</p>
 <div class="highlight-python"><div class="highlight"><pre>[sunfire08:~] % ls -d fdf
 ls: fdf: No such file or directory
 
@@ -162,15 +162,15 @@ Resolving deltas: 100% (279/279), done.
 fdf/
 </pre></div>
 </div>
-<p>The URL for cloning can be found in the right column of the FDF repository page: <a class="reference external" href="https://github.com/Fusion-Data-Framework/fdf">https://github.com/Fusion-Data-Framework/fdf</a>.</p>
-<p>The cloning example above uses the HTTPS method, but cloning via SSH is also feasible: <a class="reference external" href="https://help.github.com/articles/set-up-git/#next-steps-authenticating-with-github-from-git">https://help.github.com/articles/set-up-git/#next-steps-authenticating-with-github-from-git</a></p>
+<p>Cloning via SSH is also feasible: <a class="reference external" href="https://help.github.com/articles/set-up-git/#next-steps-authenticating-with-github-from-git">https://help.github.com/articles/set-up-git/#next-steps-authenticating-with-github-from-git</a></p>
 <p>Finally, add your new fdf directory to the <code class="docutils literal"><span class="pre">PYTHONPATH</span></code> environment variable:</p>
 <div class="highlight-python"><div class="highlight"><pre>[sunfire08:~] % setenv PYTHONPATH ${HOME}/fdf:$PYTHONPATH
+
 [sunfire08:~] % echo $PYTHONPATH
 /u/drsmith/fdf:&lt;other directories&gt;
 </pre></div>
 </div>
-<p>You may want to add this action to your shell start-up files: .cshrc for csh/tcsh or .bash_profile bash.  In bash, use the export command to set <code class="docutils literal"><span class="pre">PYTHONPATH</span></code>.</p>
+<p>You may want to add this action to your shell start-up files: .cshrc for csh/tcsh or .bash_profile for bash.  In bash, use the export command to set <code class="docutils literal"><span class="pre">PYTHONPATH</span></code>.</p>
 <p><strong>Git workflow for FDF development</strong></p>
 <ol class="arabic">
 <li><p class="first">Create a development branch (here, we call it devbranch) and checkout the new branch:</p>
