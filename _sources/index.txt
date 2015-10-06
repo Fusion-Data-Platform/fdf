@@ -16,11 +16,13 @@ Documentation: `PDF <http://fusion-data-framework.github.io/fdf/_static/FusionDa
 .. toctree::
     :maxdepth: 2
     
-    about
-    userguide
-    module
-    LICENSE
+    about.rst
+    userguide.rst
+    LICENSE.rst
 
+.. automodule:: factory
+.. automodule:: fdf_signal
+.. automodule:: fdf_globals
 
 
 *************************
