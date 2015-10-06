@@ -171,6 +171,100 @@ fdf/
 </pre></div>
 </div>
 <p>You may want to add this action to your shell start-up files: .cshrc for csh/tcsh or .bash_profile bash.  In bash, use the export command to set <code class="docutils literal"><span class="pre">PYTHONPATH</span></code>.</p>
+<p><strong>Workflow for FDF development</strong></p>
+<ol class="arabic">
+<li><p class="first">Create a development branch (here, we call it devbranch) and checkout the new branch:</p>
+<div class="highlight-python"><div class="highlight"><pre>[sunfire08:~] % cd fdf
+
+[sunfire08:~/fdf] % git branch
+* master
+
+[sunfire08:~/fdf] % git branch devbranch
+
+[sunfire08:~/fdf] % git branch
+devbranch
+* master
+
+[sunfire08:~/fdf] % git checkout devbranch
+Switched to branch &#39;devbranch&#39;
+
+[sunfire08:~/fdf] % git branch
+* devbranch
+master
+</pre></div>
+</div>
+</li>
+</ol>
+<p>Devbranch initializes as a copy of master.  <code class="docutils literal"><span class="pre">git</span> <span class="pre">branch</span></code> lists branches in your local repository, and the asterisk denotes the active branch.  You can switch local branches with <code class="docutils literal"><span class="pre">git</span> <span class="pre">checkout</span> <span class="pre">&lt;LocalBranchName&gt;</span></code>.</p>
+<ol class="arabic" start="2">
+<li><p class="first">Push devbranch to the remote FDF repository at GitHub (you may need to enter your GitHub username and password):</p>
+<div class="highlight-python"><div class="highlight"><pre>[sunfire08:~/fdf] % git push origin devbranch
+Total 0 (delta 0), reused 0 (delta 0)
+To https://github.com/Fusion-Data-Framework/fdf.git
+ * [new branch]      devbranch -&gt; devbranch
+</pre></div>
+</div>
+</li>
+</ol>
+<p>devbranch is now listed in the FDF repository at GitHub.  <code class="docutils literal"><span class="pre">origin</span></code> is the alias for the remote GitHub repository.  You can view your remote repositories and aliases with <code class="docutils literal"><span class="pre">git</span> <span class="pre">remote</span> <span class="pre">-v</span></code>.</p>
+<ol class="arabic simple" start="3">
+<li>Proceed with FDF development within devbranch: commit changes, add/delete files, and push updates to GitHub.</li>
+</ol>
+<p>As you complete small tasks, you should commit changes to your local repository with <code class="docutils literal"><span class="pre">git</span> <span class="pre">commit</span> <span class="pre">-a</span> <span class="pre">-m</span> <span class="pre">'&lt;mymessage&gt;'</span></code>.  Also, each commit requires a short message describing the changes:</p>
+<div class="highlight-python"><div class="highlight"><pre>[sunfire02:~/fdf] % git commit -a -m &#39;added dictionary rows in logbook.py&#39;
+[devbranch bb6c58a] added dictionary rows in logbook.py
+1 file changed, 16 insertions(+), 21 deletions(-)
+</pre></div>
+</div>
+<p>If you do not specify a commit message with -m option, then Git will open your default editor and ask for a commit message (see Configure Git above).  The -a option commits all file changes throughout the branch index, not simply your current directory.  The branch index is the list of files Git tracks in the branch.  <code class="docutils literal"><span class="pre">git</span> <span class="pre">commit</span> <span class="pre">-a</span></code> tracks changes to files in the branch index, so you must add new files to the index and remove deleted files from the index.  You can view the branch index with <code class="docutils literal"><span class="pre">git</span> <span class="pre">ls-files</span></code>, and you can add new files to the index and remove deleted files from the index with <code class="docutils literal"><span class="pre">git</span> <span class="pre">add</span> <span class="pre">-A</span></code>:</p>
+<div class="highlight-python"><div class="highlight"><pre>[sunfire02:~/fdf] % touch temp.py
+
+[sunfire02:~/fdf] % ls temp.py
+temp.py
+
+[sunfire02:~/fdf] % git ls-files temp.py
+
+[sunfire02:~/fdf] % git add -A
+
+[sunfire02:~/fdf] % git ls-files temp.py
+temp.py
+</pre></div>
+</div>
+<p>Note that temp.py appeared in the index only after the command <code class="docutils literal"><span class="pre">git</span> <span class="pre">add</span> <span class="pre">-A</span></code>.  Similarly, deleted files stay in the index until the <code class="docutils literal"><span class="pre">git</span> <span class="pre">add</span> <span class="pre">-A</span></code> is given.</p>
+<p>When you complete a large task, you should “push” changes to the devbranch on GitHub with <code class="docutils literal"><span class="pre">git</span> <span class="pre">push</span></code>:</p>
+<div class="highlight-python"><div class="highlight"><pre>[sunfire05:~/fdf] % git push origin devbranch
+Counting objects: 10, done.
+Delta compression using up to 8 threads.
+Compressing objects: 100% (6/6), done.
+Writing objects: 100% (6/6), 1.30 KiB, done.
+Total 6 (delta 3), reused 0 (delta 0)
+To https://github.com/Fusion-Data-Framework/fdf.git
+    129c5d9..a166825 devbranch -&gt; devbranch
+</pre></div>
+</div>
+<p>Again, &#8220;origin&#8221; signifies the branches on the remote GitHub repo.</p>
+<ol class="arabic" start="4">
+<li><p class="first">While you are working locally in devbranch, others may be modifying master at GitHub.  When you are ready to merge devbranch into master, you should first merge the latest version of master from GitHub into your local devbranch.  To retrieve the latest version of master from GitHub, use <code class="docutils literal"><span class="pre">git</span> <span class="pre">fetch</span></code>:</p>
+<div class="highlight-python"><div class="highlight"><pre>[sunfire05:~/fdf] % git fetch origin master
+From https://github.com/Fusion-Data-Framework/fdf
+* branch            master     -&gt; FETCH_HEAD
+</pre></div>
+</div>
+</li>
+</ol>
+<p>Next, verify that you are in devbranch and merge origin/master into devbranch:</p>
+<div class="highlight-python"><div class="highlight"><pre>[sunfire08:~/fdf] % git branch
+* devbranch
+master
+
+[sunfire05:~/fdf] % git merge origin/master
+</pre></div>
+</div>
+<p>Next, push your local devbranch to devbranch on GitHub:</p>
+<div class="highlight-python"><div class="highlight"><pre>[sunfire05:~/fdf] % git push origin devbranch
+</pre></div>
+</div>
+<p>Finally, on the GitHub website, in the devbranch area, submit a <em>pull request</em> to pull devbranch into master.</p>
 </div>
 
 
