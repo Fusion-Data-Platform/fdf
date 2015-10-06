@@ -222,22 +222,23 @@ htmlhelp_basename = 'FusionDataFrameworkdoc'
 
 # -- Options for LaTeX output ---------------------------------------------
 
-latex_elements = {
+#latex_elements = {
 # The paper size ('letterpaper' or 'a4paper').
 #'papersize': 'letterpaper',
 
 # The font size ('10pt', '11pt' or '12pt').
-#'pointsize': '10pt',
+#'pointsize': '11pt',
 
 # Additional stuff for the LaTeX preamble.
 #'preamble': '',
 
 # Latex figure (float) alignment
 #'figure_align': 'htbp',
-}
+#}
 latex_elements = {
   'classoptions': ',oneside',
-  'babel': '\\usepackage[english]{babel}'
+  'babel': '\\usepackage[english]{babel}',
+  'pointsize': '11pt'
 }
 
 # Grouping the document tree into LaTeX files. List of tuples
