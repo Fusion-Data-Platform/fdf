@@ -135,7 +135,7 @@ Currently Loaded Modulefiles:
 2) moab/5.4.0        4) git/1.8.0.2
 </pre></div>
 </div>
-<p>You may want to add the module load command to your shell start-up files: .cshrc for csh/tcsh or .bash_profile for bash.</p>
+<p>You may want to add the module load command to your shell start-up files: ~/.cshrc for csh/tcsh or ~/.bash_profile for bash.</p>
 <p>Next, you must configure Git with your name and email (the same email associated with your GitHub account):</p>
 <div class="highlight-python"><div class="highlight"><pre>[sunfire08:~] % git config --global user.name &quot;John Doe&quot;
 [sunfire08:~] % git config --global user.email &quot;JohnDoe@email.com&quot;
@@ -170,45 +170,38 @@ fdf/
 /u/drsmith/fdf:&lt;other directories&gt;
 </pre></div>
 </div>
-<p>You may want to add this action to your shell start-up files: .cshrc for csh/tcsh or .bash_profile for bash.  In bash, use the export command to set <code class="docutils literal"><span class="pre">PYTHONPATH</span></code>.</p>
+<p>You may want to add this action to your shell start-up files, as described above.  In bash, use the export command to set <code class="docutils literal"><span class="pre">PYTHONPATH</span></code>.</p>
 <p><strong>Git workflow for FDF development</strong></p>
-<ol class="arabic">
-<li><p class="first">Create a development branch (here, we call it devbranch) and checkout the new branch:</p>
+<p>(1) Create a development branch (here, we call it devbranch) and checkout the new branch:</p>
 <div class="highlight-python"><div class="highlight"><pre>[sunfire08:~] % cd fdf
-</pre></div>
-</div>
-<p>[sunfire08:~/fdf] % git branch
-* master</p>
-<p>[sunfire08:~/fdf] % git branch devbranch</p>
-<p>[sunfire08:~/fdf] % git branch
+
+[sunfire08:~/fdf] % git branch
+* master
+
+[sunfire08:~/fdf] % git branch devbranch
+
+[sunfire08:~/fdf] % git branch
 devbranch
-* master</p>
-<p>[sunfire08:~/fdf] % git checkout devbranch
-Switched to branch &#8216;devbranch&#8217;</p>
-<p>[sunfire08:~/fdf] % git branch
+* master
+
+[sunfire08:~/fdf] % git checkout devbranch
+Switched to branch &#39;devbranch&#39;
+
+[sunfire08:~/fdf] % git branch
 * devbranch
-master</p>
-</li>
-</ol>
-<p>Devbranch initializes as a copy of master.  <code class="docutils literal"><span class="pre">git</span> <span class="pre">branch</span></code> lists branches in your local repository, and the asterisk denotes the active branch.  You can switch between local branches with <code class="docutils literal"><span class="pre">git</span> <span class="pre">checkout</span> <span class="pre">&lt;LocalBranchName&gt;</span></code>.</p>
-<ol class="arabic" start="2">
-<li><p class="first">Push devbranch to the remote FDF repository at GitHub (you may need to enter your GitHub username and password):</p>
-<div class="highlight-python"><div class="highlight"><pre>[sunfire08:~/fdf] % git push origin devbranch
+master
 </pre></div>
 </div>
-<p>Total 0 (delta 0), reused 0 (delta 0)
-To <a class="reference external" href="https://github.com/Fusion-Data-Framework/fdf.git">https://github.com/Fusion-Data-Framework/fdf.git</a></p>
-<blockquote>
-<div><ul class="simple">
-<li>[new branch]      devbranch -&gt; devbranch</li>
-</ul>
-</div></blockquote>
-</li>
-</ol>
+<p>Devbranch initializes as a copy of master.  <code class="docutils literal"><span class="pre">git</span> <span class="pre">branch</span></code> lists branches in your local repository, and the asterisk denotes the active branch.  You can switch between local branches with <code class="docutils literal"><span class="pre">git</span> <span class="pre">checkout</span> <span class="pre">&lt;LocalBranchName&gt;</span></code>.</p>
+<p>(2) Push devbranch to the remote FDF repository at GitHub (you may need to enter your GitHub username and password):</p>
+<div class="highlight-python"><div class="highlight"><pre>[sunfire08:~/fdf] % git push origin devbranch
+Total 0 (delta 0), reused 0 (delta 0)
+To https://github.com/Fusion-Data-Framework/fdf.git
+ * [new branch]      devbranch -&gt; devbranch
+</pre></div>
+</div>
 <p>devbranch is now listed in the FDF repository at GitHub.  <code class="docutils literal"><span class="pre">origin</span></code> is the alias for the remote GitHub repository.  You can view your remote repositories and aliases with <code class="docutils literal"><span class="pre">git</span> <span class="pre">remote</span> <span class="pre">-v</span></code>.</p>
-<ol class="arabic simple" start="3">
-<li>Proceed with FDF development within devbranch: commit changes, add/delete files, and push updates to GitHub.</li>
-</ol>
+<p>(3) Proceed with FDF development within devbranch: commit changes, add/delete files, and push updates to GitHub.</p>
 <p>As you complete small tasks, you should commit changes to your local repository with <code class="docutils literal"><span class="pre">git</span> <span class="pre">commit</span> <span class="pre">-a</span> <span class="pre">-m</span> <span class="pre">'&lt;mymessage&gt;'</span></code>.  Also, each commit requires a short message describing the changes:</p>
 <div class="highlight-python"><div class="highlight"><pre>[sunfire02:~/fdf] % git commit -a -m &#39;added dictionary rows in logbook.py&#39;
 [devbranch bb6c58a] added dictionary rows in logbook.py
@@ -242,15 +235,12 @@ To https://github.com/Fusion-Data-Framework/fdf.git
 </pre></div>
 </div>
 <p>Again, &#8220;origin&#8221; signifies the branches on the remote GitHub repo.</p>
-<ol class="arabic" start="4">
-<li><p class="first">While you are working locally in devbranch, others may be modifying master at GitHub.  When you are ready to merge devbranch into master, you should first merge the latest version of master from GitHub into your local devbranch.  To retrieve the latest version of master from GitHub, use <code class="docutils literal"><span class="pre">git</span> <span class="pre">fetch</span></code>:</p>
+<p>(4) While you are working locally in devbranch, others may be modifying master at GitHub.  When you are ready to merge devbranch into master, you should first merge the latest version of master from GitHub into your local devbranch.  To retrieve the latest version of master from GitHub, use <code class="docutils literal"><span class="pre">git</span> <span class="pre">fetch</span></code>:</p>
 <div class="highlight-python"><div class="highlight"><pre>[sunfire05:~/fdf] % git fetch origin master
+From https://github.com/Fusion-Data-Framework/fdf
+* branch            master     -&gt; FETCH_HEAD
 </pre></div>
 </div>
-<p>From <a class="reference external" href="https://github.com/Fusion-Data-Framework/fdf">https://github.com/Fusion-Data-Framework/fdf</a>
-* branch            master     -&gt; FETCH_HEAD</p>
-</li>
-</ol>
 <p>Next, verify that you are in devbranch and merge origin/master into devbranch:</p>
 <div class="highlight-python"><div class="highlight"><pre>[sunfire08:~/fdf] % git branch
 * devbranch
