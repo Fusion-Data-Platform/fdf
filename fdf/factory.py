@@ -57,6 +57,7 @@ class Machine(MutableMapping):
     # to avoid proliferation of MDS server connections
     _connections = OrderedDict()
     _parent = None
+    _modules = None
 
     def __init__(self, name='nstx', shotlist=[], xp=[], date=[]):
         self._shots = {}
@@ -156,10 +157,12 @@ class Machine(MutableMapping):
         return data
 
     def _get_modules(self):
-        module_dir = os.path.join(FDF_DIR, 'modules')
-        modules = [module for module in os.listdir(module_dir)
-                   if os.path.isdir(os.path.join(module_dir, module))]
-        return modules
+
+        if self._modules is None:
+            module_dir = os.path.join(FDF_DIR, 'modules')
+            self._modules = [module for module in os.listdir(module_dir)
+                        if os.path.isdir(os.path.join(module_dir, module))]
+        return self._modules
 
     def addshot(self, shotlist=[], date=[], xp=[], verbose=False):
         if not iterable(shotlist):
@@ -378,23 +381,29 @@ class Logbook():
             entries.extend(self.logbook[sh])
         return entries
 
+_tree_dict = {}
+
 
 def Factory(module, root=None, shot=None, parent=None):
+    global _tree_dict
+
     try:
         module = module.lower()
-        module_path = os.path.join(FDF_DIR, 'modules', module)
-        parse_tree = ET.parse(os.path.join(module_path,
-                                           ''.join([module, '.xml'])))
-        module_tree = parse_tree.getroot()
+        if module not in _tree_dict:
+            module_path = os.path.join(FDF_DIR, 'modules', module)
+            parse_tree = ET.parse(os.path.join(module_path,
+                                               ''.join([module, '.xml'])))
+            module_tree = parse_tree.getroot()
+            _tree_dict[module] = module_tree
         DiagnosticClassName = ''.join(['Diagnostic', module.capitalize()])
         if DiagnosticClassName not in Container._classes:
             DiagnosticClass = type(DiagnosticClassName, (Container,), {})
-            init_class(DiagnosticClass, module_tree, root=root, diagnostic=module)
+            init_class(DiagnosticClass, _tree_dict[module], root=root, diagnostic=module)
             Container._classes[DiagnosticClassName] = DiagnosticClass
         else:
             DiagnosticClass = Container._classes[DiagnosticClassName]
 
-        return DiagnosticClass(module_tree, shot=shot, parent=parent)
+        return DiagnosticClass(_tree_dict[module], shot=shot, parent=parent)
 
     except IOError:
         print("{} not found in modules directory".format(module))
@@ -611,22 +620,32 @@ def parse_error(obj, element):
     return error
 
 
+_path_dict = {}
+
+
 def parse_mdspath(obj, element):
-    mdspath = element.get('mdspath')
+    global _path_dict
+
+    key = (type(obj), element)
     try:
-        dim_of = int(element.get('dim_of'))
-    except:
-        dim_of = None
-    if mdspath is None:
+        return _path_dict[key]
+    except KeyError:
+        mdspath = element.get('mdspath')
         try:
-            mdspath = obj.mdspath
+            dim_of = int(element.get('dim_of'))
         except:
-            pass
-    if mdspath is not None:
-        mdspath = '.'.join([mdspath, element.get('mdsnode')])
-    else:
-        mdspath = element.get('mdsnode')
-    return mdspath, dim_of
+            dim_of = None
+        if mdspath is None:
+            try:
+                mdspath = obj.mdspath
+            except:
+                pass
+        if mdspath is not None:
+            mdspath = '.'.join([mdspath, element.get('mdsnode')])
+        else:
+            mdspath = element.get('mdsnode')
+        _path_dict[key] = (mdspath, dim_of)
+        return mdspath, dim_of
 
 
 def parse_mdstree(obj, element):
