@@ -1,9 +1,9 @@
-.. RST Syntax Primer: http://sphinx-doc.org/rest.html
+.. Restructured Text (RST) Syntax Primer: http://sphinx-doc.org/rest.html
 
 
-=========================
+*****************************************
 User Guide
-=========================
+*****************************************
 
 
 

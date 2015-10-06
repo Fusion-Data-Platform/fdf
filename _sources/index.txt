@@ -1,4 +1,4 @@
-.. RST Syntax Primer: http://sphinx-doc.org/rest.html
+.. Restructured Text (RST) Syntax Primer: http://sphinx-doc.org/rest.html
 
 
 #####################################
@@ -16,13 +16,13 @@ Documentation: `PDF <http://fusion-data-framework.github.io/fdf/_static/FusionDa
     
     about.rst
     userguide.rst
-    code_reference.rst
+    package_reference.rst
     LICENSE.rst
 
 
-*************************
+*****************************************
 Indices and tables
-*************************
+*****************************************
 
 * :ref:`genindex`
 * :ref:`modindex`
