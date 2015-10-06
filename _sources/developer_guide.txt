@@ -7,9 +7,17 @@ Developer Guide
 
 This guide is for developers who want to contribute to the FDF project, and this guide describes the development workflow on the PPPL Linux cluster.  If you simply want to use FDF on the PPPL Linux cluster, see the user guide.
 
+.. only:: latex
+    
+    HTML documentation is also available: http://fusion-data-framework.github.io/fdf/
+
+.. only:: html
+    
+    `PDF Documentation <http://fusion-data-framework.github.io/fdf/_static/FusionDataFramework.pdf>`_ is also available.
+
 The FDF code repository is hosted on GitHub: https://github.com/Fusion-Data-Framework/fdf
 
-To participate in the FDF project as a developer, you must create a GitHub account.  The FDF project uses Git for collaborative development, version control, and GitHub communication.
+To participate in the FDF project as a developer, you must create a GitHub account.  The FDF project uses GitHub and Git for collaborative development and version control.
 
 **Configure Git**
 
