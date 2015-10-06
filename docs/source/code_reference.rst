@@ -1,43 +1,44 @@
 ***************************
-Modules and classes
+Code Reference
 ***************************
 
 
 Module factory.py
-=================================
+-----------------------
 .. automodule:: factory
 
 
 Class Machine
 -----------------------
-.. autoclass:: Machine
+.. autoclass:: factory.Machine
     :members:
 
 
 Class Shot
 -----------------------
-.. autoclass:: Shot
+.. autoclass:: factory.Shot
     :members:
 
 
 Class Logbook
 -----------------------
-.. autoclass:: Logbook
+.. autoclass:: factory.Logbook
     :members:
 
 
 Module fdf_signal.py
-=================================
+-----------------------
 .. automodule:: fdf_signal
 
 
 Class Signal
 -----------------------
-.. autoclass:: Signal
+.. autoclass:: fdf_signal.Signal
     :members:
 
 
 Module fdf_globals.py
-=================================
+-----------------------
 .. automodule:: fdf_globals
+
 

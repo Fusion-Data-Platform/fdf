@@ -18,7 +18,7 @@ Documentation: `PDF <http://fusion-data-framework.github.io/fdf/_static/FusionDa
     
     about.rst
     userguide.rst
-    module.rst
+    code_reference.rst
     LICENSE.rst
 
 
