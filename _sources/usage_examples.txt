@@ -43,7 +43,7 @@ or by XP::
 
     >>> nstx.addshot(xp=1048)
 
-or by date (YYYYMMDD (string or int)::
+or by date (YYYYMMDD (string or int))::
 
     >>> nstx.addshot(date=20100817)
 
