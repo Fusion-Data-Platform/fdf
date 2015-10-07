@@ -128,7 +128,7 @@
 </div>
 <div class="section" id="define-a-machine-instance">
 <h2>Define a machine instance<a class="headerlink" href="#define-a-machine-instance" title="Permalink to this headline">¶</a></h2>
-<p><strong>Define</strong> an NSTX machine instance:</p>
+<p><strong>Define</strong> a NSTX machine instance:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nstx</span> <span class="o">=</span> <span class="n">fdf</span><span class="o">.</span><span class="n">Machine</span><span class="p">(</span><span class="s">&#39;nstx&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -159,8 +159,14 @@
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nstx</span><span class="o">.</span><span class="n">addshot</span><span class="p">(</span><span class="n">date</span><span class="o">=</span><span class="mi">20100817</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>List shots presently loaded:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">dir</span><span class="p">(</span><span class="n">nstx</span><span class="p">)</span>
+</pre></div>
+</div>
 <p>Get a custom shotlist:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">my_shotlist</span> <span class="o">=</span> <span class="n">nstx</span><span class="o">.</span><span class="n">get_shotlist</span><span class="p">(</span><span class="n">xp</span><span class="o">=</span><span class="mi">1032</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">my_shotlist</span><span class="p">)</span>
+<span class="go">&lt;type &#39;numpy.ndarray&#39;&gt;</span>
 </pre></div>
 </div>
 </div>

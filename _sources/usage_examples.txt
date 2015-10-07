@@ -15,7 +15,7 @@ Import the FDF module::
 Define a machine instance
 =======================================
 
-**Define** an NSTX machine instance::
+**Define** a NSTX machine instance::
 
     >>> nstx = fdf.Machine('nstx')
 
@@ -47,8 +47,15 @@ or by date (YYYYMMDD (string or int)::
 
     >>> nstx.addshot(date=20100817)
 
+List shots presently loaded::
+
+    >>> dir(nstx)
+
 Get a custom shotlist::
 
     >>> my_shotlist = nstx.get_shotlist(xp=1032)
+    >>> type(my_shotlist)
+    <type 'numpy.ndarray'>
+
 
 
