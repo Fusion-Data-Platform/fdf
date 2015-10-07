@@ -69,7 +69,11 @@
 <li class="toctree-l1"><a class="reference internal" href="about.html">About FDF</a></li>
 <li class="toctree-l1"><a class="reference internal" href="user_guide.html">User Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="developer_guide.html">Developer Guide</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">Usage Examples</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Usage Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#define-a-machine-instance">Define a machine instance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#loading-shots-and-xps">Loading shots and XPs</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="package_reference.html">Package Reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="package_reference.html#module-factory">Module factory.py</a></li>
 <li class="toctree-l2"><a class="reference internal" href="package_reference.html#class-machine">Class Machine</a></li>
@@ -118,6 +122,48 @@
             
   <div class="section" id="id1">
 <h1>Usage Examples<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<p>Import the FDF module:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">fdf</span>
+</pre></div>
+</div>
+<div class="section" id="define-a-machine-instance">
+<h2>Define a machine instance<a class="headerlink" href="#define-a-machine-instance" title="Permalink to this headline">¶</a></h2>
+<p><strong>Define</strong> an NSTX machine instance:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nstx</span> <span class="o">=</span> <span class="n">fdf</span><span class="o">.</span><span class="n">Machine</span><span class="p">(</span><span class="s">&#39;nstx&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>or pre-load a shotlist:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nstx</span> <span class="o">=</span> <span class="n">fdf</span><span class="o">.</span><span class="n">Machine</span><span class="p">(</span><span class="s">&#39;nstx&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">140000</span><span class="p">,</span> <span class="mi">140001</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>or pre-load an XP:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nstx</span> <span class="o">=</span> <span class="n">fdf</span><span class="o">.</span><span class="n">Machine</span><span class="p">(</span><span class="s">&#39;nstx&#39;</span><span class="p">,</span> <span class="n">xp</span><span class="o">=</span><span class="mi">1013</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="loading-shots-and-xps">
+<h2>Loading shots and XPs<a class="headerlink" href="#loading-shots-and-xps" title="Permalink to this headline">¶</a></h2>
+<p><strong>Add shot(s)</strong> to the NSTX instance:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nstx</span><span class="o">.</span><span class="n">addshot</span><span class="p">(</span><span class="mi">140000</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>or a shotlist:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nstx</span><span class="o">.</span><span class="n">addshot</span><span class="p">([</span><span class="mi">141400</span><span class="p">,</span> <span class="mi">141401</span><span class="p">,</span> <span class="mi">141402</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>or by XP:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nstx</span><span class="o">.</span><span class="n">addshot</span><span class="p">(</span><span class="n">xp</span><span class="o">=</span><span class="mi">1048</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>or by date (YYYYMMDD (string or int):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nstx</span><span class="o">.</span><span class="n">addshot</span><span class="p">(</span><span class="n">date</span><span class="o">=</span><span class="mi">20100817</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Get a custom shotlist:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">my_shotlist</span> <span class="o">=</span> <span class="n">nstx</span><span class="o">.</span><span class="n">get_shotlist</span><span class="p">(</span><span class="n">xp</span><span class="o">=</span><span class="mi">1032</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
 </div>
 
 

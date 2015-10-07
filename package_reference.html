@@ -69,7 +69,11 @@
 <li class="toctree-l1"><a class="reference internal" href="about.html">About FDF</a></li>
 <li class="toctree-l1"><a class="reference internal" href="user_guide.html">User Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="developer_guide.html">Developer Guide</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage_examples.html">Usage Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage_examples.html">Usage Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="usage_examples.html#define-a-machine-instance">Define a machine instance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage_examples.html#loading-shots-and-xps">Loading shots and XPs</a></li>
+</ul>
+</li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">Package Reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#module-factory">Module factory.py</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#class-machine">Class Machine</a></li>
@@ -151,11 +155,11 @@
 </pre></div>
 </div>
 <p>Alternatively, a list of shot #&#8217;s may be provided during initialization:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="go">&gt;&gt;&gt;nstx = Machine(name=&#39;nstx&#39;, shotlist=[141398, 141399])</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nstx</span> <span class="o">=</span> <span class="n">Machine</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;nstx&#39;</span><span class="p">,</span> <span class="n">shotlist</span><span class="o">=</span><span class="p">[</span><span class="mi">141398</span><span class="p">,</span> <span class="mi">141399</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>Or added later using the addshot method:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="go">&gt;&gt;&gt;nstx.addshot([141398, 141399])</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nstx</span><span class="o">.</span><span class="n">addshot</span><span class="p">([</span><span class="mi">141398</span><span class="p">,</span> <span class="mi">141399</span><span class="p">])</span>
 </pre></div>
 </div>
 </dd></dl>
