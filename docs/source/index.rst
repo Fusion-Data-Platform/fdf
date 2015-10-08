@@ -17,7 +17,7 @@ Fusion Data Framework
     developer_guide.rst
     usage_examples.rst
     package_reference.rst
-    genindex
+    genindex.html
 
 * :ref:`genindex`
 
