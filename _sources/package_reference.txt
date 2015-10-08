@@ -16,19 +16,19 @@ Module factory.py
 .. automodule:: factory
 
 
-Class Machine
+Class factory.Machine
 ====================================
 .. autoclass:: factory.Machine
     :members:
 
 
-Class Shot
+Class factory.Shot
 ====================================
 .. autoclass:: factory.Shot
     :members:
 
 
-Class Logbook
+Class factory.Logbook
 ====================================
 .. autoclass:: factory.Logbook
     :members:
@@ -39,7 +39,7 @@ Module fdf_signal.py
 .. automodule:: fdf_signal
 
 
-Class Signal
+Class fdf_signal.Signal
 ====================================
 .. autoclass:: fdf_signal.Signal
     :members:
