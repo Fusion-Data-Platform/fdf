@@ -15,7 +15,7 @@ About FDF
 Project Documents
 ======================================
 
-October 9, 2015 Meeting
+October 9, 2015 meeting
 ---------------------------------------
 
 
