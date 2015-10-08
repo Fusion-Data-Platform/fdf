@@ -19,7 +19,7 @@ Fusion Data Framework
     package_reference.rst
     genindex
 
-..    * :ref:`genindex`
+* :ref:`genindex`
 
 
 
