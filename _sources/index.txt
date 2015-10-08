@@ -17,6 +17,7 @@ Fusion Data Framework
     developer_guide.rst
     usage_examples.rst
     package_reference.rst
+    project_documents.rst
     LICENSE.rst
 
 
