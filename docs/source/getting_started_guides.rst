@@ -1,13 +1,11 @@
 .. Restructured Text (RST) Syntax Primer: http://sphinx-doc.org/rest.html
 
 
-.. _getting-started-guides:
 *****************************************
 Getting Started Guides
 *****************************************
 
 
-.. _user-guide:
 User Guide
 ====================================
 
@@ -15,7 +13,6 @@ User Guide
 
 
 
-.. _developer-guide:
 Developer Guide
 =========================================
 
