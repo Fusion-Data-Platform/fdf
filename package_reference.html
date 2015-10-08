@@ -77,7 +77,7 @@
 </ul>
 </li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">Package Reference</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#module-fdf.__init__">Package fdf</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-fdf.__init__">FDF Package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-factory">Module factory.py</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#class-machine">Class Machine</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#class-shot">Class Shot</a></li>
@@ -125,16 +125,15 @@
   <div class="section" id="package-reference">
 <h1>Package Reference<a class="headerlink" href="#package-reference" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="module-fdf.__init__">
-<span id="package-fdf"></span><h2>Package fdf<a class="headerlink" href="#module-fdf.__init__" title="Permalink to this headline">¶</a></h2>
-<p>FDF is a data access/management framework for magnetic fusion experiments.</p>
+<span id="fdf-package"></span><h2>FDF Package<a class="headerlink" href="#module-fdf.__init__" title="Permalink to this headline">¶</a></h2>
+<p>A data access/management framework for magnetic fusion experiments.</p>
 <p><strong>Modules</strong></p>
 <ul class="simple">
 <li><code class="docutils literal"><span class="pre">factory</span></code> - root module for FDF package</li>
 <li><code class="docutils literal"><span class="pre">fdf_globals</span></code> - package-wide constants</li>
 <li><code class="docutils literal"><span class="pre">fdf_signal</span></code> - signal class module</li>
+<li><code class="docutils literal"><span class="pre">fdf/modules/</span></code> - diagnostic sub-modules.</li>
 </ul>
-<p><strong>Diagnostic sub-modules</strong></p>
-<p><code class="docutils literal"><span class="pre">fdf/modules/</span></code> contains diagnostic sub-modules.</p>
 <p><strong>Usage</strong></p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">fdf</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nstx</span> <span class="o">=</span> <span class="n">fdf</span><span class="o">.</span><span class="n">Machine</span><span class="p">(</span><span class="s">&#39;nstx&#39;</span><span class="p">)</span>
