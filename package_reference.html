@@ -129,18 +129,20 @@
 <p>FDF is a data access/management framework for magnetic fusion experiments.</p>
 <p><strong>Modules</strong></p>
 <ul class="simple">
-<li><cite>factory</cite> - root module for FDF package</li>
-<li><cite>fdf_globals</cite> - package-wide constants</li>
-<li><cite>fdf_signal</cite> - signal class module</li>
+<li><code class="docutils literal"><span class="pre">factory</span></code> - root module for FDF package</li>
+<li><code class="docutils literal"><span class="pre">fdf_globals</span></code> - package-wide constants</li>
+<li><code class="docutils literal"><span class="pre">fdf_signal</span></code> - signal class module</li>
 </ul>
-<p><strong>Diagnostic sub-modules</strong>
-<cite>fdf/modules/</cite> contains diagnostic sub-modules.</p>
-<p><strong>Usage</strong>
-&gt;&gt;&gt; import fdf
-&gt;&gt;&gt; nstx = fdf.Machine(&#8216;nstx&#8217;)
-&gt;&gt;&gt; nstx.s140000.logbook()
-&gt;&gt;&gt; nstx.addshots(xp=1048)
-&gt;&gt;&gt; nstx.s140001.mpts.plot()</p>
+<p><strong>Diagnostic sub-modules</strong></p>
+<p><code class="docutils literal"><span class="pre">fdf/modules/</span></code> contains diagnostic sub-modules.</p>
+<p><strong>Usage</strong></p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">fdf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nstx</span> <span class="o">=</span> <span class="n">fdf</span><span class="o">.</span><span class="n">Machine</span><span class="p">(</span><span class="s">&#39;nstx&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nstx</span><span class="o">.</span><span class="n">s140000</span><span class="o">.</span><span class="n">logbook</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nstx</span><span class="o">.</span><span class="n">addshots</span><span class="p">(</span><span class="n">xp</span><span class="o">=</span><span class="mi">1048</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nstx</span><span class="o">.</span><span class="n">s140001</span><span class="o">.</span><span class="n">mpts</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="module-factory">
 <span id="module-factory-py"></span><h2>Module factory.py<a class="headerlink" href="#module-factory" title="Permalink to this headline">¶</a></h2>
