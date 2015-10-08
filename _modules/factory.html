@@ -84,10 +84,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../package_reference.html#module-fdf_globals">Module fdf_globals.py</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../project_documents.html">Project Documents</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../project_documents.html#october-9-2015-meeting">October 9, 2015 meeting</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../project_documents.html">Project Documents</a></li>
 </ul>
 
           
@@ -162,8 +159,6 @@
 <span class="n">FdfError</span> <span class="o">=</span> <span class="n">fdf_globals</span><span class="o">.</span><span class="n">FdfError</span>
 
 
-
-
 <div class="viewcode-block" id="Machine"><a class="viewcode-back" href="../package_reference.html#factory.Machine">[docs]</a><span class="k">class</span> <span class="nc">Machine</span><span class="p">(</span><span class="n">MutableMapping</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Factory root class that contains shot objects and MDS access methods.</span>
@@ -205,13 +200,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_classlist</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">LOGBOOK_CREDENTIALS</span> \
-            <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">MDS_SERVERS</span><span class="p">:</span>
-                <span class="n">txt</span> <span class="o">=</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">{} is not a valid machine.</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span>
-                <span class="n">txt</span> <span class="o">=</span> <span class="n">txt</span> <span class="o">+</span> <span class="s">&#39;Valid machines are:</span><span class="se">\n</span><span class="s">&#39;</span>
-                <span class="k">for</span> <span class="n">machine</span> <span class="ow">in</span> <span class="n">LOGBOOK_CREDENTIALS</span><span class="p">:</span>
-                    <span class="n">txt</span> <span class="o">=</span> <span class="n">txt</span> <span class="o">+</span> <span class="s">&#39;  {}</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">machine</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span>
-                <span class="k">raise</span> <span class="n">FdfError</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">LOGBOOK_CREDENTIALS</span> <span class="ow">or</span> \
+                <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">MDS_SERVERS</span><span class="p">:</span>
+            <span class="n">txt</span> <span class="o">=</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">{} is not a valid machine.</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span>
+            <span class="n">txt</span> <span class="o">=</span> <span class="n">txt</span> <span class="o">+</span> <span class="s">&#39;Valid machines are:</span><span class="se">\n</span><span class="s">&#39;</span>
+            <span class="k">for</span> <span class="n">machine</span> <span class="ow">in</span> <span class="n">LOGBOOK_CREDENTIALS</span><span class="p">:</span>
+                <span class="n">txt</span> <span class="o">=</span> <span class="n">txt</span> <span class="o">+</span> <span class="s">&#39;  {}</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">machine</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span>
+            <span class="k">raise</span> <span class="n">FdfError</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_logbook</span> <span class="o">=</span> <span class="n">Logbook</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">s0</span> <span class="o">=</span> <span class="n">Shot</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
@@ -656,7 +651,8 @@
                 <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;_&#39;</span><span class="o">+</span><span class="n">signal_dict</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">],</span> <span class="n">SignalObj</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">branch</span> <span class="ow">in</span> <span class="n">module_tree</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">&#39;container&#39;</span><span class="p">):</span>
-            <span class="n">ContainerClassName</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s">&#39;Container&#39;</span><span class="p">,</span> <span class="n">branch</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()])</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">branch</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">)</span>
+            <span class="n">ContainerClassName</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s">&#39;Container&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()])</span>
             <span class="k">if</span> <span class="n">ContainerClassName</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cls</span><span class="o">.</span><span class="n">_classes</span><span class="p">:</span>
                 <span class="n">ContainerClass</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">ContainerClassName</span><span class="p">,</span> <span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">Container</span><span class="p">),</span> <span class="p">{})</span>
                 <span class="n">init_class</span><span class="p">(</span><span class="n">ContainerClass</span><span class="p">,</span> <span class="n">branch</span><span class="p">)</span>
@@ -664,7 +660,7 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">ContainerClass</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">_classes</span><span class="p">[</span><span class="n">ContainerClassName</span><span class="p">]</span>
             <span class="n">ContainerObj</span> <span class="o">=</span> <span class="n">ContainerClass</span><span class="p">(</span><span class="n">branch</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
-            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">branch</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">),</span> <span class="n">ContainerObj</span><span class="p">)</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">ContainerObj</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">module_tree</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">&#39;signal&#39;</span><span class="p">):</span>
             <span class="n">signal_list</span> <span class="o">=</span> <span class="n">parse_signal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">)</span>
@@ -694,6 +690,12 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">attr</span>
 
+    <span class="k">def</span> <span class="nf">__dir__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="n">items</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">items</span><span class="p">)</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_base_items</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="s">&#39;_&#39;</span><span class="p">]</span>
+
 
 <span class="k">def</span> <span class="nf">init_class</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">module_tree</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
@@ -713,6 +715,7 @@
         <span class="k">if</span> <span class="n">getitem</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="nb">setattr</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">getitem</span><span class="p">)</span>
 
+    <span class="n">cls</span><span class="o">.</span><span class="n">_base_items</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
     <span class="n">parse_method</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">module_tree</span><span class="p">)</span>
 
 
