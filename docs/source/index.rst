@@ -16,6 +16,7 @@ Fusion Data Framework
     getting_started_guides.rst
     usage_examples.rst
     package_reference.rst
+    project_documents.rst
 
 
 

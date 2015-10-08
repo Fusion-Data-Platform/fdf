@@ -1,5 +1,5 @@
 """
-A data access/management framework for magnetic fusion experiments.
+FDF is a data access/management framework for magnetic fusion experiments.
 
 **Modules**
 
