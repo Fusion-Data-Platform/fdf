@@ -25,7 +25,7 @@ Fusion Data Framework
 .. Indices and tables
 .. *****************************************
 
-* :ref:`modindex`
+.. * :ref:`modindex`
 .. * :ref:`search`
-.. * :ref:`genindex`
+* :ref:`genindex`
 
