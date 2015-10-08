@@ -162,6 +162,19 @@
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nstx</span><span class="o">.</span><span class="n">addshot</span><span class="p">([</span><span class="mi">141398</span><span class="p">,</span> <span class="mi">141399</span><span class="p">])</span>
 </pre></div>
 </div>
+<dl class="method">
+<dt id="factory.Machine.addshot">
+<code class="descname">addshot</code><span class="sig-paren">(</span><em>shotlist=[]</em>, <em>date=[]</em>, <em>xp=[]</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/factory.html#Machine.addshot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factory.Machine.addshot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load shots into the Machine class</p>
+<p><strong>Usage</strong></p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nstx</span><span class="o">.</span><span class="n">addshot</span><span class="p">([</span><span class="mi">140000</span> <span class="mi">140001</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nstx</span><span class="o">.</span><span class="n">addshot</span><span class="p">(</span><span class="n">xp</span><span class="o">=</span><span class="mi">1032</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nstx</span><span class="o">.</span><span class="n">addshot</span><span class="p">(</span><span class="n">date</span><span class="o">=</span><span class="mi">20100817</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Note: You can reference shots even if the shots have not been loaded.</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>

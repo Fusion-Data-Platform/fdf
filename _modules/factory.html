@@ -197,7 +197,7 @@
     <span class="n">_modules</span> <span class="o">=</span> <span class="bp">None</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;nstx&#39;</span><span class="p">,</span> <span class="n">shotlist</span><span class="o">=</span><span class="p">[],</span> <span class="n">xp</span><span class="o">=</span><span class="p">[],</span> <span class="n">date</span><span class="o">=</span><span class="p">[]):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_shots</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_shots</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c"># shot dictionary with shot number (int) keys</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_classlist</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
 
@@ -315,7 +315,19 @@
                         <span class="n">module</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="s">&#39;_&#39;</span><span class="p">]</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modules</span>
 
-    <span class="k">def</span> <span class="nf">addshot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shotlist</span><span class="o">=</span><span class="p">[],</span> <span class="n">date</span><span class="o">=</span><span class="p">[],</span> <span class="n">xp</span><span class="o">=</span><span class="p">[],</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+<div class="viewcode-block" id="Machine.addshot"><a class="viewcode-back" href="../package_reference.html#factory.Machine.addshot">[docs]</a>    <span class="k">def</span> <span class="nf">addshot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shotlist</span><span class="o">=</span><span class="p">[],</span> <span class="n">date</span><span class="o">=</span><span class="p">[],</span> <span class="n">xp</span><span class="o">=</span><span class="p">[],</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load shots into the Machine class</span>
+<span class="sd">        </span>
+<span class="sd">        **Usage**</span>
+<span class="sd">        </span>
+<span class="sd">            &gt;&gt;&gt; nstx.addshot([140000 140001])</span>
+<span class="sd">            &gt;&gt;&gt; nstx.addshot(xp=1032)</span>
+<span class="sd">            &gt;&gt;&gt; nstx.addshot(date=20100817, verbose=True)</span>
+<span class="sd">        </span>
+<span class="sd">        Note: You can reference shots even if the shots have not been loaded.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">iterable</span><span class="p">(</span><span class="n">shotlist</span><span class="p">):</span>
             <span class="n">shotlist</span> <span class="o">=</span> <span class="p">[</span><span class="n">shotlist</span><span class="p">]</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">iterable</span><span class="p">(</span><span class="n">xp</span><span class="p">):</span>
@@ -331,6 +343,17 @@
         <span class="k">for</span> <span class="n">shot</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">shots</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">shot</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shots</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_shots</span><span class="p">[</span><span class="n">shot</span><span class="p">]</span> <span class="o">=</span> <span class="n">Shot</span><span class="p">(</span><span class="n">shot</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+</div>
+    <span class="k">def</span> <span class="nf">addxp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xp</span><span class="o">=</span><span class="p">[]):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">addshot</span><span class="p">(</span><span class="n">xp</span><span class="o">=</span><span class="n">xp</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">adddate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="p">[]):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">addshot</span><span class="p">(</span><span class="n">date</span><span class="o">=</span><span class="n">date</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">listshot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">shotkey</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shots</span><span class="p">:</span>
+            <span class="n">shot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shots</span><span class="p">[</span><span class="n">shotkey</span><span class="p">]</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&#39;{} in XP {} on {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">shot</span><span class="o">.</span><span class="n">shot</span><span class="p">,</span> <span class="n">shot</span><span class="o">.</span><span class="n">xp</span><span class="p">,</span> <span class="n">shot</span><span class="o">.</span><span class="n">date</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">get_shotlist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="p">[],</span> <span class="n">xp</span><span class="o">=</span><span class="p">[],</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="c"># return a list of shots</span>
@@ -344,6 +367,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_root</span> <span class="o">=</span> <span class="n">root</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="n">parent</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_logbook</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">_logbook</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logbook_entries</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">modules</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">_get_modules</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_signals</span> <span class="o">=</span> <span class="p">{</span><span class="n">module</span><span class="p">:</span> <span class="n">Factory</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="n">root</span><span class="p">,</span> <span class="n">shot</span><span class="o">=</span><span class="n">shot</span><span class="p">,</span>
                                          <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span> <span class="k">for</span> <span class="n">module</span> <span class="ow">in</span> <span class="n">modules</span><span class="p">}</span>
@@ -358,7 +382,7 @@
             <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s">&#39;&lt;shot# {}&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shot</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s">&#39;&lt;Shot {}&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shot</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c"># return iter(self._signals.values())</span>
@@ -383,24 +407,41 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_signals</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">_get_xp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="c"># query logbook for XP, return XP</span>
-        <span class="k">return</span> <span class="bp">None</span>
+        <span class="c"># query logbook for XP, return XP (list if needed)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logbook_entries</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logbook_entries</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logbook</span><span class="o">.</span><span class="n">get_entries</span><span class="p">(</span><span class="n">shot</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shot</span><span class="p">)</span>
+        <span class="n">xplist</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logbook_entries</span><span class="p">:</span>
+            <span class="n">xplist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="s">&#39;xp&#39;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">xplist</span><span class="p">))</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">xp</span> <span class="o">=</span> <span class="n">xplist</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">xp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">xplist</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">xp</span>
 
     <span class="k">def</span> <span class="nf">_get_date</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c"># query logbook for rundate, return rundate</span>
-        <span class="k">return</span> <span class="bp">None</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logbook_entries</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logbook_entries</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logbook</span><span class="o">.</span><span class="n">get_entries</span><span class="p">(</span><span class="n">shot</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shot</span><span class="p">)</span>
+        <span class="n">date</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logbook_entries</span><span class="p">:</span>
+            <span class="n">date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logbook_entries</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;rundate&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">date</span>
 
     <span class="k">def</span> <span class="nf">logbook</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c"># return a list of logbook entries (dictionaries)</span>
-        <span class="n">entries</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logbook</span><span class="o">.</span><span class="n">get_entries</span><span class="p">(</span><span class="n">shot</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shot</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">entries</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logbook_entries</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logbook_entries</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logbook</span><span class="o">.</span><span class="n">get_entries</span><span class="p">(</span><span class="n">shot</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shot</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logbook_entries</span><span class="p">:</span>
             <span class="k">print</span><span class="p">(</span><span class="s">&#39;Logbook entries for {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shot</span><span class="p">))</span>
-            <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">entries</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logbook_entries</span><span class="p">:</span>
                 <span class="k">print</span><span class="p">(</span><span class="s">&#39;************************************&#39;</span><span class="p">)</span>
                 <span class="k">print</span><span class="p">((</span><span class="s">&#39;{shot} on {rundate} in XP {xp}</span><span class="se">\n</span><span class="s">&#39;</span>
                        <span class="s">&#39;{username} in topic {topic}</span><span class="se">\n\n</span><span class="s">&#39;</span>
                        <span class="s">&#39;{text}&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">entry</span><span class="p">))</span>
             <span class="k">print</span><span class="p">(</span><span class="s">&#39;************************************&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&#39;No logbook entries for {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shot</span><span class="p">))</span>
 
 </div>
 <div class="viewcode-block" id="Logbook"><a class="viewcode-back" href="../package_reference.html#factory.Logbook">[docs]</a><span class="k">class</span> <span class="nc">Logbook</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -833,8 +874,10 @@
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="n">nstx</span> <span class="o">=</span> <span class="n">Machine</span><span class="p">(</span><span class="s">&#39;nstx&#39;</span><span class="p">)</span>
-    <span class="n">nstx</span><span class="o">.</span><span class="n">s140000</span><span class="o">.</span><span class="n">logbook</span><span class="p">()</span>
-    <span class="c">#nstx.addshot(xp=1048, verbose=True)</span>
+    <span class="c">#nstx.s140000.logbook()</span>
+    <span class="n">nstx</span><span class="o">.</span><span class="n">addshot</span><span class="p">(</span><span class="n">xp</span><span class="o">=</span><span class="mi">1048</span><span class="p">)</span>
+    <span class="n">nstx</span><span class="o">.</span><span class="n">listshot</span><span class="p">()</span>
+    
 </pre></div>
 
           </div>
