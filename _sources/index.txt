@@ -18,7 +18,9 @@ Fusion Data Framework
     package_reference.rst
     project_documents.rst
 
+.. only:: html
 
+    * :ref:`genindex`
 
 
 ..
