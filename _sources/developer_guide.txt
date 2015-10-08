@@ -1,8 +1,5 @@
 .. Restructured Text (RST) Syntax Primer: http://sphinx-doc.org/rest.html
 
-.. _developer-guide:
-Developer Guide
-=========================================
 
 This guide is for developers who want to contribute to the FDF project, and this guide describes the development workflow on the PPPL Linux cluster.  If you simply want to use FDF on the PPPL Linux cluster, see the user guide.
 
