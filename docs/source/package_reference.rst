@@ -13,7 +13,7 @@ FDF Package
 
 Module factory.py
 ====================================
-.. automodule:: factory.py
+.. automodule:: factory
 
 
 Class Machine
