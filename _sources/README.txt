@@ -7,7 +7,7 @@ HTML documentation: http://fusion-data-framework.github.io/fdf/
 
 PDF documentation: http://fusion-data-framework.github.io/fdf/_static/FusionDataFramework.pdf
 
-Project documents: http://fusion-data-framework.github.io/fdf/introduction.html#project-documents
+Project documents: http://fusion-data-framework.github.io/fdf/project_documents.html
 
 Submit bugs or feature requests: https://github.com/Fusion-Data-Framework/fdf/issues
 
