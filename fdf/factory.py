@@ -36,8 +36,6 @@ LOGBOOK_CREDENTIALS = fdf_globals.LOGBOOK_CREDENTIALS
 FdfError = fdf_globals.FdfError
 
 
-
-
 class Machine(MutableMapping):
     """
     Factory root class that contains shot objects and MDS access methods.
@@ -79,13 +77,13 @@ class Machine(MutableMapping):
         self._classlist = {}
         self._name = name.lower()
 
-        if self._name not in LOGBOOK_CREDENTIALS \
-            or self._name not in MDS_SERVERS:
-                txt = '\n{} is not a valid machine.\n'.format(self._name.upper())
-                txt = txt + 'Valid machines are:\n'
-                for machine in LOGBOOK_CREDENTIALS:
-                    txt = txt + '  {}\n'.format(machine.upper())
-                raise FdfError(txt)
+        if self._name not in LOGBOOK_CREDENTIALS or \
+                self._name not in MDS_SERVERS:
+            txt = '\n{} is not a valid machine.\n'.format(self._name.upper())
+            txt = txt + 'Valid machines are:\n'
+            for machine in LOGBOOK_CREDENTIALS:
+                txt = txt + '  {}\n'.format(machine.upper())
+            raise FdfError(txt)
 
         self._logbook = Logbook(name=self._name, root=self)
         self.s0 = Shot(0, root=self, parent=self)
@@ -530,7 +528,8 @@ class Container(object):
                 setattr(self, '_'+signal_dict['name'], SignalObj)
 
         for branch in module_tree.findall('container'):
-            ContainerClassName = ''.join(['Container', branch.get('name').capitalize()])
+            name = branch.get('name')
+            ContainerClassName = ''.join(['Container', name.capitalize()])
             if ContainerClassName not in cls._classes:
                 ContainerClass = type(ContainerClassName, (cls, Container), {})
                 init_class(ContainerClass, branch)
@@ -538,7 +537,7 @@ class Container(object):
             else:
                 ContainerClass = cls._classes[ContainerClassName]
             ContainerObj = ContainerClass(branch, parent=self)
-            setattr(self, branch.get('name'), ContainerObj)
+            setattr(self, name, ContainerObj)
 
         for element in module_tree.findall('signal'):
             signal_list = parse_signal(self, element)
@@ -568,6 +567,12 @@ class Container(object):
         else:
             return attr
 
+    def __dir__(self):
+        items = self.__dict__.keys()
+        items.extend(self.__class__.__dict__.keys())
+        return [item for item in set(items).difference(self._base_items)
+                if item[0] is not '_']
+
 
 def init_class(cls, module_tree, **kwargs):
 
@@ -587,6 +592,7 @@ def init_class(cls, module_tree, **kwargs):
         if getitem is not None:
             setattr(cls, item, getitem)
 
+    cls._base_items = set(cls.__dict__.keys())
     parse_method(cls, module_tree)
 
 
