@@ -6,6 +6,8 @@ Code repository: https://github.com/Fusion-Data-Framework/fdf
 `HTML Documentation <http://fusion-data-framework.github.io/fdf/>`_ or 
 `PDF Documentation <http://fusion-data-framework.github.io/fdf/_static/FusionDataFramework.pdf>`_
 
+`Project Documents <http://fusion-data-framework.github.io/fdf/introduction.html#project-documents>`_
+
 Submit bugs or feature requests: https://github.com/Fusion-Data-Framework/fdf/issues
 
 Created by:
