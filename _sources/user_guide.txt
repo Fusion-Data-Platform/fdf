@@ -2,9 +2,8 @@
 
 
 .. _user-guide:
-*****************************************
 User Guide
-*****************************************
+====================================
 
 This guide is for people who want to use FDF on the PPPL Linux cluster.  If you wish to contribute to the FDF project as a developer, see the developer guide.
 
