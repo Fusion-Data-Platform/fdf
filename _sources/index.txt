@@ -17,9 +17,7 @@ Fusion Data Framework
     developer_guide.rst
     usage_examples.rst
     package_reference.rst
-    genindex.html
 
-* :ref:`genindex`
 
 
 
@@ -27,6 +25,7 @@ Fusion Data Framework
 .. Indices and tables
 .. *****************************************
 
-.. * :ref:`modindex`
+* :ref:`modindex`
 .. * :ref:`search`
+.. * :ref:`genindex`
 
