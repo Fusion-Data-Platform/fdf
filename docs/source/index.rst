@@ -13,8 +13,7 @@ Fusion Data Framework
     :maxdepth: 2
     
     introduction.rst
-    user_guide.rst
-    developer_guide.rst
+    getting_started_guides.rst
     usage_examples.rst
     package_reference.rst
 
