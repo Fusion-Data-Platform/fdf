@@ -6,6 +6,11 @@ Package Reference
 *****************************************
 
 
+Package fdf
+====================================
+.. automodule:: __init__
+
+
 Module factory.py
 ====================================
 .. automodule:: factory

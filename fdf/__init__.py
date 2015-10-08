@@ -1,19 +1,17 @@
 """
 FDF is a data access/management framework for magnetic fusion experiments.
 
-Modules
--------
-factory - root module for FDF package
-fdf_globals - package-wide constants
-fdf_signal - signal class module
+**Modules**
+
+* `factory` - root module for FDF package
+* `fdf_globals` - package-wide constants
+* `fdf_signal` - signal class module
 
 
-Diagnostic sub-modules
-----------------------
-fdf/modules/ contains diagnostic sub-modules.
+**Diagnostic sub-modules**
+`fdf/modules/` contains diagnostic sub-modules.
 
-Usage
------
+**Usage**
 >>> import fdf
 >>> nstx = fdf.Machine('nstx')
 >>> nstx.s140000.logbook()
