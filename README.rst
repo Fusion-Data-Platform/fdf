@@ -15,5 +15,4 @@ Created by:
 * Kevin Tritz, The Johns Hopkins U.
 * Howard Yuh, Nova Photonics
 
-To contribute to the FDF project, please contact John, David, Kevin, or Howard.
 
