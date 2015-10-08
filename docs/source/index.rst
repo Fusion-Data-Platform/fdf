@@ -18,14 +18,9 @@ Fusion Data Framework
     package_reference.rst
     project_documents.rst
 
+.. only:: html
+
+    * :ref:`genindex`
 
 
-
-.. *****************************************
-.. Indices and tables
-.. *****************************************
-
-.. * :ref:`modindex`
-.. * :ref:`search`
-* :ref:`genindex`
 
