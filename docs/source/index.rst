@@ -12,20 +12,19 @@ Fusion Data Framework
 .. toctree::
     :maxdepth: 5
     
-    about.rst
+    introduction.rst
     user_guide.rst
     developer_guide.rst
     usage_examples.rst
     package_reference.rst
-    project_documents.rst
-    LICENSE.rst
+    * :ref:`genindex`
 
 
-*****************************************
-Indices and tables
-*****************************************
 
-* :ref:`genindex`
+.. *****************************************
+.. Indices and tables
+.. *****************************************
+
 .. * :ref:`modindex`
 .. * :ref:`search`
 
