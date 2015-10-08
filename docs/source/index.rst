@@ -10,14 +10,16 @@ Fusion Data Framework
     .. include:: html_preamble.rst
 
 .. toctree::
-    :maxdepth: 5
+    :maxdepth: 2
     
     introduction.rst
     user_guide.rst
     developer_guide.rst
     usage_examples.rst
     package_reference.rst
-    * :ref:`genindex`
+    genindex
+
+..    * :ref:`genindex`
 
 
 
