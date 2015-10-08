@@ -194,6 +194,18 @@ class Machine(MutableMapping):
         return self._modules
 
     def addshot(self, shotlist=[], date=[], xp=[], verbose=False):
+        """
+        Load shots into the Machine class
+        
+        **Usage**
+        
+            >>> nstx.addshot([140000 140001])
+            >>> nstx.addshot(xp=1032)
+            >>> nstx.addshot(date=20100817, verbose=True)
+        
+        Note: You can reference shots even if the shots have not been loaded.
+        
+        """
         if not iterable(shotlist):
             shotlist = [shotlist]
         if not iterable(xp):
