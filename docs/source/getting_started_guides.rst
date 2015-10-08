@@ -7,8 +7,8 @@ Getting Started Guides
 *****************************************
 
 
-.. include: user_guide.rst
+.. include:: user_guide.rst
 
-.. include: developer_guide.rst
+.. include:: developer_guide.rst
 
 
