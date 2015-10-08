@@ -2,18 +2,13 @@
 
 
 *****************************************
-Introduction
+Project Documents
 *****************************************
 
 
-About FDF
+October 9, 2015 meeting
 ======================================
 
-.. include:: README.rst
 
 
 
-License
-======================================
-
-.. include:: LICENSE.rst
