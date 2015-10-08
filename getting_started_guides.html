@@ -71,6 +71,8 @@
 </ul>
 </li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">Getting Started Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#id2">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#id3">Developer Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage_examples.html">Usage Examples</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="usage_examples.html#define-a-machine-instance">Define a machine instance</a></li>
 <li class="toctree-l2"><a class="reference internal" href="usage_examples.html#loading-shots-and-xps">Loading shots and XPs</a></li>
@@ -124,6 +126,180 @@
             
   <div class="section" id="id1">
 <h1>Getting Started Guides<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+</div>
+<div class="section" id="id2">
+<h1>User Guide<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h1>
+<p>This guide is for people who want to use FDF on the PPPL Linux cluster.  If you wish to contribute to the FDF project as a developer, see the developer guide.</p>
+<p><a class="reference external" href="http://fusion-data-framework.github.io/fdf/_static/FusionDataFramework.pdf">PDF Documentation</a> is also available.</p>
+<p>To use FDF on the PPPL Linux cluster, load the module nstx/fdf (you may need to unload other nstx modules):</p>
+<div class="highlight-python"><div class="highlight"><pre>[sunfire06:~] % module load nstx/fdf
+
+[sunfire06:~] % module list
+Currently Loaded Modulefiles:
+1) torque/2.5.2      5) idl/8.2           9) java/v1.6
+2) moab/5.4.0        6) nstx/treedefs    10) nstx/mdsplus5
+3) ppplcluster/1.1   7) nstx/epics       11) nstx/fdf
+4) freetds/0.91      8) nstx/idldirs
+</pre></div>
+</div>
+<p>Verify that python points to <code class="docutils literal"><span class="pre">/p/fdf/anaconda/bin/python</span></code>:</p>
+<div class="highlight-python"><div class="highlight"><pre>[sunfire06:~] % which python
+/p/fdf/anaconda/bin/python
+</pre></div>
+</div>
+<p>If python does not point to <code class="docutils literal"><span class="pre">/p/fdf/anaconda/bin/python</span></code>, then PATH contains to a different python distribution.  In this case, you need to modify PATH so <code class="docutils literal"><span class="pre">/p/fdf/anaconda/bin</span></code> is the first python distribution in PATH.</p>
+<p>Finally, you can launch python and import the FDF package:</p>
+<div class="highlight-python"><div class="highlight"><pre>[sunfire06:~] % python
+Python 2.7.10 |Anaconda 2.3.0 (64-bit)| (default, Sep 15 2015, 14:50:01)
+[GCC 4.4.7 20120313 (Red Hat 4.4.7-1)] on linux2
+Type &quot;help&quot;, &quot;copyright&quot;, &quot;credits&quot; or &quot;license&quot; for more information.
+Anaconda is brought to you by Continuum Analytics.
+Please check out: http://continuum.io/thanks and https://anaconda.org
+&gt;&gt;&gt; import fdf
+&gt;&gt;&gt;
+</pre></div>
+</div>
+<p>See Usage Examples to learn about the capabilities of FDF.</p>
+</div>
+<div class="section" id="id3">
+<h1>Developer Guide<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h1>
+<p>This guide is for developers who want to contribute to the FDF project, and this guide describes the development workflow on the PPPL Linux cluster.  If you simply want to use FDF on the PPPL Linux cluster, see the user guide.</p>
+<p><a class="reference external" href="http://fusion-data-framework.github.io/fdf/_static/FusionDataFramework.pdf">PDF Documentation</a> is also available.</p>
+<p>The FDF code repository is hosted on GitHub: <a class="reference external" href="https://github.com/Fusion-Data-Framework/fdf">https://github.com/Fusion-Data-Framework/fdf</a></p>
+<p>To participate in the FDF project as a developer, you must create a GitHub account.  The FDF project uses GitHub and Git for collaborative development and version control.</p>
+<p><strong>Configure Git</strong></p>
+<p>On the PPPL Linux cluster, load the module git/1.8.0.2 (on Red Hat 6 systems, use git/2.4.2):</p>
+<div class="highlight-python"><div class="highlight"><pre>[sunfire08:~] % module avail git
+--------------------- /usr/pppl/Modules/modulefiles -------------------
+git/1.7.4.1(default)     git/1.8.0.2      git/2.4.2
+
+[sunfire08:~] % module load git/1.8.0.2
+
+[sunfire08:~] % module list
+Currently Loaded Modulefiles:
+1) torque/2.5.2      3) ppplcluster/1.1
+2) moab/5.4.0        4) git/1.8.0.2
+</pre></div>
+</div>
+<p>You may want to add the module load command to your shell start-up files: ~/.cshrc for csh/tcsh or ~/.bash_profile for bash.</p>
+<p>Next, you must configure Git with your name and email (the same email associated with your GitHub account):</p>
+<div class="highlight-python"><div class="highlight"><pre>[sunfire08:~] % git config --global user.name &quot;John Doe&quot;
+[sunfire08:~] % git config --global user.email &quot;JohnDoe@email.com&quot;
+</pre></div>
+</div>
+<p>Also, we recommend setting an editor (e.g. vi, emacs, nedit) for Git comments:</p>
+<div class="highlight-python"><div class="highlight"><pre>[sunfire08:~] % git config --global core.editor nedit
+</pre></div>
+</div>
+<p>You can inspect your Git configuration in the file ~/.gitconfig.  For more information about Git configuration, see <a class="reference external" href="https://help.github.com/articles/set-up-git/">https://help.github.com/articles/set-up-git/</a> or <a class="reference external" href="https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup">https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup</a></p>
+<p><strong>Clone the FDF repository</strong></p>
+<p>Git clones repositories into a new directory in your current directory.  In the right column of the FDF repo page (<a class="reference external" href="https://github.com/Fusion-Data-Framework/fdf">https://github.com/Fusion-Data-Framework/fdf</a>), you can find the HTTPS URL (<a class="reference external" href="https://github.com/Fusion-Data-Framework/fdf.git">https://github.com/Fusion-Data-Framework/fdf.git</a>) to clone FDF to your local directory</p>
+<div class="highlight-python"><div class="highlight"><pre>[sunfire08:~] % ls -d fdf
+ls: fdf: No such file or directory
+
+[sunfire08:~] % git clone https://github.com/Fusion-Data-Framework/fdf.git
+Cloning into &#39;fdf&#39;...
+remote: Counting objects: 619, done.
+remote: Total 619 (delta 0), reused 0 (delta 0), pack-reused 619
+Receiving objects: 100% (619/619), 783.01 KiB, done.
+Resolving deltas: 100% (279/279), done.
+
+[sunfire08:~] % ls -d fdf
+fdf/
+</pre></div>
+</div>
+<p>Cloning via SSH is also feasible: <a class="reference external" href="https://help.github.com/articles/set-up-git/#next-steps-authenticating-with-github-from-git">https://help.github.com/articles/set-up-git/#next-steps-authenticating-with-github-from-git</a></p>
+<p>Finally, add your new fdf directory to the <code class="docutils literal"><span class="pre">PYTHONPATH</span></code> environment variable:</p>
+<div class="highlight-python"><div class="highlight"><pre>[sunfire08:~] % setenv PYTHONPATH ${HOME}/fdf:$PYTHONPATH
+
+[sunfire08:~] % echo $PYTHONPATH
+/u/drsmith/fdf:&lt;other directories&gt;
+</pre></div>
+</div>
+<p>You may want to add this action to your shell start-up files, as described above.  In bash, use the export command to set <code class="docutils literal"><span class="pre">PYTHONPATH</span></code>.</p>
+<p><strong>Git workflow for FDF development</strong></p>
+<p>(1) Create a development branch (here, we call it devbranch) and checkout the new branch:</p>
+<div class="highlight-python"><div class="highlight"><pre>[sunfire08:~] % cd fdf
+
+[sunfire08:~/fdf] % git branch
+* master
+
+[sunfire08:~/fdf] % git branch devbranch
+
+[sunfire08:~/fdf] % git branch
+devbranch
+* master
+
+[sunfire08:~/fdf] % git checkout devbranch
+Switched to branch &#39;devbranch&#39;
+
+[sunfire08:~/fdf] % git branch
+* devbranch
+master
+</pre></div>
+</div>
+<p>Devbranch initializes as a copy of master.  <code class="docutils literal"><span class="pre">git</span> <span class="pre">branch</span></code> lists branches in your local repository, and the asterisk denotes the active branch.  You can switch between local branches with <code class="docutils literal"><span class="pre">git</span> <span class="pre">checkout</span> <span class="pre">&lt;LocalBranchName&gt;</span></code>.</p>
+<p>(2) Push devbranch to the remote FDF repository at GitHub (you may need to enter your GitHub username and password):</p>
+<div class="highlight-python"><div class="highlight"><pre>[sunfire08:~/fdf] % git push origin devbranch
+Total 0 (delta 0), reused 0 (delta 0)
+To https://github.com/Fusion-Data-Framework/fdf.git
+ * [new branch]      devbranch -&gt; devbranch
+</pre></div>
+</div>
+<p>devbranch is now listed in the FDF repository at GitHub.  <code class="docutils literal"><span class="pre">origin</span></code> is the alias for the remote GitHub repository.  You can view your remote repositories and aliases with <code class="docutils literal"><span class="pre">git</span> <span class="pre">remote</span> <span class="pre">-v</span></code>.</p>
+<p>(3) Proceed with FDF development within devbranch: commit changes, add/delete files, and push updates to GitHub.</p>
+<p>As you complete small tasks, you should commit changes to your local repository with <code class="docutils literal"><span class="pre">git</span> <span class="pre">commit</span> <span class="pre">-a</span> <span class="pre">-m</span> <span class="pre">'&lt;mymessage&gt;'</span></code>.  Also, each commit requires a short message describing the changes:</p>
+<div class="highlight-python"><div class="highlight"><pre>[sunfire02:~/fdf] % git commit -a -m &#39;added dictionary rows in logbook.py&#39;
+[devbranch bb6c58a] added dictionary rows in logbook.py
+1 file changed, 16 insertions(+), 21 deletions(-)
+</pre></div>
+</div>
+<p>If you do not specify a commit message with -m option, then Git will open your default editor and ask for a commit message (see Configure Git above).  The -a option commits all file changes throughout the branch index, not simply your current directory.  The branch index is the list of files Git tracks in the branch.  <code class="docutils literal"><span class="pre">git</span> <span class="pre">commit</span> <span class="pre">-a</span></code> tracks changes to files in the branch index, so you must add new files to the index and remove deleted files from the index.  You can view the branch index with <code class="docutils literal"><span class="pre">git</span> <span class="pre">ls-files</span></code>, and you can add new files to the index and remove deleted files from the index with <code class="docutils literal"><span class="pre">git</span> <span class="pre">add</span> <span class="pre">-A</span></code>:</p>
+<div class="highlight-python"><div class="highlight"><pre>[sunfire02:~/fdf] % touch temp.py
+
+[sunfire02:~/fdf] % ls temp.py
+temp.py
+
+[sunfire02:~/fdf] % git ls-files temp.py
+
+[sunfire02:~/fdf] % git add -A
+
+[sunfire02:~/fdf] % git ls-files temp.py
+temp.py
+</pre></div>
+</div>
+<p>Note that temp.py appeared in the index only after the command <code class="docutils literal"><span class="pre">git</span> <span class="pre">add</span> <span class="pre">-A</span></code>.  Similarly, deleted files stay in the index until the <code class="docutils literal"><span class="pre">git</span> <span class="pre">add</span> <span class="pre">-A</span></code> is given.</p>
+<p>When you complete a large task, you should “push” changes to the devbranch on GitHub with <code class="docutils literal"><span class="pre">git</span> <span class="pre">push</span></code>:</p>
+<div class="highlight-python"><div class="highlight"><pre>[sunfire05:~/fdf] % git push origin devbranch
+Counting objects: 10, done.
+Delta compression using up to 8 threads.
+Compressing objects: 100% (6/6), done.
+Writing objects: 100% (6/6), 1.30 KiB, done.
+Total 6 (delta 3), reused 0 (delta 0)
+To https://github.com/Fusion-Data-Framework/fdf.git
+    129c5d9..a166825 devbranch -&gt; devbranch
+</pre></div>
+</div>
+<p>Again, &#8220;origin&#8221; signifies the branches on the remote GitHub repo.</p>
+<p>(4) While you are working locally in devbranch, others may be modifying master at GitHub.  When you are ready to merge devbranch into master, you should first merge the latest version of master from GitHub into your local devbranch.  To retrieve the latest version of master from GitHub, use <code class="docutils literal"><span class="pre">git</span> <span class="pre">fetch</span></code>:</p>
+<div class="highlight-python"><div class="highlight"><pre>[sunfire05:~/fdf] % git fetch origin master
+From https://github.com/Fusion-Data-Framework/fdf
+* branch            master     -&gt; FETCH_HEAD
+</pre></div>
+</div>
+<p>Next, verify that you are in devbranch and merge origin/master into devbranch:</p>
+<div class="highlight-python"><div class="highlight"><pre>[sunfire08:~/fdf] % git branch
+* devbranch
+master
+
+[sunfire05:~/fdf] % git merge origin/master
+</pre></div>
+</div>
+<p>Next, push your local devbranch to devbranch on GitHub:</p>
+<div class="highlight-python"><div class="highlight"><pre>[sunfire05:~/fdf] % git push origin devbranch
+</pre></div>
+</div>
+<p>Finally, on the GitHub website, in the devbranch area, submit a <em>pull request</em> to pull devbranch into master.</p>
 </div>
 
 
