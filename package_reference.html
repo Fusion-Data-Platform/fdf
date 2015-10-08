@@ -77,7 +77,7 @@
 </ul>
 </li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">Package Reference</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#package-fdf">Package fdf</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-fdf.__init__">Package fdf</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-factory">Module factory.py</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#class-machine">Class Machine</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#class-shot">Class Shot</a></li>
@@ -124,8 +124,23 @@
             
   <div class="section" id="package-reference">
 <h1>Package Reference<a class="headerlink" href="#package-reference" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="package-fdf">
-<h2>Package fdf<a class="headerlink" href="#package-fdf" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-fdf.__init__">
+<span id="package-fdf"></span><h2>Package fdf<a class="headerlink" href="#module-fdf.__init__" title="Permalink to this headline">¶</a></h2>
+<p>FDF is a data access/management framework for magnetic fusion experiments.</p>
+<p><strong>Modules</strong></p>
+<ul class="simple">
+<li><cite>factory</cite> - root module for FDF package</li>
+<li><cite>fdf_globals</cite> - package-wide constants</li>
+<li><cite>fdf_signal</cite> - signal class module</li>
+</ul>
+<p><strong>Diagnostic sub-modules</strong>
+<cite>fdf/modules/</cite> contains diagnostic sub-modules.</p>
+<p><strong>Usage</strong>
+&gt;&gt;&gt; import fdf
+&gt;&gt;&gt; nstx = fdf.Machine(&#8216;nstx&#8217;)
+&gt;&gt;&gt; nstx.s140000.logbook()
+&gt;&gt;&gt; nstx.addshots(xp=1048)
+&gt;&gt;&gt; nstx.s140001.mpts.plot()</p>
 </div>
 <div class="section" id="module-factory">
 <span id="module-factory-py"></span><h2>Module factory.py<a class="headerlink" href="#module-factory" title="Permalink to this headline">¶</a></h2>

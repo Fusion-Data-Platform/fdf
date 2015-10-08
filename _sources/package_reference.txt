@@ -8,7 +8,7 @@ Package Reference
 
 Package fdf
 ====================================
-.. automodule:: __init__
+.. automodule:: fdf.__init__
 
 
 Module factory.py
