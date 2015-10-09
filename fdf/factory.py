@@ -41,28 +41,28 @@ class Machine(MutableMapping):
     Factory root class that contains shot objects and MDS access methods.
 
     **Usage**::
-    
+
         >>> import fdf
         >>> nstx = fdf.Machine('nstx')
         >>> nstx.s140000.logbook()
         >>> nstx.addshots(xp=1048)
         >>> nstx.s140000.mpts.plot()
-        
+
     Machine class contains a model shot object: nstx.s0
 
     Shot data can be accessed directly through the Machine class::
-    
+
         >>> nstx.s141398
         >>> nstx.s141399
 
     Alternatively, a list of shot #'s may be provided during initialization::
-    
+
         >>> nstx = Machine(name='nstx', shotlist=[141398, 141399])
 
     Or added later using the addshot method::
-    
+
         >>> nstx.addshot([141398, 141399])
-        
+
     """
 
     # Maintain a dictionary of cached MDS server connections to speed up
@@ -162,8 +162,8 @@ class Machine(MutableMapping):
         if shot is 0:
             print('No MDS data exists for model tree')
             return None
-        connection = self._get_connection(shot, signal.mdstree)
-        data = connection.get(signal.mdsnode)
+        connection = self._get_connection(shot, signal._mdstree)
+        data = connection.get(signal._mdsnode)
         try:
             if signal._raw_of is not None:
                 data = data.raw_of()
@@ -194,15 +194,15 @@ class Machine(MutableMapping):
     def addshot(self, shotlist=[], date=[], xp=[], verbose=False):
         """
         Load shots into the Machine class
-        
+
         **Usage**
-        
+
             >>> nstx.addshot([140000 140001])
             >>> nstx.addshot(xp=1032)
             >>> nstx.addshot(date=20100817, verbose=True)
-        
+
         Note: You can reference shots even if the shots have not been loaded.
-        
+
         """
         if not iterable(shotlist):
             shotlist = [shotlist]
@@ -240,6 +240,7 @@ class Shot(MutableMapping):
 
     def __init__(self, shot, root=None, parent=None):
         self.shot = shot
+        self._shotobj = self
         self._root = root
         self._parent = parent
         self._logbook = root._logbook
@@ -412,7 +413,8 @@ class Logbook(object):
                 print('date {}'.format(date))
                 for row in rows:
                     print('   {shot} in XP {xp}'.format(**row))
-            shotlist.extend([row['shot'] for row in rows  # add shots to shotlist
+            # add shots to shotlist
+            shotlist.extend([row['shot'] for row in rows
                             if row['shot'] is not None])
 
         xp_list = xp
@@ -427,7 +429,8 @@ class Logbook(object):
                 print('XP {}'.format(xp))
                 for row in rows:
                     print('   {shot} on date {rundate}'.format(**row))
-            shotlist.extend([row['shot'] for row in rows  # add shots to shotlist
+            # add shots to shotlist
+            shotlist.extend([row['shot'] for row in rows
                             if row['shot'] is not None])
 
         cursor.close()
@@ -525,7 +528,7 @@ class Container(object):
                 else:
                     SignalClass = cls._classes[SignalClassName]
                 SignalObj = SignalClass(**signal_dict)
-                setattr(self, '_'+signal_dict['name'], SignalObj)
+                setattr(self, ''.join(['_',signal_dict['_name']]), SignalObj)
 
         for branch in module_tree.findall('container'):
             name = branch.get('name')
@@ -555,7 +558,7 @@ class Container(object):
                     refs = SignalObj.axes
                 for axis, ref in zip(SignalObj.axes, refs):
                     setattr(SignalObj, axis, getattr(self, '_'+ref))
-                setattr(self, signal_dict['name'], SignalObj)
+                setattr(self, signal_dict['_name'], SignalObj)
 
     def __getattr__(self, attribute):
         if not hasattr(self, '_parent') or self._parent is None:
@@ -623,9 +626,9 @@ def parse_signal(obj, element):
         mdspath, dim_of = parse_mdspath(obj, element)
         mdstree = parse_mdstree(obj, element)
         error = parse_error(obj, element)
-        signal_dict = [{'name': name, 'units': units, 'axes': axes,
-                        'mdsnode': mdspath, 'mdstree': mdstree,
-                        'dim_of': dim_of, 'error': error, 'parent': obj,
+        signal_dict = [{'_name': name, 'units': units, 'axes': axes,
+                        '_mdsnode': mdspath, '_mdstree': mdstree,
+                        '_dim_of': dim_of, '_error': error, '_parent': obj,
                         '_transpose': transpose}]
     else:
         num = int(num)
@@ -637,10 +640,10 @@ def parse_signal(obj, element):
             mdspath = mdspath.format(str(index).zfill(digits))
             mdstree = parse_mdstree(obj, element)
             error = parse_error(obj, element)
-            signal_dict.append({'name': name, 'units': units, 'axes': axes,
-                                'mdsnode': mdspath, 'mdstree': mdstree,
-                                'dim_of': dim_of, 'error': error,
-                                'parent': obj, '_transpose': transpose})
+            signal_dict.append({'_name': name, 'units': units, 'axes': axes,
+                                '_mdsnode': mdspath, '_mdstree': mdstree,
+                                '_dim_of': dim_of, '_error': error,
+                                '_parent': obj, '_transpose': transpose})
     return signal_dict
 
 
@@ -761,5 +764,5 @@ if __name__ == '__main__':
     #nstx.s140000.logbook()
     nstx.addshot(xp=1048)
     nstx.listshot()
-    
+
 
