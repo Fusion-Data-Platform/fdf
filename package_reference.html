@@ -157,12 +157,15 @@
 <dt id="factory.Machine">
 <em class="property">class </em><code class="descclassname">factory.</code><code class="descname">Machine</code><span class="sig-paren">(</span><em>name='nstx'</em>, <em>shotlist=[]</em>, <em>xp=[]</em>, <em>date=[]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/factory.html#Machine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#factory.Machine" title="Permalink to this definition">¶</a></dt>
 <dd><p>Factory root class that contains shot objects and MDS access methods.</p>
+<p>Note that fdf.factory.Machine is exposed in fdf.__init__, so fdf.Machine
+is valid.</p>
 <p><strong>Usage</strong>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">fdf</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nstx</span> <span class="o">=</span> <span class="n">fdf</span><span class="o">.</span><span class="n">Machine</span><span class="p">(</span><span class="s">&#39;nstx&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nstx</span><span class="o">.</span><span class="n">s140000</span><span class="o">.</span><span class="n">logbook</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nstx</span><span class="o">.</span><span class="n">addshots</span><span class="p">(</span><span class="n">xp</span><span class="o">=</span><span class="mi">1048</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nstx</span><span class="o">.</span><span class="n">s140000</span><span class="o">.</span><span class="n">mpts</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nstx</span><span class="o">.</span><span class="n">listshot</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>Machine class contains a model shot object: nstx.s0</p>

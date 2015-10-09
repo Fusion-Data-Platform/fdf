@@ -162,6 +162,9 @@
 <div class="viewcode-block" id="Machine"><a class="viewcode-back" href="../package_reference.html#factory.Machine">[docs]</a><span class="k">class</span> <span class="nc">Machine</span><span class="p">(</span><span class="n">MutableMapping</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Factory root class that contains shot objects and MDS access methods.</span>
+<span class="sd">    </span>
+<span class="sd">    Note that fdf.factory.Machine is exposed in fdf.__init__, so fdf.Machine</span>
+<span class="sd">    is valid.</span>
 
 <span class="sd">    **Usage**::</span>
 <span class="sd">    </span>
@@ -170,6 +173,7 @@
 <span class="sd">        &gt;&gt;&gt; nstx.s140000.logbook()</span>
 <span class="sd">        &gt;&gt;&gt; nstx.addshots(xp=1048)</span>
 <span class="sd">        &gt;&gt;&gt; nstx.s140000.mpts.plot()</span>
+<span class="sd">        &gt;&gt;&gt; nstx.listshot()</span>
 <span class="sd">        </span>
 <span class="sd">    Machine class contains a model shot object: nstx.s0</span>
 
