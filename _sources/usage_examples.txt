@@ -47,7 +47,7 @@ or by XP::
 
     >>> nstx.addshot(xp=1048)
 
-or by date (YYYYMMDD (string or int))::
+or by date (string or int YYYYMMDD)::
 
     >>> nstx.addshot(date=20100817)
 
@@ -59,11 +59,9 @@ or::
 
     >>> nstx.listshot()
 
-Get a custom shotlist::
+Get a custom **shotlist**::
 
-    >>> my_shotlist = nstx.get_shotlist(xp=1032)
-    >>> type(my_shotlist)
-    <type 'numpy.ndarray'>
+    >>> my_shotlist = nstx.get_shotlist(xp=1032)  # returns numpy.ndarray
 
 
 

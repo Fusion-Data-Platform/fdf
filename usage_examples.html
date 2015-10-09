@@ -160,7 +160,7 @@
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nstx</span><span class="o">.</span><span class="n">addshot</span><span class="p">(</span><span class="n">xp</span><span class="o">=</span><span class="mi">1048</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>or by date (YYYYMMDD (string or int)):</p>
+<p>or by date (string or int YYYYMMDD):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nstx</span><span class="o">.</span><span class="n">addshot</span><span class="p">(</span><span class="n">date</span><span class="o">=</span><span class="mi">20100817</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -172,10 +172,8 @@
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nstx</span><span class="o">.</span><span class="n">listshot</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>Get a custom shotlist:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">my_shotlist</span> <span class="o">=</span> <span class="n">nstx</span><span class="o">.</span><span class="n">get_shotlist</span><span class="p">(</span><span class="n">xp</span><span class="o">=</span><span class="mi">1032</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">my_shotlist</span><span class="p">)</span>
-<span class="go">&lt;type &#39;numpy.ndarray&#39;&gt;</span>
+<p>Get a custom <strong>shotlist</strong>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">my_shotlist</span> <span class="o">=</span> <span class="n">nstx</span><span class="o">.</span><span class="n">get_shotlist</span><span class="p">(</span><span class="n">xp</span><span class="o">=</span><span class="mi">1032</span><span class="p">)</span>  <span class="c"># returns numpy.ndarray</span>
 </pre></div>
 </div>
 </div>
