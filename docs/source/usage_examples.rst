@@ -6,13 +6,12 @@
 Usage Examples
 *****************************************
 
-
-Import the FDF module::
+First, import the FDF module::
 
     >>> import fdf
 
 
-Define a machine instance
+Initiate a machine instance
 =======================================
 
 **Define** a NSTX machine instance::
@@ -28,10 +27,14 @@ or pre-load an XP::
     >>> nstx = fdf.Machine('nstx', xp=1013)
 
 
-Loading shots and XPs
+Load shots and XPs
 =======================================
 
-**Add shot(s)** to the NSTX instance::
+Shots are added as referenced.  For instance, without previous reference to 139980, you can enter::
+
+    >>> nstx.s139980.chers.plot()
+
+**Add shots** to the NSTX instance::
 
     >>> nstx.addshot(140000)
 
@@ -43,19 +46,21 @@ or by XP::
 
     >>> nstx.addshot(xp=1048)
 
-or by date (YYYYMMDD (string or int))::
+or by date (string or int YYYYMMDD)::
 
     >>> nstx.addshot(date=20100817)
 
-List shots presently loaded::
+**List shots** presently loaded::
 
     >>> dir(nstx)
 
-Get a custom shotlist::
+or::
 
-    >>> my_shotlist = nstx.get_shotlist(xp=1032)
-    >>> type(my_shotlist)
-    <type 'numpy.ndarray'>
+    >>> nstx.listshot()
+
+Get a custom **shotlist**::
+
+    >>> my_shotlist = nstx.get_shotlist(xp=1032)  # returns numpy.ndarray
 
 
 
