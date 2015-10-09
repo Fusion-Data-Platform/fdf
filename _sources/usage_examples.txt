@@ -6,13 +6,12 @@
 Usage Examples
 *****************************************
 
-
-Import the FDF module::
+First, import the FDF module::
 
     >>> import fdf
 
 
-Define a machine instance
+Initiate a machine instance
 =======================================
 
 **Define** a NSTX machine instance::
@@ -28,7 +27,7 @@ or pre-load an XP::
     >>> nstx = fdf.Machine('nstx', xp=1013)
 
 
-Loading shots and XPs
+Load shots and XPs
 =======================================
 
 Shots are added as referenced.  For instance, without previous reference to 139980, you can enter::
