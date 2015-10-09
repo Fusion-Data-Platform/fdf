@@ -144,7 +144,11 @@
 </div>
 <div class="section" id="loading-shots-and-xps">
 <h2>Loading shots and XPs<a class="headerlink" href="#loading-shots-and-xps" title="Permalink to this headline">¶</a></h2>
-<p><strong>Add shot(s)</strong> to the NSTX instance:</p>
+<p>Shots are added as referenced.  For instance, without previous reference to 139980, you can enter:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nstx</span><span class="o">.</span><span class="n">s139980</span><span class="o">.</span><span class="n">chers</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><strong>Add shots</strong> to the NSTX instance:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nstx</span><span class="o">.</span><span class="n">addshot</span><span class="p">(</span><span class="mi">140000</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -160,8 +164,12 @@
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nstx</span><span class="o">.</span><span class="n">addshot</span><span class="p">(</span><span class="n">date</span><span class="o">=</span><span class="mi">20100817</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>List shots presently loaded:</p>
+<p><strong>List shots</strong> presently loaded:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">dir</span><span class="p">(</span><span class="n">nstx</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>or:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nstx</span><span class="o">.</span><span class="n">listshot</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>Get a custom shotlist:</p>
