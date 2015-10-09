@@ -161,6 +161,23 @@ Please check out: http://continuum.io/thanks and https://anaconda.org
 <h2>Developer Guide<a class="headerlink" href="#developer-guide" title="Permalink to this headline">¶</a></h2>
 <p>This guide is for developers who want to contribute to the FDF project, and this guide describes the development workflow on the PPPL Linux cluster.  If you simply want to use FDF on the PPPL Linux cluster, see the user guide.</p>
 <p><a class="reference external" href="http://fusion-data-framework.github.io/fdf/_static/FusionDataFramework.pdf">PDF Documentation</a> is also available.</p>
+<p>To work with FDF on the PPPL Linux cluster, load the module nstx/fdf (you may need to unload other nstx modules):</p>
+<div class="highlight-python"><div class="highlight"><pre>[sunfire06:~] % module load nstx/fdf
+
+[sunfire06:~] % module list
+Currently Loaded Modulefiles:
+1) torque/2.5.2      5) idl/8.2           9) java/v1.6
+2) moab/5.4.0        6) nstx/treedefs    10) nstx/mdsplus5
+3) ppplcluster/1.1   7) nstx/epics       11) nstx/fdf
+4) freetds/0.91      8) nstx/idldirs
+</pre></div>
+</div>
+<p>Verify that python points to <code class="docutils literal"><span class="pre">/p/fdf/anaconda/bin/python</span></code>:</p>
+<div class="highlight-python"><div class="highlight"><pre>[sunfire06:~] % which python
+/p/fdf/anaconda/bin/python
+</pre></div>
+</div>
+<p>If python does not point to <code class="docutils literal"><span class="pre">/p/fdf/anaconda/bin/python</span></code>, then PATH contains to a different python distribution.  In this case, you need to modify PATH so <code class="docutils literal"><span class="pre">/p/fdf/anaconda/bin</span></code> is the first python distribution in PATH.</p>
 <p>The FDF code repository is hosted on GitHub: <a class="reference external" href="https://github.com/Fusion-Data-Framework/fdf">https://github.com/Fusion-Data-Framework/fdf</a></p>
 <p>To participate in the FDF project as a developer, you must create a GitHub account.  The FDF project uses GitHub and Git for collaborative development and version control.</p>
 <p><strong>Configure Git</strong></p>

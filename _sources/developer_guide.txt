@@ -11,6 +11,24 @@ This guide is for developers who want to contribute to the FDF project, and this
     
     `PDF Documentation <http://fusion-data-framework.github.io/fdf/_static/FusionDataFramework.pdf>`_ is also available.
 
+To work with FDF on the PPPL Linux cluster, load the module nstx/fdf (you may need to unload other nstx modules)::
+
+    [sunfire06:~] % module load nstx/fdf
+
+    [sunfire06:~] % module list
+    Currently Loaded Modulefiles:
+    1) torque/2.5.2      5) idl/8.2           9) java/v1.6
+    2) moab/5.4.0        6) nstx/treedefs    10) nstx/mdsplus5
+    3) ppplcluster/1.1   7) nstx/epics       11) nstx/fdf
+    4) freetds/0.91      8) nstx/idldirs 
+
+Verify that python points to ``/p/fdf/anaconda/bin/python``::
+
+    [sunfire06:~] % which python
+    /p/fdf/anaconda/bin/python
+
+If python does not point to ``/p/fdf/anaconda/bin/python``, then PATH contains to a different python distribution.  In this case, you need to modify PATH so ``/p/fdf/anaconda/bin`` is the first python distribution in PATH.
+
 The FDF code repository is hosted on GitHub: https://github.com/Fusion-Data-Framework/fdf
 
 To participate in the FDF project as a developer, you must create a GitHub account.  The FDF project uses GitHub and Git for collaborative development and version control.
