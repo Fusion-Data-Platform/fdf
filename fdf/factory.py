@@ -39,6 +39,9 @@ FdfError = fdf_globals.FdfError
 class Machine(MutableMapping):
     """
     Factory root class that contains shot objects and MDS access methods.
+    
+    Note that fdf.factory.Machine is exposed in fdf.__init__, so fdf.Machine
+    is valid.
 
     **Usage**::
     
@@ -47,6 +50,7 @@ class Machine(MutableMapping):
         >>> nstx.s140000.logbook()
         >>> nstx.addshots(xp=1048)
         >>> nstx.s140000.mpts.plot()
+        >>> nstx.listshot()
         
     Machine class contains a model shot object: nstx.s0
 
