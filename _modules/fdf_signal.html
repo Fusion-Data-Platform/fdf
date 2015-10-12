@@ -74,6 +74,12 @@
 <li class="toctree-l2"><a class="reference internal" href="../usage_examples.html#load-shots-and-xps">Load shots and XPs</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../git_command_guide.html">Git Command Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../git_command_guide.html#tutorials">Tutorials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../git_command_guide.html#brief-command-reference">Brief command reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../git_command_guide.html#detailed-command-reference">Detailed command reference</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../package_reference.html">Package Reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../package_reference.html#module-factory">Module factory.py</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../package_reference.html#class-factory-machine">Class factory.Machine</a></li>
@@ -165,8 +171,7 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">pass</span>
 
-    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">input_array</span><span class="o">=</span><span class="p">[],</span> <span class="n">units</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">[],</span> <span class="n">axes_units</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">axes_values</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-                <span class="n">name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">dim_of</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">input_array</span><span class="o">=</span><span class="p">[],</span> <span class="n">root</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="c">#maybe an **kwargs dict for more attr</span>
         <span class="c">#name is name of signal...e.g. Te</span>
         <span class="c">#__doc__ for the signal...decriptor (filled in when? XML/MDSvalue?)</span>
@@ -187,14 +192,14 @@
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
             <span class="k">print</span><span class="p">(</span><span class="s">&#39;__new__: type(obj) </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span>
             <span class="k">print</span><span class="p">(</span><span class="s">&#39;__new__: setting attributes&#39;</span><span class="p">)</span>
-        <span class="n">obj</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="n">units</span>
-        <span class="n">obj</span><span class="o">.</span><span class="n">axes</span> <span class="o">=</span> <span class="n">axes</span>
-        <span class="n">obj</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="n">parent</span>
+        <span class="c">#obj.units = units</span>
+        <span class="c">#obj.axes = axes</span>
+        <span class="c">#obj._parent = parent</span>
         <span class="c">#obj._root = root</span>
-        <span class="n">obj</span><span class="o">.</span><span class="n">_dim_of</span> <span class="o">=</span> <span class="n">dim_of</span>
+        <span class="c">#obj._dim_of = dim_of</span>
         <span class="n">obj</span><span class="o">.</span><span class="n">_verbose</span> <span class="o">=</span> <span class="n">verbose</span>
         <span class="n">obj</span><span class="o">.</span><span class="n">slic</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="n">obj</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="c">#obj._name = name</span>
         <span class="c">#not necessary but can be defined</span>
         <span class="c">#obj.mdstree = mdstree</span>
         <span class="c">#obj.mdsnode = mdsnode</span>

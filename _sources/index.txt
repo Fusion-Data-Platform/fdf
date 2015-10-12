@@ -15,6 +15,7 @@ Fusion Data Framework
     introduction.rst
     getting_started.rst
     usage_examples.rst
+    git_command_guide.rst
     package_reference.rst
     project_documents.rst
 

@@ -74,6 +74,12 @@
 <li class="toctree-l2"><a class="reference internal" href="../usage_examples.html#load-shots-and-xps">Load shots and XPs</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../git_command_guide.html">Git Command Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../git_command_guide.html#tutorials">Tutorials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../git_command_guide.html#brief-command-reference">Brief command reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../git_command_guide.html#detailed-command-reference">Detailed command reference</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../package_reference.html">Package Reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../package_reference.html#module-factory">Module factory.py</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../package_reference.html#class-factory-machine">Class factory.Machine</a></li>
@@ -167,29 +173,29 @@
 <span class="sd">    is valid.</span>
 
 <span class="sd">    **Usage**::</span>
-<span class="sd">    </span>
+
 <span class="sd">        &gt;&gt;&gt; import fdf</span>
 <span class="sd">        &gt;&gt;&gt; nstx = fdf.Machine(&#39;nstx&#39;)</span>
 <span class="sd">        &gt;&gt;&gt; nstx.s140000.logbook()</span>
 <span class="sd">        &gt;&gt;&gt; nstx.addshots(xp=1048)</span>
 <span class="sd">        &gt;&gt;&gt; nstx.s140000.mpts.plot()</span>
 <span class="sd">        &gt;&gt;&gt; nstx.listshot()</span>
-<span class="sd">        </span>
+
 <span class="sd">    Machine class contains a model shot object: nstx.s0</span>
 
 <span class="sd">    Shot data can be accessed directly through the Machine class::</span>
-<span class="sd">    </span>
+
 <span class="sd">        &gt;&gt;&gt; nstx.s141398</span>
 <span class="sd">        &gt;&gt;&gt; nstx.s141399</span>
 
 <span class="sd">    Alternatively, a list of shot #&#39;s may be provided during initialization::</span>
-<span class="sd">    </span>
+
 <span class="sd">        &gt;&gt;&gt; nstx = Machine(name=&#39;nstx&#39;, shotlist=[141398, 141399])</span>
 
-<span class="sd">    Or added later using the addshot method::</span>
-<span class="sd">    </span>
+<span class="sd">    Or added later using the method addshot()::</span>
+
 <span class="sd">        &gt;&gt;&gt; nstx.addshot([141398, 141399])</span>
-<span class="sd">        </span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c"># Maintain a dictionary of cached MDS server connections to speed up</span>
@@ -289,8 +295,8 @@
         <span class="k">if</span> <span class="n">shot</span> <span class="ow">is</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">print</span><span class="p">(</span><span class="s">&#39;No MDS data exists for model tree&#39;</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">None</span>
-        <span class="n">connection</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_connection</span><span class="p">(</span><span class="n">shot</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">mdstree</span><span class="p">)</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">mdsnode</span><span class="p">)</span>
+        <span class="n">connection</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_connection</span><span class="p">(</span><span class="n">shot</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">_mdstree</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">_mdsnode</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">signal</span><span class="o">.</span><span class="n">_raw_of</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
                 <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">raw_of</span><span class="p">()</span>
@@ -321,15 +327,15 @@
 <div class="viewcode-block" id="Machine.addshot"><a class="viewcode-back" href="../package_reference.html#factory.Machine.addshot">[docs]</a>    <span class="k">def</span> <span class="nf">addshot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shotlist</span><span class="o">=</span><span class="p">[],</span> <span class="n">date</span><span class="o">=</span><span class="p">[],</span> <span class="n">xp</span><span class="o">=</span><span class="p">[],</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Load shots into the Machine class</span>
-<span class="sd">        </span>
+
 <span class="sd">        **Usage**</span>
-<span class="sd">        </span>
+
 <span class="sd">            &gt;&gt;&gt; nstx.addshot([140000 140001])</span>
 <span class="sd">            &gt;&gt;&gt; nstx.addshot(xp=1032)</span>
 <span class="sd">            &gt;&gt;&gt; nstx.addshot(date=20100817, verbose=True)</span>
-<span class="sd">        </span>
+
 <span class="sd">        Note: You can reference shots even if the shots have not been loaded.</span>
-<span class="sd">        </span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">iterable</span><span class="p">(</span><span class="n">shotlist</span><span class="p">):</span>
             <span class="n">shotlist</span> <span class="o">=</span> <span class="p">[</span><span class="n">shotlist</span><span class="p">]</span>
@@ -367,6 +373,7 @@
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shot</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">shot</span> <span class="o">=</span> <span class="n">shot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_shotobj</span> <span class="o">=</span> <span class="bp">self</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_root</span> <span class="o">=</span> <span class="n">root</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="n">parent</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_logbook</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">_logbook</span>
@@ -539,7 +546,8 @@
                 <span class="k">print</span><span class="p">(</span><span class="s">&#39;date {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">date</span><span class="p">))</span>
                 <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
                     <span class="k">print</span><span class="p">(</span><span class="s">&#39;   {shot} in XP {xp}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">row</span><span class="p">))</span>
-            <span class="n">shotlist</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">row</span><span class="p">[</span><span class="s">&#39;shot&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span>  <span class="c"># add shots to shotlist</span>
+            <span class="c"># add shots to shotlist</span>
+            <span class="n">shotlist</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">row</span><span class="p">[</span><span class="s">&#39;shot&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span>
                             <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;shot&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">])</span>
 
         <span class="n">xp_list</span> <span class="o">=</span> <span class="n">xp</span>
@@ -554,7 +562,8 @@
                 <span class="k">print</span><span class="p">(</span><span class="s">&#39;XP {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">xp</span><span class="p">))</span>
                 <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
                     <span class="k">print</span><span class="p">(</span><span class="s">&#39;   {shot} on date {rundate}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">row</span><span class="p">))</span>
-            <span class="n">shotlist</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">row</span><span class="p">[</span><span class="s">&#39;shot&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span>  <span class="c"># add shots to shotlist</span>
+            <span class="c"># add shots to shotlist</span>
+            <span class="n">shotlist</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">row</span><span class="p">[</span><span class="s">&#39;shot&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span>
                             <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;shot&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">])</span>
 
         <span class="n">cursor</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
@@ -652,7 +661,7 @@
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">SignalClass</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">_classes</span><span class="p">[</span><span class="n">SignalClassName</span><span class="p">]</span>
                 <span class="n">SignalObj</span> <span class="o">=</span> <span class="n">SignalClass</span><span class="p">(</span><span class="o">**</span><span class="n">signal_dict</span><span class="p">)</span>
-                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;_&#39;</span><span class="o">+</span><span class="n">signal_dict</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">],</span> <span class="n">SignalObj</span><span class="p">)</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s">&#39;_&#39;</span><span class="p">,</span><span class="n">signal_dict</span><span class="p">[</span><span class="s">&#39;_name&#39;</span><span class="p">]]),</span> <span class="n">SignalObj</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">branch</span> <span class="ow">in</span> <span class="n">module_tree</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">&#39;container&#39;</span><span class="p">):</span>
             <span class="n">name</span> <span class="o">=</span> <span class="n">branch</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">)</span>
@@ -682,7 +691,7 @@
                     <span class="n">refs</span> <span class="o">=</span> <span class="n">SignalObj</span><span class="o">.</span><span class="n">axes</span>
                 <span class="k">for</span> <span class="n">axis</span><span class="p">,</span> <span class="n">ref</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">SignalObj</span><span class="o">.</span><span class="n">axes</span><span class="p">,</span> <span class="n">refs</span><span class="p">):</span>
                     <span class="nb">setattr</span><span class="p">(</span><span class="n">SignalObj</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;_&#39;</span><span class="o">+</span><span class="n">ref</span><span class="p">))</span>
-                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">signal_dict</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">],</span> <span class="n">SignalObj</span><span class="p">)</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">signal_dict</span><span class="p">[</span><span class="s">&#39;_name&#39;</span><span class="p">],</span> <span class="n">SignalObj</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;_parent&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
@@ -750,9 +759,9 @@
         <span class="n">mdspath</span><span class="p">,</span> <span class="n">dim_of</span> <span class="o">=</span> <span class="n">parse_mdspath</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">element</span><span class="p">)</span>
         <span class="n">mdstree</span> <span class="o">=</span> <span class="n">parse_mdstree</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">element</span><span class="p">)</span>
         <span class="n">error</span> <span class="o">=</span> <span class="n">parse_error</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">element</span><span class="p">)</span>
-        <span class="n">signal_dict</span> <span class="o">=</span> <span class="p">[{</span><span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span> <span class="s">&#39;units&#39;</span><span class="p">:</span> <span class="n">units</span><span class="p">,</span> <span class="s">&#39;axes&#39;</span><span class="p">:</span> <span class="n">axes</span><span class="p">,</span>
-                        <span class="s">&#39;mdsnode&#39;</span><span class="p">:</span> <span class="n">mdspath</span><span class="p">,</span> <span class="s">&#39;mdstree&#39;</span><span class="p">:</span> <span class="n">mdstree</span><span class="p">,</span>
-                        <span class="s">&#39;dim_of&#39;</span><span class="p">:</span> <span class="n">dim_of</span><span class="p">,</span> <span class="s">&#39;error&#39;</span><span class="p">:</span> <span class="n">error</span><span class="p">,</span> <span class="s">&#39;parent&#39;</span><span class="p">:</span> <span class="n">obj</span><span class="p">,</span>
+        <span class="n">signal_dict</span> <span class="o">=</span> <span class="p">[{</span><span class="s">&#39;_name&#39;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span> <span class="s">&#39;units&#39;</span><span class="p">:</span> <span class="n">units</span><span class="p">,</span> <span class="s">&#39;axes&#39;</span><span class="p">:</span> <span class="n">axes</span><span class="p">,</span>
+                        <span class="s">&#39;_mdsnode&#39;</span><span class="p">:</span> <span class="n">mdspath</span><span class="p">,</span> <span class="s">&#39;_mdstree&#39;</span><span class="p">:</span> <span class="n">mdstree</span><span class="p">,</span>
+                        <span class="s">&#39;_dim_of&#39;</span><span class="p">:</span> <span class="n">dim_of</span><span class="p">,</span> <span class="s">&#39;_error&#39;</span><span class="p">:</span> <span class="n">error</span><span class="p">,</span> <span class="s">&#39;_parent&#39;</span><span class="p">:</span> <span class="n">obj</span><span class="p">,</span>
                         <span class="s">&#39;_transpose&#39;</span><span class="p">:</span> <span class="n">transpose</span><span class="p">}]</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">num</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>
@@ -764,10 +773,10 @@
             <span class="n">mdspath</span> <span class="o">=</span> <span class="n">mdspath</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">index</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="n">digits</span><span class="p">))</span>
             <span class="n">mdstree</span> <span class="o">=</span> <span class="n">parse_mdstree</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">element</span><span class="p">)</span>
             <span class="n">error</span> <span class="o">=</span> <span class="n">parse_error</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">element</span><span class="p">)</span>
-            <span class="n">signal_dict</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span> <span class="s">&#39;units&#39;</span><span class="p">:</span> <span class="n">units</span><span class="p">,</span> <span class="s">&#39;axes&#39;</span><span class="p">:</span> <span class="n">axes</span><span class="p">,</span>
-                                <span class="s">&#39;mdsnode&#39;</span><span class="p">:</span> <span class="n">mdspath</span><span class="p">,</span> <span class="s">&#39;mdstree&#39;</span><span class="p">:</span> <span class="n">mdstree</span><span class="p">,</span>
-                                <span class="s">&#39;dim_of&#39;</span><span class="p">:</span> <span class="n">dim_of</span><span class="p">,</span> <span class="s">&#39;error&#39;</span><span class="p">:</span> <span class="n">error</span><span class="p">,</span>
-                                <span class="s">&#39;parent&#39;</span><span class="p">:</span> <span class="n">obj</span><span class="p">,</span> <span class="s">&#39;_transpose&#39;</span><span class="p">:</span> <span class="n">transpose</span><span class="p">})</span>
+            <span class="n">signal_dict</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s">&#39;_name&#39;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span> <span class="s">&#39;units&#39;</span><span class="p">:</span> <span class="n">units</span><span class="p">,</span> <span class="s">&#39;axes&#39;</span><span class="p">:</span> <span class="n">axes</span><span class="p">,</span>
+                                <span class="s">&#39;_mdsnode&#39;</span><span class="p">:</span> <span class="n">mdspath</span><span class="p">,</span> <span class="s">&#39;_mdstree&#39;</span><span class="p">:</span> <span class="n">mdstree</span><span class="p">,</span>
+                                <span class="s">&#39;_dim_of&#39;</span><span class="p">:</span> <span class="n">dim_of</span><span class="p">,</span> <span class="s">&#39;_error&#39;</span><span class="p">:</span> <span class="n">error</span><span class="p">,</span>
+                                <span class="s">&#39;_parent&#39;</span><span class="p">:</span> <span class="n">obj</span><span class="p">,</span> <span class="s">&#39;_transpose&#39;</span><span class="p">:</span> <span class="n">transpose</span><span class="p">})</span>
     <span class="k">return</span> <span class="n">signal_dict</span>
 
 
@@ -888,7 +897,6 @@
     <span class="c">#nstx.s140000.logbook()</span>
     <span class="n">nstx</span><span class="o">.</span><span class="n">addshot</span><span class="p">(</span><span class="n">xp</span><span class="o">=</span><span class="mi">1048</span><span class="p">)</span>
     <span class="n">nstx</span><span class="o">.</span><span class="n">listshot</span><span class="p">()</span>
-    
 </pre></div>
 
           </div>
