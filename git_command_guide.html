@@ -137,21 +137,96 @@
 </div>
 <div class="section" id="brief-command-reference">
 <h2>Brief command reference<a class="headerlink" href="#brief-command-reference" title="Permalink to this headline">¶</a></h2>
-<p><code class="docutils literal"><span class="pre">git</span> <span class="pre">clone</span></code> - clone a local copy of a remote repo in a new directory</p>
+<p><code class="docutils literal"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">&lt;URL&gt;</span></code> - clone a local copy of a remote repo in a new directory</p>
 <p><code class="docutils literal"><span class="pre">git</span> <span class="pre">remote</span></code> - manage remote repo names (e.g. “origin”) and URLs</p>
-<p><code class="docutils literal"><span class="pre">git</span> <span class="pre">fetch</span></code> - fetch updates from remote repo</p>
-<p><code class="docutils literal"><span class="pre">git</span> <span class="pre">merge</span></code> - merge updates from local or remote branch into current local branch</p>
-<p><code class="docutils literal"><span class="pre">git</span> <span class="pre">push</span></code> - push current local branch to remote repo</p>
+<p><code class="docutils literal"><span class="pre">git</span> <span class="pre">fetch</span> <span class="pre">&lt;remote&gt;</span></code> - fetch updates from remote repo</p>
+<p><code class="docutils literal"><span class="pre">git</span> <span class="pre">push</span> <span class="pre">&lt;remote&gt;</span> <span class="pre">&lt;branch&gt;</span></code> - push current local branch to remote branch</p>
+<p><code class="docutils literal"><span class="pre">git</span> <span class="pre">merge</span> <span class="pre">&lt;branch&gt;</span></code> or <code class="docutils literal"><span class="pre">git</span> <span class="pre">merge</span> <span class="pre">&lt;remote&gt;/&lt;branch&gt;</span></code> - merge updates from local or remote branch into current local branch</p>
 <p><code class="docutils literal"><span class="pre">git</span> <span class="pre">branch</span></code> - manage branches in local and remote repos</p>
-<p><code class="docutils literal"><span class="pre">git</span> <span class="pre">checkout</span></code> - switch to a different local branch</p>
-<p><code class="docutils literal"><span class="pre">git</span> <span class="pre">status</span></code> - view status of current local branch</p>
-<p><code class="docutils literal"><span class="pre">git</span> <span class="pre">log</span></code> - view commit history of current local branch</p>
-<p><code class="docutils literal"><span class="pre">git</span> <span class="pre">diff</span></code> - view conflicts between branches</p>
+<p><code class="docutils literal"><span class="pre">git</span> <span class="pre">checkout</span> <span class="pre">&lt;branch&gt;</span></code> - switch to a different local branch</p>
 <p><code class="docutils literal"><span class="pre">git</span> <span class="pre">add</span></code> - add files to the index</p>
 <p><code class="docutils literal"><span class="pre">git</span> <span class="pre">commit</span></code> - commit changes to the local branch</p>
+<p><code class="docutils literal"><span class="pre">git</span> <span class="pre">status</span></code> - view status of working directory</p>
+<p><code class="docutils literal"><span class="pre">git</span> <span class="pre">log</span></code> - view commit log of current local branch</p>
+<p><code class="docutils literal"><span class="pre">git</span> <span class="pre">diff</span></code> - view differences between working directory and index</p>
 </div>
 <div class="section" id="detailed-command-reference">
 <h2>Detailed command reference<a class="headerlink" href="#detailed-command-reference" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="initiate-or-clone-a-repository">
+<h3>Initiate or clone a repository<a class="headerlink" href="#initiate-or-clone-a-repository" title="Permalink to this headline">¶</a></h3>
+<p>Clone a local copy of a repository (repo) in a new directory (remote repo is the “origin” remote)</p>
+<blockquote>
+<div>git clone &lt;URL&gt;</div></blockquote>
+<p>Initiate a repository in the current directory</p>
+<blockquote>
+<div>git init</div></blockquote>
+</div>
+<div class="section" id="working-with-remote-repos">
+<h3>Working with remote repos<a class="headerlink" href="#working-with-remote-repos" title="Permalink to this headline">¶</a></h3>
+<p>List remotes and URLs (omitting -v lists only remote names, not URLs)</p>
+<blockquote>
+<div>git remote -v</div></blockquote>
+<p>Add a remote repo, such as “upstream” (good for the parent of a forked repo)</p>
+<blockquote>
+<div>git remote add &lt;new-remote&gt; &lt;URL&gt;</div></blockquote>
+<p>Fetch updates from a remote repo, such as “origin” (note that fetch does not merge anything into the local repo)</p>
+<blockquote>
+<div>git fetch &lt;remote&gt;</div></blockquote>
+<p>Merge remote branch into current branch</p>
+<blockquote>
+<div>git merge &lt;remote&gt;/&lt;branch&gt;</div></blockquote>
+<p>Push local branch to remote repo</p>
+<blockquote>
+<div>git push &lt;remote&gt; &lt;branch&gt;</div></blockquote>
+<p>Delete remote branch</p>
+<blockquote>
+<div>git branch &lt;remote&gt; -d &lt;branch&gt;</div></blockquote>
+</div>
+<div class="section" id="working-with-branches">
+<h3>Working with branches<a class="headerlink" href="#working-with-branches" title="Permalink to this headline">¶</a></h3>
+<p>List local branches</p>
+<blockquote>
+<div>git branch</div></blockquote>
+<p>List remote branches</p>
+<blockquote>
+<div>git branch -r</div></blockquote>
+<p>Create new branch in local repo (copy of master branch)</p>
+<blockquote>
+<div>git branch &lt;new branch&gt;</div></blockquote>
+<p>Create new branch in local repo from a different branch</p>
+<blockquote>
+<div>git branch &lt;new branch&gt; &lt;existing branch&gt;</div></blockquote>
+<p>Delete local branch</p>
+<blockquote>
+<div>git branch -d &lt;branch&gt;</div></blockquote>
+<p>Checkout (switch) to different local branch (or create local version of remote branch if local branch does not exist)</p>
+<blockquote>
+<div>git checkout &lt;branch&gt;</div></blockquote>
+<p>View differences with another branch</p>
+<blockquote>
+<div>git diff &lt;target branch&gt;</div></blockquote>
+<p>Merge local branch into current branch</p>
+<blockquote>
+<div>git merge &lt;branch&gt;</div></blockquote>
+<p>View commit log for cirrent branch</p>
+<blockquote>
+<div>git log</div></blockquote>
+</div>
+<div class="section" id="working-with-the-index">
+<h3>Working with the index<a class="headerlink" href="#working-with-the-index" title="Permalink to this headline">¶</a></h3>
+<p>Update index with any new/deleted/moved files</p>
+<blockquote>
+<div>git add -A</div></blockquote>
+<p>Commit changes in current branch</p>
+<blockquote>
+<div>git commit -a -m “message”</div></blockquote>
+<p>View differences with index</p>
+<blockquote>
+<div>git diff</div></blockquote>
+<p>View status of current branch</p>
+<blockquote>
+<div>git status</div></blockquote>
+</div>
 </div>
 </div>
 
