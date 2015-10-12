@@ -20,32 +20,138 @@ https://help.github.com/articles/good-resources-for-learning-git-and-github/
 Brief command reference
 ============================================
 
-``git clone`` - clone a local copy of a remote repo in a new directory
+``git clone <URL>`` - clone a local copy of a remote repo in a new directory
 
 ``git remote`` - manage remote repo names (e.g. “origin”) and URLs
 
-``git fetch`` - fetch updates from remote repo
+``git fetch <remote>`` - fetch updates from remote repo
 
-``git merge`` - merge updates from local or remote branch into current local branch
+``git push <remote> <branch>`` - push current local branch to remote branch
 
-``git push`` - push current local branch to remote repo
+``git merge <branch>`` or ``git merge <remote>/<branch>`` - merge updates from local or remote branch into current local branch
 
 ``git branch`` - manage branches in local and remote repos
 
-``git checkout`` - switch to a different local branch
-
-``git status`` - view status of current local branch
-
-``git log`` - view commit history of current local branch
-
-``git diff`` - view conflicts between branches
+``git checkout <branch>`` - switch to a different local branch
 
 ``git add`` - add files to the index
 
 ``git commit`` - commit changes to the local branch
 
+``git status`` - view status of working directory
+
+``git log`` - view commit log of current local branch
+
+``git diff`` - view differences between working directory and index
+
+
 
 
 Detailed command reference
 ==================================================
+
+
+Initiate or clone a repository
+---------------------------------------------
+
+Clone a local copy of a repository (repo) in a new directory (remote repo is the “origin” remote)
+
+    git clone <URL>
+
+Initiate a repository in the current directory
+
+    git init
+
+
+Working with remote repos
+---------------------------------------------
+
+List remotes and URLs (omitting -v lists only remote names, not URLs)
+
+    git remote -v
+
+Add a remote repo, such as “upstream” (good for the parent of a forked repo)
+
+    git remote add <new-remote> <URL>
+
+Fetch updates from a remote repo, such as “origin” (note that fetch does not merge anything into the local repo)
+
+    git fetch <remote>
+
+Merge remote branch into current branch
+
+    git merge <remote>/<branch>
+
+Push local branch to remote repo
+
+    git push <remote> <branch>
+
+Delete remote branch
+
+    git branch <remote> -d <branch>
+
+
+
+Working with branches
+---------------------------------------------
+
+List local branches
+
+    git branch
+
+List remote branches
+
+    git branch -r
+
+Create new branch in local repo (copy of master branch)
+
+    git branch <new branch>
+
+Create new branch in local repo from a different branch
+
+    git branch <new branch> <existing branch>
+
+Delete local branch
+
+    git branch -d <branch>
+
+Checkout (switch) to different local branch (or create local version of remote branch if local branch does not exist)
+
+    git checkout <branch>
+
+View differences with another branch
+
+    git diff <target branch>
+
+Merge local branch into current branch
+
+    git merge <branch>
+
+View commit log for cirrent branch
+
+    git log
+
+
+Working with the index
+---------------------------------------------
+
+Update index with any new/deleted/moved files
+
+    git add -A
+
+Commit changes in current branch
+
+    git commit -a -m “message”
+
+View differences with index
+
+    git diff
+
+View status of current branch
+
+    git status
+
+
+
+
 
