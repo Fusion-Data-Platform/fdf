@@ -42,8 +42,7 @@ class Signal(np.ndarray):
     def __init__(self, **kwargs):
         pass
 
-    def __new__(cls, input_array=[], units=None, axes=[], axes_units=None, axes_values=None,
-                name=None, parent=None, root=None, dim_of=None, verbose=False, **kwargs):
+    def __new__(cls, input_array=[], root=None, verbose=False, **kwargs):
         #maybe an **kwargs dict for more attr
         #name is name of signal...e.g. Te
         #__doc__ for the signal...decriptor (filled in when? XML/MDSvalue?)
@@ -64,14 +63,14 @@ class Signal(np.ndarray):
         if verbose:
             print('__new__: type(obj) %s' % type(obj))
             print('__new__: setting attributes')
-        obj.units = units
-        obj.axes = axes
-        obj._parent = parent
+        #obj.units = units
+        #obj.axes = axes
+        #obj._parent = parent
         #obj._root = root
-        obj._dim_of = dim_of
+        #obj._dim_of = dim_of
         obj._verbose = verbose
         obj.slic = None
-        obj._name = name
+        #obj._name = name
         #not necessary but can be defined
         #obj.mdstree = mdstree
         #obj.mdsnode = mdsnode
