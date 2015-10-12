@@ -63,7 +63,7 @@ class Machine(MutableMapping):
 
         >>> nstx = Machine(name='nstx', shotlist=[141398, 141399])
 
-    Or added later using the addshot method::
+    Or added later using the method addshot()::
 
         >>> nstx.addshot([141398, 141399])
 
