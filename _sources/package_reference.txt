@@ -6,6 +6,8 @@ Package Reference
 *****************************************
 
 
+Package overview
+====================================
 .. automodule:: fdf.__init__
 
 
