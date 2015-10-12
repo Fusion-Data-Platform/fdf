@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Git Command Guide &mdash; Fusion Data Framework 0.0.0 documentation</title>
+  <title>Git Command Reference &mdash; Fusion Data Framework 0.0.0 documentation</title>
   
 
   
@@ -75,9 +75,9 @@
 <li class="toctree-l2"><a class="reference internal" href="usage_examples.html#load-shots-and-xps">Load shots and XPs</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">Git Command Guide</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Git Command Reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#tutorials">Tutorials</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#brief-command-reference">Brief command reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#command-summary">Command summary</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#detailed-command-reference">Detailed command reference</a></li>
 </ul>
 </li>
@@ -116,7 +116,7 @@
   <ul class="wy-breadcrumbs">
     <li><a href="index.html">Docs</a> &raquo;</li>
       
-    <li>Git Command Guide</li>
+    <li>Git Command Reference</li>
       <li class="wy-breadcrumbs-aside">
         
           <a href="_sources/git_command_guide.txt" rel="nofollow"> View page source</a>
@@ -127,16 +127,16 @@
 </div>
           <div role="main" class="document">
             
-  <div class="section" id="git-command-guide">
-<h1>Git Command Guide<a class="headerlink" href="#git-command-guide" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="git-command-reference">
+<h1>Git Command Reference<a class="headerlink" href="#git-command-reference" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="tutorials">
 <h2>Tutorials<a class="headerlink" href="#tutorials" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference external" href="https://www.atlassian.com/git/tutorials">https://www.atlassian.com/git/tutorials</a></p>
 <p><a class="reference external" href="https://try.github.io/levels/1/challenges/1">https://try.github.io/levels/1/challenges/1</a></p>
 <p><a class="reference external" href="https://help.github.com/articles/good-resources-for-learning-git-and-github/">https://help.github.com/articles/good-resources-for-learning-git-and-github/</a></p>
 </div>
-<div class="section" id="brief-command-reference">
-<h2>Brief command reference<a class="headerlink" href="#brief-command-reference" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="command-summary">
+<h2>Command summary<a class="headerlink" href="#command-summary" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">&lt;URL&gt;</span></code> - clone a local copy of a remote repo in a new directory</p>
 <p><code class="docutils literal"><span class="pre">git</span> <span class="pre">remote</span></code> - manage remote repo names (e.g. “origin”) and URLs</p>
 <p><code class="docutils literal"><span class="pre">git</span> <span class="pre">fetch</span> <span class="pre">&lt;remote&gt;</span></code> - fetch updates from remote repo</p>
@@ -182,8 +182,8 @@
 <blockquote>
 <div>git branch &lt;remote&gt; -d &lt;branch&gt;</div></blockquote>
 </div>
-<div class="section" id="working-with-branches">
-<h3>Working with branches<a class="headerlink" href="#working-with-branches" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="working-with-branches-and-the-index">
+<h3>Working with branches and the index<a class="headerlink" href="#working-with-branches-and-the-index" title="Permalink to this headline">¶</a></h3>
 <p>List local branches</p>
 <blockquote>
 <div>git branch</div></blockquote>
@@ -211,9 +211,6 @@
 <p>View commit log for cirrent branch</p>
 <blockquote>
 <div>git log</div></blockquote>
-</div>
-<div class="section" id="working-with-the-index">
-<h3>Working with the index<a class="headerlink" href="#working-with-the-index" title="Permalink to this headline">¶</a></h3>
 <p>Update index with any new/deleted/moved files</p>
 <blockquote>
 <div>git add -A</div></blockquote>
@@ -223,7 +220,7 @@
 <p>View differences with index</p>
 <blockquote>
 <div>git diff</div></blockquote>
-<p>View status of current branch</p>
+<p>View status of working directory</p>
 <blockquote>
 <div>git status</div></blockquote>
 </div>
