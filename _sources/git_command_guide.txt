@@ -26,20 +26,12 @@ Command summary
 | ``git push <remote> <branch>`` - push current local branch to remote branch
 | ``git merge <branch>`` or ``git merge <remote>/<branch>`` - merge updates from local or remote branch into current local branch
 | ``git branch`` - manage branches in local and remote repos
-
-``git checkout <branch>`` - switch to a different local branch
-
-``git add`` - add files to the index
-
-``git commit`` - commit changes to the local branch
-
-``git status`` - view status of working directory
-
-``git log`` - view commit log of current local branch
-
-``git diff`` - view differences between working directory and index
-
-
+| ``git checkout <branch>`` - switch to a different local branch
+| ``git add`` - add files to the index
+| ``git commit`` - commit changes to the local branch
+| ``git status`` - view status of working directory
+| ``git log`` - view commit log of current local branch
+| ``git diff`` - view differences between working directory and index
 
 
 Detailed command reference
@@ -49,98 +41,94 @@ Detailed command reference
 Initiate or clone a repository
 ---------------------------------------------
 
-Clone a local copy of a repository (repo) in a new directory (remote repo is the “origin” remote)
+Clone a local copy of a repository (repo) in a new directory (remote repo is the “origin” remote)::
 
-    git clone <URL>
+    % git clone <URL>
 
-Initiate a repository in the current directory
+Initiate a repository in the current directory::
 
-    git init
+    % git init
 
 
-Working with remote repos
+Interacting with the remote repo
 ---------------------------------------------
 
-List remotes and URLs (omitting -v lists only remote names, not URLs)
+List remotes and URLs (omitting -v lists only remote names, not URLs)::
 
-    git remote -v
+    % git remote -v
 
-Add a remote repo, such as “upstream” (good for the parent of a forked repo)
+Add a remote repo, such as “upstream” (good for the parent of a forked repo)::
 
-    git remote add <new-remote> <URL>
+    % git remote add <new-remote> <URL>
 
-Fetch updates from a remote repo, such as “origin” (note that fetch does not merge anything into the local repo)
+Fetch updates from a remote repo, such as “origin” (note that fetch does not merge anything into the local repo)::
 
-    git fetch <remote>
+    % git fetch <remote>
 
-Merge remote branch into current branch
+List remote branches::
 
-    git merge <remote>/<branch>
+    % git branch -r
 
-Push local branch to remote repo
+Merge remote branch into current branch::
 
-    git push <remote> <branch>
+    % git merge <remote>/<branch>
 
-Delete remote branch
+Push local branch to remote repo::
 
-    git branch <remote> -d <branch>
+    % git push <remote> <branch>
+
+Delete remote branch::
+
+    % git branch <remote> -d <branch>
 
 
 
-Working with branches and the index
+Working within the local repo
 ---------------------------------------------
 
-List local branches
+List local branches::
 
-    git branch
+    % git branch
 
-List remote branches
+Create new branch in local repo (copy of master branch)::
 
-    git branch -r
+    % git branch <new branch>
 
-Create new branch in local repo (copy of master branch)
+Delete local branch::
 
-    git branch <new branch>
+    % git branch -d <branch>
 
-Create new branch in local repo from a different branch
+Checkout (switch) to different local branch (or create local version of remote branch if local branch does not exist)::
 
-    git branch <new branch> <existing branch>
+    % git checkout <branch>
 
-Delete local branch
+Merge local branch into current branch::
 
-    git branch -d <branch>
+    % git merge <branch>
 
-Checkout (switch) to different local branch (or create local version of remote branch if local branch does not exist)
+Update index with any new/deleted/moved files::
 
-    git checkout <branch>
+    % git add -A
 
-View differences with another branch
+Commit changes in current branch::
 
-    git diff <target branch>
+    % git commit -a -m “message”
 
-Merge local branch into current branch
+View differences with index::
 
-    git merge <branch>
+    % git diff
 
-View commit log for cirrent branch
+View differences with another branch::
 
-    git log
+    % git diff <target branch>
 
-Update index with any new/deleted/moved files
+View commit log for cirrent branch::
 
-    git add -A
+    % git log
 
-Commit changes in current branch
+View status of working directory::
 
-    git commit -a -m “message”
-
-View differences with index
-
-    git diff
-
-View status of working directory
-
-    git status
+    % git status
 
 
 

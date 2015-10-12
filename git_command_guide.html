@@ -144,87 +144,104 @@
 <div class="line"><code class="docutils literal"><span class="pre">git</span> <span class="pre">push</span> <span class="pre">&lt;remote&gt;</span> <span class="pre">&lt;branch&gt;</span></code> - push current local branch to remote branch</div>
 <div class="line"><code class="docutils literal"><span class="pre">git</span> <span class="pre">merge</span> <span class="pre">&lt;branch&gt;</span></code> or <code class="docutils literal"><span class="pre">git</span> <span class="pre">merge</span> <span class="pre">&lt;remote&gt;/&lt;branch&gt;</span></code> - merge updates from local or remote branch into current local branch</div>
 <div class="line"><code class="docutils literal"><span class="pre">git</span> <span class="pre">branch</span></code> - manage branches in local and remote repos</div>
+<div class="line"><code class="docutils literal"><span class="pre">git</span> <span class="pre">checkout</span> <span class="pre">&lt;branch&gt;</span></code> - switch to a different local branch</div>
+<div class="line"><code class="docutils literal"><span class="pre">git</span> <span class="pre">add</span></code> - add files to the index</div>
+<div class="line"><code class="docutils literal"><span class="pre">git</span> <span class="pre">commit</span></code> - commit changes to the local branch</div>
+<div class="line"><code class="docutils literal"><span class="pre">git</span> <span class="pre">status</span></code> - view status of working directory</div>
+<div class="line"><code class="docutils literal"><span class="pre">git</span> <span class="pre">log</span></code> - view commit log of current local branch</div>
+<div class="line"><code class="docutils literal"><span class="pre">git</span> <span class="pre">diff</span></code> - view differences between working directory and index</div>
 </div>
-<p><code class="docutils literal"><span class="pre">git</span> <span class="pre">checkout</span> <span class="pre">&lt;branch&gt;</span></code> - switch to a different local branch</p>
-<p><code class="docutils literal"><span class="pre">git</span> <span class="pre">add</span></code> - add files to the index</p>
-<p><code class="docutils literal"><span class="pre">git</span> <span class="pre">commit</span></code> - commit changes to the local branch</p>
-<p><code class="docutils literal"><span class="pre">git</span> <span class="pre">status</span></code> - view status of working directory</p>
-<p><code class="docutils literal"><span class="pre">git</span> <span class="pre">log</span></code> - view commit log of current local branch</p>
-<p><code class="docutils literal"><span class="pre">git</span> <span class="pre">diff</span></code> - view differences between working directory and index</p>
 </div>
 <div class="section" id="detailed-command-reference">
 <h2>Detailed command reference<a class="headerlink" href="#detailed-command-reference" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="initiate-or-clone-a-repository">
 <h3>Initiate or clone a repository<a class="headerlink" href="#initiate-or-clone-a-repository" title="Permalink to this headline">¶</a></h3>
-<p>Clone a local copy of a repository (repo) in a new directory (remote repo is the “origin” remote)</p>
-<blockquote>
-<div>git clone &lt;URL&gt;</div></blockquote>
-<p>Initiate a repository in the current directory</p>
-<blockquote>
-<div>git init</div></blockquote>
+<p>Clone a local copy of a repository (repo) in a new directory (remote repo is the “origin” remote):</p>
+<div class="highlight-python"><div class="highlight"><pre>% git clone &lt;URL&gt;
+</pre></div>
 </div>
-<div class="section" id="working-with-remote-repos">
-<h3>Working with remote repos<a class="headerlink" href="#working-with-remote-repos" title="Permalink to this headline">¶</a></h3>
-<p>List remotes and URLs (omitting -v lists only remote names, not URLs)</p>
-<blockquote>
-<div>git remote -v</div></blockquote>
-<p>Add a remote repo, such as “upstream” (good for the parent of a forked repo)</p>
-<blockquote>
-<div>git remote add &lt;new-remote&gt; &lt;URL&gt;</div></blockquote>
-<p>Fetch updates from a remote repo, such as “origin” (note that fetch does not merge anything into the local repo)</p>
-<blockquote>
-<div>git fetch &lt;remote&gt;</div></blockquote>
-<p>Merge remote branch into current branch</p>
-<blockquote>
-<div>git merge &lt;remote&gt;/&lt;branch&gt;</div></blockquote>
-<p>Push local branch to remote repo</p>
-<blockquote>
-<div>git push &lt;remote&gt; &lt;branch&gt;</div></blockquote>
-<p>Delete remote branch</p>
-<blockquote>
-<div>git branch &lt;remote&gt; -d &lt;branch&gt;</div></blockquote>
+<p>Initiate a repository in the current directory:</p>
+<div class="highlight-python"><div class="highlight"><pre>% git init
+</pre></div>
 </div>
-<div class="section" id="working-with-branches-and-the-index">
-<h3>Working with branches and the index<a class="headerlink" href="#working-with-branches-and-the-index" title="Permalink to this headline">¶</a></h3>
-<p>List local branches</p>
-<blockquote>
-<div>git branch</div></blockquote>
-<p>List remote branches</p>
-<blockquote>
-<div>git branch -r</div></blockquote>
-<p>Create new branch in local repo (copy of master branch)</p>
-<blockquote>
-<div>git branch &lt;new branch&gt;</div></blockquote>
-<p>Create new branch in local repo from a different branch</p>
-<blockquote>
-<div>git branch &lt;new branch&gt; &lt;existing branch&gt;</div></blockquote>
-<p>Delete local branch</p>
-<blockquote>
-<div>git branch -d &lt;branch&gt;</div></blockquote>
-<p>Checkout (switch) to different local branch (or create local version of remote branch if local branch does not exist)</p>
-<blockquote>
-<div>git checkout &lt;branch&gt;</div></blockquote>
-<p>View differences with another branch</p>
-<blockquote>
-<div>git diff &lt;target branch&gt;</div></blockquote>
-<p>Merge local branch into current branch</p>
-<blockquote>
-<div>git merge &lt;branch&gt;</div></blockquote>
-<p>View commit log for cirrent branch</p>
-<blockquote>
-<div>git log</div></blockquote>
-<p>Update index with any new/deleted/moved files</p>
-<blockquote>
-<div>git add -A</div></blockquote>
-<p>Commit changes in current branch</p>
-<blockquote>
-<div>git commit -a -m “message”</div></blockquote>
-<p>View differences with index</p>
-<blockquote>
-<div>git diff</div></blockquote>
-<p>View status of working directory</p>
-<blockquote>
-<div>git status</div></blockquote>
+</div>
+<div class="section" id="interacting-with-the-remote-repo">
+<h3>Interacting with the remote repo<a class="headerlink" href="#interacting-with-the-remote-repo" title="Permalink to this headline">¶</a></h3>
+<p>List remotes and URLs (omitting -v lists only remote names, not URLs):</p>
+<div class="highlight-python"><div class="highlight"><pre>% git remote -v
+</pre></div>
+</div>
+<p>Add a remote repo, such as “upstream” (good for the parent of a forked repo):</p>
+<div class="highlight-python"><div class="highlight"><pre>% git remote add &lt;new-remote&gt; &lt;URL&gt;
+</pre></div>
+</div>
+<p>Fetch updates from a remote repo, such as “origin” (note that fetch does not merge anything into the local repo):</p>
+<div class="highlight-python"><div class="highlight"><pre>% git fetch &lt;remote&gt;
+</pre></div>
+</div>
+<p>List remote branches:</p>
+<div class="highlight-python"><div class="highlight"><pre>% git branch -r
+</pre></div>
+</div>
+<p>Merge remote branch into current branch:</p>
+<div class="highlight-python"><div class="highlight"><pre>% git merge &lt;remote&gt;/&lt;branch&gt;
+</pre></div>
+</div>
+<p>Push local branch to remote repo:</p>
+<div class="highlight-python"><div class="highlight"><pre>% git push &lt;remote&gt; &lt;branch&gt;
+</pre></div>
+</div>
+<p>Delete remote branch:</p>
+<div class="highlight-python"><div class="highlight"><pre>% git branch &lt;remote&gt; -d &lt;branch&gt;
+</pre></div>
+</div>
+</div>
+<div class="section" id="working-within-the-local-repo">
+<h3>Working within the local repo<a class="headerlink" href="#working-within-the-local-repo" title="Permalink to this headline">¶</a></h3>
+<p>List local branches:</p>
+<div class="highlight-python"><div class="highlight"><pre>% git branch
+</pre></div>
+</div>
+<p>Create new branch in local repo (copy of master branch):</p>
+<div class="highlight-python"><div class="highlight"><pre>% git branch &lt;new branch&gt;
+</pre></div>
+</div>
+<p>Delete local branch:</p>
+<div class="highlight-python"><div class="highlight"><pre>% git branch -d &lt;branch&gt;
+</pre></div>
+</div>
+<p>Checkout (switch) to different local branch (or create local version of remote branch if local branch does not exist):</p>
+<div class="highlight-python"><div class="highlight"><pre>% git checkout &lt;branch&gt;
+</pre></div>
+</div>
+<p>Merge local branch into current branch:</p>
+<div class="highlight-python"><div class="highlight"><pre>% git merge &lt;branch&gt;
+</pre></div>
+</div>
+<p>Update index with any new/deleted/moved files:</p>
+<div class="highlight-python"><div class="highlight"><pre>% git add -A
+</pre></div>
+</div>
+<p>Commit changes in current branch:</p>
+<div class="highlight-python"><div class="highlight"><pre>% git commit -a -m “message”
+</pre></div>
+</div>
+<p>View differences with index:</p>
+<div class="highlight-python"><div class="highlight"><pre>% git diff
+</pre></div>
+</div>
+<p>View differences with another branch:</p>
+<div class="highlight-python"><div class="highlight"><pre>% git diff &lt;target branch&gt;
+</pre></div>
+</div>
+<p>View commit log for cirrent branch:</p>
+<div class="highlight-python"><div class="highlight"><pre>% git log
+</pre></div>
+</div>
+<p>View status of working directory:</p>
+<div class="highlight-python"><div class="highlight"><pre>% git status
+</pre></div>
+</div>
 </div>
 </div>
 </div>
