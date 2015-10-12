@@ -2,7 +2,7 @@
 
 
 #####################################
-Git Command Guide
+Git Command Reference
 #####################################
 
 
@@ -17,7 +17,7 @@ https://try.github.io/levels/1/challenges/1
 https://help.github.com/articles/good-resources-for-learning-git-and-github/
 
 
-Brief command reference
+Command summary
 ============================================
 
 ``git clone <URL>`` - clone a local copy of a remote repo in a new directory
@@ -92,7 +92,7 @@ Delete remote branch
 
 
 
-Working with branches
+Working with branches and the index
 ---------------------------------------------
 
 List local branches
@@ -131,10 +131,6 @@ View commit log for cirrent branch
 
     git log
 
-
-Working with the index
----------------------------------------------
-
 Update index with any new/deleted/moved files
 
     git add -A
@@ -147,7 +143,7 @@ View differences with index
 
     git diff
 
-View status of current branch
+View status of working directory
 
     git status
 
