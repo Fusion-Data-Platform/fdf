@@ -13,7 +13,7 @@ This guide is for developers who want to contribute to the FDF project, and this
 
 First, configure your Linux cluster environment as described above in User Guide.
 
-The FDF code repository is hosted on GitHub: https://github.com/Fusion-Data-Framework/fdf.  To participate in the FDF project as a developer, you must create a GitHub account.  The FDF project uses GitHub and Git for collaborative development and version control.
+The `FDF code repository <https://github.com/Fusion-Data-Framework/fdf>`_ is hosted on GitHub.  To participate in the FDF project as a developer, you must create a GitHub account.  The FDF project uses GitHub and Git for collaborative development and version control.  You can submit bug reports and feature requests on the repository website.
 
 **Configure Git**
 
