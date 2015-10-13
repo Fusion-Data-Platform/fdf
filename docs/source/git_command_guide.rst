@@ -20,18 +20,18 @@ https://help.github.com/articles/good-resources-for-learning-git-and-github/
 Command summary
 ============================================
 
-| ``git clone <URL>`` - clone a local copy of a remote repo in a new directory
-| ``git remote`` - manage remote repo names (e.g. “origin”) and URLs
-| ``git fetch <remote>`` - fetch updates from remote repo
-| ``git push <remote> <branch>`` - push current local branch to remote branch
-| ``git merge <branch>`` or ``git merge <remote>/<branch>`` - merge updates from local or remote branch into current local branch
-| ``git branch`` - manage branches in local and remote repos
-| ``git checkout <branch>`` - switch to a different local branch
-| ``git add`` - add files to the index
-| ``git commit`` - commit changes to the local branch
-| ``git status`` - view status of working directory
-| ``git log`` - view commit log of current local branch
-| ``git diff`` - view differences between working directory and index
+    | ``git clone <URL>`` - clone a local copy of a remote repo in a new directory
+    | ``git remote`` - manage remote repo names (e.g. “origin”) and URLs
+    | ``git fetch <remote>`` - fetch updates from remote repo
+    | ``git push <remote> <branch>`` - push current local branch to remote branch
+    | ``git merge <branch>`` or ``git merge <remote>/<branch>`` - merge updates from local or remote branch into current local branch
+    | ``git branch`` - manage branches in local and remote repos
+    | ``git checkout <branch>`` - switch to a different local branch
+    | ``git add`` - add files to the index
+    | ``git commit`` - commit changes to the local branch
+    | ``git status`` - view status of working directory
+    | ``git log`` - view commit log of current local branch
+    | ``git diff`` - view differences between working directory and index
 
 
 
