@@ -80,7 +80,7 @@ Push local branch to remote repo::
 
 Delete remote branch::
 
-    % git branch <remote> -d <branch>
+    % git push <remote> --delete <branch>
 
 
 
