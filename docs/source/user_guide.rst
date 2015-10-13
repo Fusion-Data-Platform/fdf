@@ -23,14 +23,14 @@ To use FDF on the PPPL Linux cluster, load the module nstx/fdf (you may need to 
     3) ppplcluster/1.1   7) nstx/epics       11) nstx/fdf
     4) freetds/0.91      8) nstx/idldirs 
 
-Verify that Python points to ``/p/fdf/anaconda/bin/python``::
+Verify that Python points to the Anaconda distrubtion in the FDF project area, ``/p/fdf/anaconda/bin/python``::
 
     [sunfire06:~] % which python
     /p/fdf/anaconda/bin/python
 
-If Python does not point to ``/p/fdf/anaconda/bin/python``, then you should inspect the environment variable PATH (``% echo $PATH``) to determine if a different Python module overrides ``/p/fdf/anaconda/bin/python``.  If so, then you should unload the other Python module.
+If Python does not point to ``/p/fdf/anaconda/bin/python``, then you likely loaded a different Python module that preempts ``/p/fdf/anaconda/bin/python``.  If so, then you should unload the other Python module.
 
-Next, start Python and verify that the python path (``sys.path``) points to the Anaconda distrubtion at ``/p/fdf/anaconda/lib/python2.7``, not other distributions such as ``/usr/pppl/python/2.7.2/lib/python2.7``::
+Next, start Python and verify that the Python path (``sys.path``) contains the Anaconda distrubtion at ``/p/fdf/anaconda/lib/python2.7`` and not other distributions such as ``/usr/pppl/python/2.7.2/lib/python2.7``::
 
     [sunfire06:~] % python
     Python 2.7.10 |Anaconda 2.3.0 (64-bit)| (default, Sep 15 2015, 14:50:01) 
@@ -43,11 +43,11 @@ Next, start Python and verify that the python path (``sys.path``) points to the 
     >>> from pprint import pprint
     >>> pprint(sys.path)
 
-If ``sys.path`` contains distributions other than ``/p/fdf/anaconda/lib/python2.7``, then you likely loaded other Python modules.  If so, then you should unload the other Python modules.
+If ``sys.path`` contains distributions other than ``/p/fdf/anaconda/lib/python2.7``, then you likely loaded an additional Python module.  If so, then you should unload the other Python module and restart Python.
 
 Finally, you can import the FDF package::
 
     >>> import fdf
 
-Now you can use the FDF package.  See Usage Examples to learn about the capabilities of FDF.
+See Usage Examples for more information about the usage and capabilities of FDF.
 
