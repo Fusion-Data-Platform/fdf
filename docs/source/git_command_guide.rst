@@ -34,6 +34,7 @@ Command summary
 | ``git diff`` - view differences between working directory and index
 
 
+
 Detailed command reference
 ==================================================
 

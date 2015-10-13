@@ -23,14 +23,14 @@ To use FDF on the PPPL Linux cluster, load the module nstx/fdf (you may need to 
     3) ppplcluster/1.1   7) nstx/epics       11) nstx/fdf
     4) freetds/0.91      8) nstx/idldirs 
 
-Verify that python points to ``/p/fdf/anaconda/bin/python``::
+Verify that Python points to ``/p/fdf/anaconda/bin/python``::
 
     [sunfire06:~] % which python
     /p/fdf/anaconda/bin/python
 
-If python does not point to ``/p/fdf/anaconda/bin/python``, then PATH contains to a different python distribution.  In this case, you need to modify PATH so ``/p/fdf/anaconda/bin`` is the first python distribution in PATH.
+If Python does not point to ``/p/fdf/anaconda/bin/python``, then you should inspect the environment variable PATH (``% echo $PATH``) to determine if a different Python module overrides ``/p/fdf/anaconda/bin/python``.  If so, then you should unload the other Python module.
 
-Finally, you can launch python and import the FDF package::
+Next, start Python and verify that the python path (``sys.path``) points to the Anaconda distrubtion at ``/p/fdf/anaconda/lib/python2.7``, not other distributions such as ``/usr/pppl/python/2.7.2/lib/python2.7``::
 
     [sunfire06:~] % python
     Python 2.7.10 |Anaconda 2.3.0 (64-bit)| (default, Sep 15 2015, 14:50:01) 
@@ -38,8 +38,16 @@ Finally, you can launch python and import the FDF package::
     Type "help", "copyright", "credits" or "license" for more information.
     Anaconda is brought to you by Continuum Analytics.
     Please check out: http://continuum.io/thanks and https://anaconda.org
-    >>> import fdf
-    >>>
 
-See Usage Examples to learn about the capabilities of FDF.
+    >>> import sys
+    >>> from pprint import pprint
+    >>> pprint(sys.path)
+
+If ``sys.path`` contains distributions other than ``/p/fdf/anaconda/lib/python2.7``, then you likely loaded other Python modules.  If so, then you should unload the other Python modules.
+
+Finally, you can import the FDF package::
+
+    >>> import fdf
+
+Now you can use the FDF package.  See Usage Examples to learn about the capabilities of FDF.
 
