@@ -110,15 +110,21 @@ class Machine(MutableMapping):
     def __getattr__(self, name):
         try:
             shot = int(name.split('s')[1])
+            if (shot not in self._shots):
+                self._shots[shot] = Shot(shot, root=self, parent=self)
+            return self._shots[shot]
         except:
-            raise AttributeError("'{}' object has no attribute '{}'".format(
+            try:
+                xp = int(name.split('xp')[1])
+                if (xp not in self._xps):
+                    self.addxp(xp)
+                return self._xps[xp]
+            except:
+                raise AttributeError("'{}' object has no attribute '{}'".format(
                                  type(self), name))
-        if (shot not in self._shots):
-            self._shots[shot] = Shot(shot, root=self, parent=self)
-        return self._shots[shot]
 
     def __repr__(self):
-        return '<machine {}>'.format(self._name)
+        return '<machine {}>'.format(self._name.upper())
 
     def __iter__(self):
         # return iter(self._shots.values())
@@ -142,9 +148,10 @@ class Machine(MutableMapping):
         pass
 
     def __dir__(self):
-        shotlist = ['s0']
-        shotlist.extend(['s{}'.format(shot) for shot in self._shots])
-        return shotlist
+        d = ['s0']
+        d.extend(['s{}'.format(shot) for shot in self._shots])
+        d.extend(['xp{}'.format(xp) for xp in self._xps])
+        return d
 
     def _get_connection(self, shot, tree):
         for connection in self._connections:
@@ -230,17 +237,17 @@ class Machine(MutableMapping):
         
         for shot in np.unique(shots):
             if shot not in self._shots:
-                self._shots[shot] = Shot(shot, parent=self)
+                self._shots[shot] = Shot(shot, root=self, parent=self)
 
-    def addxp(self, xp=[]):
-        self.addshot(xp=xp)
+    def addxp(self, xp=[], verbose=False):
+        self.addshot(xp=xp, verbose=verbose)
 
-    def adddate(self, date=[]):
-        self.addshot(date=date)
+    def adddate(self, date=[], verbose=False):
+        self.addshot(date=date, verbose=verbose)
 
     def listshot(self):
-        for shotkey in self._shots:
-            shot = self._shots[shotkey]
+        for key in np.sort(self._shots.keys()):
+            shot = self._shots[key]
             print('{} in XP {} on {}'.format(shot.shot, shot.xp, shot.date))
 
     def get_shotlist(self, date=[], xp=[], verbose=False):
@@ -250,14 +257,49 @@ class Machine(MutableMapping):
 
 class Xp(Machine):
     
-    def __init__(self, xp, parent=None):
+    def __init__(self, xp, root=None, parent=None):
         self.xp = xp
+        self._root = root
         self._parent = parent
         self._shots = {}
+        self._logbook = self._parent._logbook
+        self._logbook_entries = {}
         
         shotlist = self._parent.get_shotlist(xp=self.xp)
         for shot in shotlist:
-            self._shots[shot] = self._parent.get(shot)
+            self._shots[shot] = getattr(self._parent, 's{}'.format(shot))
+            
+        delattr(self, 'addshot')
+        delattr(self, 'addxp')
+        delattr(self, 'adddate')
+        delattr(self, 'get_shotlist')
+
+    def __getattr__(self, name):
+        try:
+            shot = int(name.split('s')[1])
+            return self._shots[shot]
+        except:
+            raise AttributeError("'{}' object has no attribute '{}'".format(
+                type(self), name))
+
+    def __repr__(self):
+        return '<XP {} on machine {}>'.format(
+            self.xp, self._root._name.upper())
+
+    def __dir__(self):
+        return ['s{}'.format(shot) for shot in self._shots]
+
+    def logbook(self):
+        # print a list of logbook entries
+        print('Logbook entries for XP {}'.format(self.xp))
+        if not self._logbook_entries:
+            self._logbook_entries = self._logbook.get_entries(shot=self.shot)
+        for entry in self._logbook_entries:
+            print('************************************')
+            print(('{shot} on {rundate} in XP {xp}\n'
+                   '{username} in topic {topic}\n\n'
+                   '{text}').format(**entry))
+        print('************************************')
 
 
 class Shot(MutableMapping):
@@ -267,11 +309,11 @@ class Shot(MutableMapping):
         self._shotobj = self
         self._root = root
         self._parent = parent
-        if self._root:
+        try:
             self._logbook = self._root._logbook
-        else:
-            self._logbook = None
-            print('No logbook connection for shot {}'.format(self.shot))
+        except:
+            txt = 'No logbook connection for shot {}'.format(self.shot)
+            raise FdfError(txt)
         self._logbook_entries = []
         modules = root._get_modules()
         self._signals = {module: Factory(module, root=root, shot=shot,
@@ -287,7 +329,8 @@ class Shot(MutableMapping):
             pass
 
     def __repr__(self):
-        return '<Shot {}>'.format(self.shot)
+        return '<Shot {} on machine {}>'.format(
+            self.shot, self._root._name.upper())
 
     def __iter__(self):
         # return iter(self._signals.values())
@@ -309,7 +352,10 @@ class Shot(MutableMapping):
         pass
 
     def __dir__(self):
-        return self._signals.keys()
+        # added xp and date to dir(shot), DRS, 10/13/15
+        d = self._signals.keys()
+        d.extend(['xp', 'date'])
+        return d
 
     def _get_xp(self):
         # query logbook for XP, return XP (list if needed)
@@ -338,22 +384,16 @@ class Shot(MutableMapping):
         return date
 
     def logbook(self):
-        # return a list of logbook entries (dictionaries)
-        if not self._logbook:
-            print('No logbook connection for shot {}'.format(self.shot))
-            return
+        # print a list of logbook entries
+        print('Logbook entries for {}'.format(self.shot))
         if not self._logbook_entries:
             self._logbook_entries = self._logbook.get_entries(shot=self.shot)
-        if self._logbook_entries:
-            print('Logbook entries for {}'.format(self.shot))
-            for entry in self._logbook_entries:
-                print('************************************')
-                print(('{shot} on {rundate} in XP {xp}\n'
-                       '{username} in topic {topic}\n\n'
-                       '{text}').format(**entry))
+        for entry in self._logbook_entries:
             print('************************************')
-        else:
-            print('No logbook entries for {}'.format(self.shot))
+            print(('{shot} on {rundate} in XP {xp}\n'
+                   '{username} in topic {topic}\n\n'
+                   '{text}').format(**entry))
+        print('************************************')
 
 
 class Logbook(object):
@@ -797,8 +837,21 @@ class Node(object):
 
 if __name__ == '__main__':
     nstx = Machine('nstx')
-    #nstx.s140000.logbook()
-    nstx.addshot(xp=1048)
+    nstx.addxp(1013)
+    nstx.addxp(1048)
+    xp = nstx.xp1013
     nstx.listshot()
+    print('xp 1013')
+    nstx.xp1013.listshot()
+    print('xp 1048')
+    nstx.xp1048.listshot()
+    
+    print(dir(nstx))
+    print(dir(nstx.xp1048))
+    
+    print('assigning xp 1048')
+    xp = nstx.xp1048
+    xp.listshot()
+    xp.s140000.logbook()
 
 
