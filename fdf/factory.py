@@ -108,6 +108,7 @@ class Machine(MutableMapping):
             self.addshot(shotlist=shotlist, xp=xp, date=date)
 
     def __getattr__(self, name):
+        # used for attribute referencing: s = nstx.s140000
         try:
             shot = int(name.split('s')[1])
             if (shot not in self._shots):
@@ -140,6 +141,9 @@ class Machine(MutableMapping):
         self._shots.__delitem__(item)
 
     def __getitem__(self, item):
+        # used for dictionary referencing:  s = nstx[140000]
+        # note that getitem fails to catch missing key, 
+        # but getattr does catch missing key
         if item == 0:
             return self.s0
         return self._shots[item]
@@ -230,7 +234,7 @@ class Machine(MutableMapping):
             shots.extend(self._logbook.get_shotlist(xp=xp,
                                                     verbose=verbose))
             for xpp in xp:
-                self._xps[xpp] = Xp(xpp, root=self, parent=self)
+                self._xps[xpp] = XP(xpp, root=self, parent=self)
         if date:
             shots.extend(self._logbook.get_shotlist(date=date,
                                                     verbose=verbose))
@@ -255,7 +259,7 @@ class Machine(MutableMapping):
         return self._logbook.get_shotlist(date=date, xp=xp, verbose=verbose)
 
 
-class Xp(Machine):
+class XP(Machine):
     
     def __init__(self, xp, root=None, parent=None):
         self.xp = xp
@@ -269,10 +273,10 @@ class Xp(Machine):
         for shot in shotlist:
             self._shots[shot] = getattr(self._parent, 's{}'.format(shot))
             
-        delattr(self, 'addshot')
-        delattr(self, 'addxp')
-        delattr(self, 'adddate')
-        delattr(self, 'get_shotlist')
+#        delattr(self, 'addshot')
+#        delattr(self, 'addxp')
+#        delattr(self, 'adddate')
+#        delattr(self, 'get_shotlist')
 
     def __getattr__(self, name):
         try:
@@ -283,8 +287,7 @@ class Xp(Machine):
                 type(self), name))
 
     def __repr__(self):
-        return '<XP {} on machine {}>'.format(
-            self.xp, self._root._name.upper())
+        return '<XP {}>'.format(self.xp)
 
     def __dir__(self):
         return ['s{}'.format(shot) for shot in self._shots]
@@ -300,6 +303,12 @@ class Xp(Machine):
                    '{username} in topic {topic}\n\n'
                    '{text}').format(**entry))
         print('************************************')
+
+    def addshot(*args, **kwargs):
+        pass
+    
+    def get_shotlist(*args, **kwargs):
+        pass
 
 
 class Shot(MutableMapping):
@@ -329,8 +338,7 @@ class Shot(MutableMapping):
             pass
 
     def __repr__(self):
-        return '<Shot {} on machine {}>'.format(
-            self.shot, self._root._name.upper())
+        return '<Shot {}>'.format(self.shot)
 
     def __iter__(self):
         # return iter(self._signals.values())
