@@ -145,12 +145,12 @@ Currently Loaded Modulefiles:
 4) freetds/0.91      8) nstx/idldirs
 </pre></div>
 </div>
-<p>Verify that Python points to the Anaconda distrubtion in the FDF project area, <code class="docutils literal"><span class="pre">/p/fdf/anaconda/bin/python</span></code>:</p>
+<p>Verify that Python points to the Anaconda distrubtion in the FDF project area:</p>
 <div class="highlight-python"><div class="highlight"><pre>[sunfire06:~] % which python
 /p/fdf/anaconda/bin/python
 </pre></div>
 </div>
-<p>If Python does not point to <code class="docutils literal"><span class="pre">/p/fdf/anaconda/bin/python</span></code>, then you likely loaded a different Python module that preempts <code class="docutils literal"><span class="pre">/p/fdf/anaconda/bin/python</span></code>.  If so, then you should unload the other Python module.</p>
+<p>If Python does not point to <code class="docutils literal"><span class="pre">/p/fdf/anaconda/bin/python</span></code>, then you likely loaded a different Python module that preempts the FDF/Anaconda distribution.  If so, then you should unload the other Python module.</p>
 <p>Next, start Python and verify that the Python path (<code class="docutils literal"><span class="pre">sys.path</span></code>) contains the Anaconda distrubtion at <code class="docutils literal"><span class="pre">/p/fdf/anaconda/lib/python2.7</span></code> and not other distributions such as <code class="docutils literal"><span class="pre">/usr/pppl/python/2.7.2/lib/python2.7</span></code>:</p>
 <div class="highlight-python"><div class="highlight"><pre>[sunfire06:~] % python
 Python 2.7.10 |Anaconda 2.3.0 (64-bit)| (default, Sep 15 2015, 14:50:01)
@@ -176,8 +176,7 @@ Please check out: http://continuum.io/thanks and https://anaconda.org
 <p>This guide is for developers who want to contribute to the FDF project, and this guide describes the development workflow on the PPPL Linux cluster.  If you simply want to use FDF on the PPPL Linux cluster, see the user guide.</p>
 <p><a class="reference external" href="http://fusion-data-framework.github.io/fdf/_static/FusionDataFramework.pdf">PDF Documentation</a> is also available.</p>
 <p>First, configure your Linux cluster environment as described above in User Guide.</p>
-<p>The FDF code repository is hosted on GitHub: <a class="reference external" href="https://github.com/Fusion-Data-Framework/fdf">https://github.com/Fusion-Data-Framework/fdf</a></p>
-<p>To participate in the FDF project as a developer, you must create a GitHub account.  The FDF project uses GitHub and Git for collaborative development and version control.</p>
+<p>The FDF code repository is hosted on GitHub: <a class="reference external" href="https://github.com/Fusion-Data-Framework/fdf">https://github.com/Fusion-Data-Framework/fdf</a>.  To participate in the FDF project as a developer, you must create a GitHub account.  The FDF project uses GitHub and Git for collaborative development and version control.</p>
 <p><strong>Configure Git</strong></p>
 <p>On the PPPL Linux cluster, load the module git/1.8.0.2 (on Red Hat 6 systems, use git/2.4.2):</p>
 <div class="highlight-python"><div class="highlight"><pre>[sunfire08:~] % module avail git

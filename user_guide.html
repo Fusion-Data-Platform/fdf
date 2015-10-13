@@ -139,12 +139,12 @@ Currently Loaded Modulefiles:
 4) freetds/0.91      8) nstx/idldirs
 </pre></div>
 </div>
-<p>Verify that Python points to the Anaconda distrubtion in the FDF project area, <code class="docutils literal"><span class="pre">/p/fdf/anaconda/bin/python</span></code>:</p>
+<p>Verify that Python points to the Anaconda distrubtion in the FDF project area:</p>
 <div class="highlight-python"><div class="highlight"><pre>[sunfire06:~] % which python
 /p/fdf/anaconda/bin/python
 </pre></div>
 </div>
-<p>If Python does not point to <code class="docutils literal"><span class="pre">/p/fdf/anaconda/bin/python</span></code>, then you likely loaded a different Python module that preempts <code class="docutils literal"><span class="pre">/p/fdf/anaconda/bin/python</span></code>.  If so, then you should unload the other Python module.</p>
+<p>If Python does not point to <code class="docutils literal"><span class="pre">/p/fdf/anaconda/bin/python</span></code>, then you likely loaded a different Python module that preempts the FDF/Anaconda distribution.  If so, then you should unload the other Python module.</p>
 <p>Next, start Python and verify that the Python path (<code class="docutils literal"><span class="pre">sys.path</span></code>) contains the Anaconda distrubtion at <code class="docutils literal"><span class="pre">/p/fdf/anaconda/lib/python2.7</span></code> and not other distributions such as <code class="docutils literal"><span class="pre">/usr/pppl/python/2.7.2/lib/python2.7</span></code>:</p>
 <div class="highlight-python"><div class="highlight"><pre>[sunfire06:~] % python
 Python 2.7.10 |Anaconda 2.3.0 (64-bit)| (default, Sep 15 2015, 14:50:01)
