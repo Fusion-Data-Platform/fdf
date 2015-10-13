@@ -22,12 +22,12 @@ To work with FDF on the PPPL Linux cluster, load the module nstx/fdf (you may ne
     3) ppplcluster/1.1   7) nstx/epics       11) nstx/fdf
     4) freetds/0.91      8) nstx/idldirs 
 
-Verify that python points to ``/p/fdf/anaconda/bin/python``::
+Verify that Python points to ``/p/fdf/anaconda/bin/python``::
 
     [sunfire06:~] % which python
     /p/fdf/anaconda/bin/python
 
-If python does not point to ``/p/fdf/anaconda/bin/python``, then PATH contains to a different python distribution.  In this case, you need to modify PATH so ``/p/fdf/anaconda/bin`` is the first python distribution in PATH.
+If Python does not point to ``/p/fdf/anaconda/bin/python``, then you should inspect the environment variable PATH (``% echo $PATH``) to determine if a different Python module overrides ``/p/fdf/anaconda/bin/python``.  If so, then you should unload the other Python module.
 
 The FDF code repository is hosted on GitHub: https://github.com/Fusion-Data-Framework/fdf
 

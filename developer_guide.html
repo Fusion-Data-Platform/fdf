@@ -139,12 +139,12 @@ Currently Loaded Modulefiles:
 4) freetds/0.91      8) nstx/idldirs
 </pre></div>
 </div>
-<p>Verify that python points to <code class="docutils literal"><span class="pre">/p/fdf/anaconda/bin/python</span></code>:</p>
+<p>Verify that Python points to <code class="docutils literal"><span class="pre">/p/fdf/anaconda/bin/python</span></code>:</p>
 <div class="highlight-python"><div class="highlight"><pre>[sunfire06:~] % which python
 /p/fdf/anaconda/bin/python
 </pre></div>
 </div>
-<p>If python does not point to <code class="docutils literal"><span class="pre">/p/fdf/anaconda/bin/python</span></code>, then PATH contains to a different python distribution.  In this case, you need to modify PATH so <code class="docutils literal"><span class="pre">/p/fdf/anaconda/bin</span></code> is the first python distribution in PATH.</p>
+<p>If Python does not point to <code class="docutils literal"><span class="pre">/p/fdf/anaconda/bin/python</span></code>, then you should inspect the environment variable PATH (<code class="docutils literal"><span class="pre">%</span> <span class="pre">echo</span> <span class="pre">$PATH</span></code>) to determine if a different Python module overrides <code class="docutils literal"><span class="pre">/p/fdf/anaconda/bin/python</span></code>.  If so, then you should unload the other Python module.</p>
 <p>The FDF code repository is hosted on GitHub: <a class="reference external" href="https://github.com/Fusion-Data-Framework/fdf">https://github.com/Fusion-Data-Framework/fdf</a></p>
 <p>To participate in the FDF project as a developer, you must create a GitHub account.  The FDF project uses GitHub and Git for collaborative development and version control.</p>
 <p><strong>Configure Git</strong></p>

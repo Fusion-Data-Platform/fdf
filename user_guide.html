@@ -139,24 +139,31 @@ Currently Loaded Modulefiles:
 4) freetds/0.91      8) nstx/idldirs
 </pre></div>
 </div>
-<p>Verify that python points to <code class="docutils literal"><span class="pre">/p/fdf/anaconda/bin/python</span></code>:</p>
+<p>Verify that Python points to <code class="docutils literal"><span class="pre">/p/fdf/anaconda/bin/python</span></code>:</p>
 <div class="highlight-python"><div class="highlight"><pre>[sunfire06:~] % which python
 /p/fdf/anaconda/bin/python
 </pre></div>
 </div>
-<p>If python does not point to <code class="docutils literal"><span class="pre">/p/fdf/anaconda/bin/python</span></code>, then PATH contains to a different python distribution.  In this case, you need to modify PATH so <code class="docutils literal"><span class="pre">/p/fdf/anaconda/bin</span></code> is the first python distribution in PATH.</p>
-<p>Finally, you can launch python and import the FDF package:</p>
+<p>If Python does not point to <code class="docutils literal"><span class="pre">/p/fdf/anaconda/bin/python</span></code>, then you should inspect the environment variable PATH (<code class="docutils literal"><span class="pre">%</span> <span class="pre">echo</span> <span class="pre">$PATH</span></code>) to determine if a different Python module overrides <code class="docutils literal"><span class="pre">/p/fdf/anaconda/bin/python</span></code>.  If so, then you should unload the other Python module.</p>
+<p>Next, start Python and verify that the python path (<code class="docutils literal"><span class="pre">sys.path</span></code>) points to the Anaconda distrubtion at <code class="docutils literal"><span class="pre">/p/fdf/anaconda/lib/python2.7</span></code>, not other distributions such as <code class="docutils literal"><span class="pre">/usr/pppl/python/2.7.2/lib/python2.7</span></code>:</p>
 <div class="highlight-python"><div class="highlight"><pre>[sunfire06:~] % python
 Python 2.7.10 |Anaconda 2.3.0 (64-bit)| (default, Sep 15 2015, 14:50:01)
 [GCC 4.4.7 20120313 (Red Hat 4.4.7-1)] on linux2
 Type &quot;help&quot;, &quot;copyright&quot;, &quot;credits&quot; or &quot;license&quot; for more information.
 Anaconda is brought to you by Continuum Analytics.
 Please check out: http://continuum.io/thanks and https://anaconda.org
-&gt;&gt;&gt; import fdf
-&gt;&gt;&gt;
+
+&gt;&gt;&gt; import sys
+&gt;&gt;&gt; from pprint import pprint
+&gt;&gt;&gt; pprint(sys.path)
 </pre></div>
 </div>
-<p>See Usage Examples to learn about the capabilities of FDF.</p>
+<p>If <code class="docutils literal"><span class="pre">sys.path</span></code> contains distributions other than <code class="docutils literal"><span class="pre">/p/fdf/anaconda/lib/python2.7</span></code>, then you likely loaded other Python modules.  If so, then you should unload the other Python modules.</p>
+<p>Finally, you can import the FDF package:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">fdf</span>
+</pre></div>
+</div>
+<p>Now you can use the FDF package.  See Usage Examples to learn about the capabilities of FDF.</p>
 
 
           </div>
