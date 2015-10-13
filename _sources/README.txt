@@ -1,12 +1,11 @@
 
 Fusion Data Framework (FDF) is a data access, management, and visualization framework for magnetic fusion experiments.
 
-| Code repository: https://github.com/Fusion-Data-Framework/fdf
-| HTML documentation: http://fusion-data-framework.github.io/fdf/
-| PDF documentation: http://fusion-data-framework.github.io/fdf/_static/FusionDataFramework.pdf
-| Project documents: http://fusion-data-framework.github.io/fdf/project_documents.html
-| Submit bugs or feature requests: https://github.com/Fusion-Data-Framework/fdf/issues
-| 
+    Code repository: https://github.com/Fusion-Data-Framework/fdf
+    | HTML and PDF documentation: http://fusion-data-framework.github.io/fdf/
+    | Project documents: http://fusion-data-framework.github.io/fdf/project_documents.html
+    | Submit bugs or feature requests: https://github.com/Fusion-Data-Framework/fdf/issues
+
 
 Created by:
 
