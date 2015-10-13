@@ -145,13 +145,13 @@ Currently Loaded Modulefiles:
 4) freetds/0.91      8) nstx/idldirs
 </pre></div>
 </div>
-<p>Verify that Python points to <code class="docutils literal"><span class="pre">/p/fdf/anaconda/bin/python</span></code>:</p>
+<p>Verify that Python points to the Anaconda distrubtion in the FDF project area, <code class="docutils literal"><span class="pre">/p/fdf/anaconda/bin/python</span></code>:</p>
 <div class="highlight-python"><div class="highlight"><pre>[sunfire06:~] % which python
 /p/fdf/anaconda/bin/python
 </pre></div>
 </div>
-<p>If Python does not point to <code class="docutils literal"><span class="pre">/p/fdf/anaconda/bin/python</span></code>, then you should inspect the environment variable PATH (<code class="docutils literal"><span class="pre">%</span> <span class="pre">echo</span> <span class="pre">$PATH</span></code>) to determine if a different Python module overrides <code class="docutils literal"><span class="pre">/p/fdf/anaconda/bin/python</span></code>.  If so, then you should unload the other Python module.</p>
-<p>Next, start Python and verify that the python path (<code class="docutils literal"><span class="pre">sys.path</span></code>) points to the Anaconda distrubtion at <code class="docutils literal"><span class="pre">/p/fdf/anaconda/lib/python2.7</span></code>, not other distributions such as <code class="docutils literal"><span class="pre">/usr/pppl/python/2.7.2/lib/python2.7</span></code>:</p>
+<p>If Python does not point to <code class="docutils literal"><span class="pre">/p/fdf/anaconda/bin/python</span></code>, then you likely loaded a different Python module that preempts <code class="docutils literal"><span class="pre">/p/fdf/anaconda/bin/python</span></code>.  If so, then you should unload the other Python module.</p>
+<p>Next, start Python and verify that the Python path (<code class="docutils literal"><span class="pre">sys.path</span></code>) contains the Anaconda distrubtion at <code class="docutils literal"><span class="pre">/p/fdf/anaconda/lib/python2.7</span></code> and not other distributions such as <code class="docutils literal"><span class="pre">/usr/pppl/python/2.7.2/lib/python2.7</span></code>:</p>
 <div class="highlight-python"><div class="highlight"><pre>[sunfire06:~] % python
 Python 2.7.10 |Anaconda 2.3.0 (64-bit)| (default, Sep 15 2015, 14:50:01)
 [GCC 4.4.7 20120313 (Red Hat 4.4.7-1)] on linux2
@@ -164,18 +164,18 @@ Please check out: http://continuum.io/thanks and https://anaconda.org
 &gt;&gt;&gt; pprint(sys.path)
 </pre></div>
 </div>
-<p>If <code class="docutils literal"><span class="pre">sys.path</span></code> contains distributions other than <code class="docutils literal"><span class="pre">/p/fdf/anaconda/lib/python2.7</span></code>, then you likely loaded other Python modules.  If so, then you should unload the other Python modules.</p>
+<p>If <code class="docutils literal"><span class="pre">sys.path</span></code> contains distributions other than <code class="docutils literal"><span class="pre">/p/fdf/anaconda/lib/python2.7</span></code>, then you likely loaded an additional Python module.  If so, then you should unload the other Python module.</p>
 <p>Finally, you can import the FDF package:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">fdf</span>
 </pre></div>
 </div>
-<p>Now you can use the FDF package.  See Usage Examples to learn about the capabilities of FDF.</p>
+<p>See Usage Examples for more information about the usage and capabilities of FDF.</p>
 </div>
 <div class="section" id="developer-guide">
 <h2>Developer Guide<a class="headerlink" href="#developer-guide" title="Permalink to this headline">¶</a></h2>
 <p>This guide is for developers who want to contribute to the FDF project, and this guide describes the development workflow on the PPPL Linux cluster.  If you simply want to use FDF on the PPPL Linux cluster, see the user guide.</p>
 <p><a class="reference external" href="http://fusion-data-framework.github.io/fdf/_static/FusionDataFramework.pdf">PDF Documentation</a> is also available.</p>
-<p>To work with FDF on the PPPL Linux cluster, load the module nstx/fdf (you may need to unload other nstx modules):</p>
+<p>To use FDF on the PPPL Linux cluster, load the module nstx/fdf (you may need to unload other nstx modules):</p>
 <div class="highlight-python"><div class="highlight"><pre>[sunfire06:~] % module load nstx/fdf
 
 [sunfire06:~] % module list
@@ -186,12 +186,26 @@ Currently Loaded Modulefiles:
 4) freetds/0.91      8) nstx/idldirs
 </pre></div>
 </div>
-<p>Verify that Python points to <code class="docutils literal"><span class="pre">/p/fdf/anaconda/bin/python</span></code>:</p>
+<p>Verify that Python points to the Anaconda distrubtion in the FDF project area, <code class="docutils literal"><span class="pre">/p/fdf/anaconda/bin/python</span></code>:</p>
 <div class="highlight-python"><div class="highlight"><pre>[sunfire06:~] % which python
 /p/fdf/anaconda/bin/python
 </pre></div>
 </div>
-<p>If Python does not point to <code class="docutils literal"><span class="pre">/p/fdf/anaconda/bin/python</span></code>, then you should inspect the environment variable PATH (<code class="docutils literal"><span class="pre">%</span> <span class="pre">echo</span> <span class="pre">$PATH</span></code>) to determine if a different Python module overrides <code class="docutils literal"><span class="pre">/p/fdf/anaconda/bin/python</span></code>.  If so, then you should unload the other Python module.</p>
+<p>If Python does not point to <code class="docutils literal"><span class="pre">/p/fdf/anaconda/bin/python</span></code>, then you likely loaded a different Python module that preempts <code class="docutils literal"><span class="pre">/p/fdf/anaconda/bin/python</span></code>.  If so, then you should unload the other Python module.</p>
+<p>Next, start Python and verify that the Python path (<code class="docutils literal"><span class="pre">sys.path</span></code>) contains the Anaconda distrubtion at <code class="docutils literal"><span class="pre">/p/fdf/anaconda/lib/python2.7</span></code> and not other distributions such as <code class="docutils literal"><span class="pre">/usr/pppl/python/2.7.2/lib/python2.7</span></code>:</p>
+<div class="highlight-python"><div class="highlight"><pre>[sunfire06:~] % python
+Python 2.7.10 |Anaconda 2.3.0 (64-bit)| (default, Sep 15 2015, 14:50:01)
+[GCC 4.4.7 20120313 (Red Hat 4.4.7-1)] on linux2
+Type &quot;help&quot;, &quot;copyright&quot;, &quot;credits&quot; or &quot;license&quot; for more information.
+Anaconda is brought to you by Continuum Analytics.
+Please check out: http://continuum.io/thanks and https://anaconda.org
+
+&gt;&gt;&gt; import sys
+&gt;&gt;&gt; from pprint import pprint
+&gt;&gt;&gt; pprint(sys.path)
+</pre></div>
+</div>
+<p>If <code class="docutils literal"><span class="pre">sys.path</span></code> contains distributions other than <code class="docutils literal"><span class="pre">/p/fdf/anaconda/lib/python2.7</span></code>, then you likely loaded an additional Python module.  If so, then you should unload the other Python module.</p>
 <p>The FDF code repository is hosted on GitHub: <a class="reference external" href="https://github.com/Fusion-Data-Framework/fdf">https://github.com/Fusion-Data-Framework/fdf</a></p>
 <p>To participate in the FDF project as a developer, you must create a GitHub account.  The FDF project uses GitHub and Git for collaborative development and version control.</p>
 <p><strong>Configure Git</strong></p>
