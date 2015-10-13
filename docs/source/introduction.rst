@@ -6,20 +6,18 @@ Introduction
 *****************************************
 
 
-About FDF
-==========================
+**About FDF**
+
+.. a======================================
 
 .. include:: README.rst
 
 
-About this documentation
-==========================
-
-.. include:: README_docs.rst
 
 
-License
-==========================
+
+**License**
+
+.. a======================================
 
 .. include:: LICENSE.rst
-
