@@ -78,6 +78,7 @@ class Machine(MutableMapping):
 
     def __init__(self, name='nstx', shotlist=[], xp=[], date=[]):
         self._shots = {}  # shot dictionary with shot number (int) keys
+        self._xps = {} # XP dictionary
         self._classlist = {}
         self._name = name.lower()
 
@@ -214,15 +215,22 @@ class Machine(MutableMapping):
             xp = [xp]
         if not iterable(date):
             date = [date]
+        
         shots = []
         if shotlist:
             shots.extend([shotlist])
-        if date or xp:
-            shots.extend(self._logbook.get_shotlist(date=date, xp=xp,
+        if xp:
+            shots.extend(self._logbook.get_shotlist(xp=xp,
                                                     verbose=verbose))
+            for xpp in xp:
+                self._xps[xpp] = Xp(xpp, root=self, parent=self)
+        if date:
+            shots.extend(self._logbook.get_shotlist(date=date,
+                                                    verbose=verbose))
+        
         for shot in np.unique(shots):
             if shot not in self._shots:
-                self._shots[shot] = Shot(shot, root=self, parent=self)
+                self._shots[shot] = Shot(shot, parent=self)
 
     def addxp(self, xp=[]):
         self.addshot(xp=xp)
@@ -242,10 +250,14 @@ class Machine(MutableMapping):
 
 class Xp(Machine):
     
-    def __init__(self, name='nstx', xp=0, root=None, parent=None):
+    def __init__(self, xp, parent=None):
         self.xp = xp
-        self._root = root
         self._parent = parent
+        self._shots = {}
+        
+        shotlist = self._parent.get_shotlist(xp=self.xp)
+        for shot in shotlist:
+            self._shots[shot] = self._parent.get(shot)
 
 
 class Shot(MutableMapping):
@@ -255,7 +267,11 @@ class Shot(MutableMapping):
         self._shotobj = self
         self._root = root
         self._parent = parent
-        self._logbook = root._logbook
+        if self._root:
+            self._logbook = self._root._logbook
+        else:
+            self._logbook = None
+            print('No logbook connection for shot {}'.format(self.shot))
         self._logbook_entries = []
         modules = root._get_modules()
         self._signals = {module: Factory(module, root=root, shot=shot,
@@ -297,20 +313,24 @@ class Shot(MutableMapping):
 
     def _get_xp(self):
         # query logbook for XP, return XP (list if needed)
-        if not self._logbook_entries:
+        if self._logbook and not self._logbook_entries:
             self._logbook_entries = self._logbook.get_entries(shot=self.shot)
+        
         xplist = []
         for entry in self._logbook_entries:
             xplist.append(entry['xp'])
+        
         if len(np.unique(xplist)) == 1:
             xp = xplist.pop(0)
-        else:
+        elif len(np.unique(xplist)) > 1:
             xp = np.unique(xplist)
+        else:
+            xp = 0
         return xp
 
     def _get_date(self):
         # query logbook for rundate, return rundate
-        if not self._logbook_entries:
+        if self._logbook and not self._logbook_entries:
             self._logbook_entries = self._logbook.get_entries(shot=self.shot)
         date = 0
         if self._logbook_entries:
@@ -319,6 +339,9 @@ class Shot(MutableMapping):
 
     def logbook(self):
         # return a list of logbook entries (dictionaries)
+        if not self._logbook:
+            print('No logbook connection for shot {}'.format(self.shot))
+            return
         if not self._logbook_entries:
             self._logbook_entries = self._logbook.get_entries(shot=self.shot)
         if self._logbook_entries:
@@ -456,6 +479,7 @@ class Logbook(object):
             shot.extend(self.get_shotlist(date=date, xp=xp))
         if shot:
             self._shot_query(shot=shot)
+        
         entries = []
         for sh in np.unique(shot):
             if sh in self.logbook:
