@@ -240,6 +240,14 @@ class Machine(MutableMapping):
         return self._logbook.get_shotlist(date=date, xp=xp, verbose=verbose)
 
 
+class Xp(Machine):
+    
+    def __init__(self, name='nstx', xp=0, root=None, parent=None):
+        self.xp = xp
+        self._root = root
+        self._parent = parent
+
+
 class Shot(MutableMapping):
 
     def __init__(self, shot, root=None, parent=None):
