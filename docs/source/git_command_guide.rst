@@ -91,9 +91,13 @@ List local branches::
 
     % git branch
 
-Create new branch in local repo (copy of master branch)::
+Create new branch from master branch in local repo::
 
     % git branch <new branch>
+
+Create new branch from existing branch in local repo::
+
+    % git branch <new branch> <existing branch>
 
 Delete local branch::
 
