@@ -22,6 +22,7 @@ import os
 import fdf_globals
 from fdf_signal import Signal
 import numpy as np
+import datetime as dt
 import modules
 from collections import MutableMapping, OrderedDict
 import MDSplus as mds
@@ -402,12 +403,17 @@ class Logbook(object):
                          'ORDER BY shot ASC, entered ASC'
                          ).format(self._shot_query_prefix, sh)
                 cursor.execute(query)
-                self.logbook[sh] = cursor.fetchall()  # list of logbook entries
+                rows = cursor.fetchall()  # list of logbook entries
+                for row in rows:
+                    rundate = repr(row['rundate'])
+                    yr=rundate[0:4]; mon=rundate[4:6]; day = rundate[6:8]
+                    row['rundate'] = dt.date(int(yr), int(mon), int(day))
+                self.logbook[sh] = rows
 
     def get_shotlist(self, date=[], xp=[], verbose=False):
         # return list of shots for date and/or XP
         cursor = self._get_cursor()
-
+        rows = []
         shotlist = []   # start with empty shotlist
 
         date_list = date
@@ -417,15 +423,8 @@ class Logbook(object):
             query = ('{0} and rundate={1} ORDER BY shot ASC'.
                      format(self._shotlist_query_prefix, date))
             cursor.execute(query)
-            rows = cursor.fetchall()
-            if verbose:
-                print('date {}'.format(date))
-                for row in rows:
-                    print('   {shot} in XP {xp}'.format(**row))
-            # add shots to shotlist
-            shotlist.extend([row['shot'] for row in rows
-                            if row['shot'] is not None])
-
+            rows.extend(cursor.fetchall())
+            
         xp_list = xp
         if not iterable(xp_list):           # if it's just a single xp
             xp_list = [xp_list]             # put it into a list
@@ -433,14 +432,19 @@ class Logbook(object):
             query = ('{0} and xp={1} ORDER BY shot ASC'.
                      format(self._shotlist_query_prefix, xp))
             cursor.execute(query)
-            rows = cursor.fetchall()
-            if verbose:
-                print('XP {}'.format(xp))
-                for row in rows:
-                    print('   {shot} on date {rundate}'.format(**row))
-            # add shots to shotlist
-            shotlist.extend([row['shot'] for row in rows
-                            if row['shot'] is not None])
+            rows.extend(cursor.fetchall())
+            
+        for row in rows:
+            rundate = repr(row['rundate'])
+            yr=rundate[0:4]; mon=rundate[4:6]; day = rundate[6:8]
+            row['rundate'] = dt.date(int(yr), int(mon), int(day))
+        if verbose:
+            print('date {}'.format(rows[0]['rundate']))
+            for row in rows:
+                print('   {shot} in XP {xp}'.format(**row))
+        # add shots to shotlist
+        shotlist.extend([row['shot'] for row in rows
+                        if row['shot'] is not None])
 
         cursor.close()
         return np.unique(shotlist)
@@ -458,6 +462,7 @@ class Logbook(object):
             if sh in self.logbook:
                 entries.extend(self.logbook[sh])
         return entries
+
 
 _tree_dict = {}
 
