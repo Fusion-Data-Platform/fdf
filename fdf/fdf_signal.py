@@ -42,7 +42,7 @@ class Signal(np.ndarray):
     def __init__(self, **kwargs):
         pass
 
-    def __new__(cls, input_array=[], root=None, verbose=False, **kwargs):
+    def __new__(cls, input_array=[], verbose=False, **kwargs):
         #maybe an **kwargs dict for more attr
         #name is name of signal...e.g. Te
         #__doc__ for the signal...decriptor (filled in when? XML/MDSvalue?)
@@ -80,14 +80,14 @@ class Signal(np.ndarray):
 
         #Initiate slic attribute to hold slice index info
 
-        try:
+#        try:
 #            for i, axis in enumerate(axes):
 #                print(name, axis)
 #                setattr(obj, axis, axes_values[i])
-            for axis, reference in zip(axes, axes_values):
-                setattr(obj, axis, reference)
-        except:
-            pass
+#            for axis, reference in zip(axes, axes_values):
+#                setattr(obj, axis, reference)
+#        except:
+#            pass
         return obj
 
 #    def __array_prepare__(self, context=None):
