@@ -167,7 +167,12 @@ class Machine(MutableMapping):
             print('No MDS data exists for model tree')
             return None
         connection = self._get_connection(shot, signal._mdstree)
-        data = connection.get(signal._mdsnode)
+        try:
+            data = connection.get(signal._mdsnode)
+        except:
+            txt = 'MDSplus connection error for tree {} and node {}'.format(
+                signal._mdstree, signal._mdsnode)
+            raise FdfError(txt)
         try:
             if signal._raw_of is not None:
                 data = data.raw_of()
@@ -764,9 +769,10 @@ class Node(object):
 
 
 if __name__ == '__main__':
-    nstx = Machine('nstx')
-    #nstx.s140000.logbook()
-    nstx.addshot(xp=1048)
-    nstx.listshot()
+    nstx = Machine(shotlist=140000)
+    dir(nstx.s140000)
+    dir(nstx.s140000.bes)
+    dir(nstx.s140000.bes.INPUT_01)
+    nstx.s140000.bes.INPUT_01.plot()
 
 

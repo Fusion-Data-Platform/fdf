@@ -1,68 +1,69 @@
 <?xml version='1.0'?>
 <container name='bes' mdstree='activesp_raw' mdspath='\TOP.BES.RAWDATA'>
     <axis name='time' units='s' mdsnode='BE_DT32_01:INPUT_01' dim_of='0'></axis>
-    <signal name='INPUT_01' unites='V' axes='time' mdsnode='BE_DT32_01:INPUT_01'>
+    <method name='plot'></method>
+    <signal name='INPUT_01' units='V' axes='time' mdsnode='BE_DT32_01:INPUT_01'>
     </signal>
-    <signal name='INPUT_02' unites='V' axes='time' mdsnode='BE_DT32_01:INPUT_02'>
+    <signal name='INPUT_02' units='V' axes='time' mdsnode='BE_DT32_01:INPUT_02'>
     </signal>
-    <signal name='INPUT_03' unites='V' axes='time' mdsnode='BE_DT32_01:INPUT_03'>
+    <signal name='INPUT_03' units='V' axes='time' mdsnode='BE_DT32_01:INPUT_03'>
     </signal>
-    <signal name='INPUT_04' unites='V' axes='time' mdsnode='BE_DT32_01:INPUT_04'>
+    <signal name='INPUT_04' units='V' axes='time' mdsnode='BE_DT32_01:INPUT_04'>
     </signal>
-    <signal name='INPUT_05' unites='V' axes='time' mdsnode='BE_DT32_01:INPUT_05'>
+    <signal name='INPUT_05' units='V' axes='time' mdsnode='BE_DT32_01:INPUT_05'>
     </signal>
-    <signal name='INPUT_06' unites='V' axes='time' mdsnode='BE_DT32_01:INPUT_06'>
+    <signal name='INPUT_06' units='V' axes='time' mdsnode='BE_DT32_01:INPUT_06'>
     </signal>
-    <signal name='INPUT_07' unites='V' axes='time' mdsnode='BE_DT32_01:INPUT_07'>
+    <signal name='INPUT_07' units='V' axes='time' mdsnode='BE_DT32_01:INPUT_07'>
     </signal>
-    <signal name='INPUT_08' unites='V' axes='time' mdsnode='BE_DT32_01:INPUT_08'>
+    <signal name='INPUT_08' units='V' axes='time' mdsnode='BE_DT32_01:INPUT_08'>
     </signal>
-    <signal name='INPUT_09' unites='V' axes='time' mdsnode='BE_DT32_01:INPUT_09'>
+    <signal name='INPUT_09' units='V' axes='time' mdsnode='BE_DT32_01:INPUT_09'>
     </signal>
-    <signal name='INPUT_10' unites='V' axes='time' mdsnode='BE_DT32_01:INPUT_10'>
+    <signal name='INPUT_10' units='V' axes='time' mdsnode='BE_DT32_01:INPUT_10'>
     </signal>
-    <signal name='INPUT_11' unites='V' axes='time' mdsnode='BE_DT32_01:INPUT_11'>
+    <signal name='INPUT_11' units='V' axes='time' mdsnode='BE_DT32_01:INPUT_11'>
     </signal>
-    <signal name='INPUT_12' unites='V' axes='time' mdsnode='BE_DT32_01:INPUT_12'>
+    <signal name='INPUT_12' units='V' axes='time' mdsnode='BE_DT32_01:INPUT_12'>
     </signal>
-    <signal name='INPUT_13' unites='V' axes='time' mdsnode='BE_DT32_01:INPUT_13'>
+    <signal name='INPUT_13' units='V' axes='time' mdsnode='BE_DT32_01:INPUT_13'>
     </signal>
-    <signal name='INPUT_14' unites='V' axes='time' mdsnode='BE_DT32_01:INPUT_14'>
+    <signal name='INPUT_14' units='V' axes='time' mdsnode='BE_DT32_01:INPUT_14'>
     </signal>
-    <signal name='INPUT_15' unites='V' axes='time' mdsnode='BE_DT32_01:INPUT_15'>
+    <signal name='INPUT_15' units='V' axes='time' mdsnode='BE_DT32_01:INPUT_15'>
     </signal>
-    <signal name='INPUT_16' unites='V' axes='time' mdsnode='BE_DT32_01:INPUT_16'>
+    <signal name='INPUT_16' units='V' axes='time' mdsnode='BE_DT32_01:INPUT_16'>
     </signal>
-    <signal name='INPUT_17' unites='V' axes='time' mdsnode='BE_DT32_01:INPUT_17'>
+    <signal name='INPUT_17' units='V' axes='time' mdsnode='BE_DT32_01:INPUT_17'>
     </signal>
-    <signal name='INPUT_18' unites='V' axes='time' mdsnode='BE_DT32_01:INPUT_18'>
+    <signal name='INPUT_18' units='V' axes='time' mdsnode='BE_DT32_01:INPUT_18'>
     </signal>
-    <signal name='INPUT_19' unites='V' axes='time' mdsnode='BE_DT32_01:INPUT_19'>
+    <signal name='INPUT_19' units='V' axes='time' mdsnode='BE_DT32_01:INPUT_19'>
     </signal>
-    <signal name='INPUT_20' unites='V' axes='time' mdsnode='BE_DT32_01:INPUT_20'>
+    <signal name='INPUT_20' units='V' axes='time' mdsnode='BE_DT32_01:INPUT_20'>
     </signal>
-    <signal name='INPUT_21' unites='V' axes='time' mdsnode='BE_DT32_01:INPUT_21'>
+    <signal name='INPUT_21' units='V' axes='time' mdsnode='BE_DT32_01:INPUT_21'>
     </signal>
-    <signal name='INPUT_22' unites='V' axes='time' mdsnode='BE_DT32_01:INPUT_22'>
+    <signal name='INPUT_22' units='V' axes='time' mdsnode='BE_DT32_01:INPUT_22'>
     </signal>
-    <signal name='INPUT_23' unites='V' axes='time' mdsnode='BE_DT32_01:INPUT_23'>
+    <signal name='INPUT_23' units='V' axes='time' mdsnode='BE_DT32_01:INPUT_23'>
     </signal>
-    <signal name='INPUT_24' unites='V' axes='time' mdsnode='BE_DT32_01:INPUT_24'>
+    <signal name='INPUT_24' units='V' axes='time' mdsnode='BE_DT32_01:INPUT_24'>
     </signal>
-    <signal name='INPUT_25' unites='V' axes='time' mdsnode='BE_DT32_01:INPUT_25'>
+    <signal name='INPUT_25' units='V' axes='time' mdsnode='BE_DT32_01:INPUT_25'>
     </signal>
-    <signal name='INPUT_26' unites='V' axes='time' mdsnode='BE_DT32_01:INPUT_26'>
+    <signal name='INPUT_26' units='V' axes='time' mdsnode='BE_DT32_01:INPUT_26'>
     </signal>
-    <signal name='INPUT_27' unites='V' axes='time' mdsnode='BE_DT32_01:INPUT_27'>
+    <signal name='INPUT_27' units='V' axes='time' mdsnode='BE_DT32_01:INPUT_27'>
     </signal>
-    <signal name='INPUT_28' unites='V' axes='time' mdsnode='BE_DT32_01:INPUT_28'>
+    <signal name='INPUT_28' units='V' axes='time' mdsnode='BE_DT32_01:INPUT_28'>
     </signal>
-    <signal name='INPUT_29' unites='V' axes='time' mdsnode='BE_DT32_01:INPUT_29'>
+    <signal name='INPUT_29' units='V' axes='time' mdsnode='BE_DT32_01:INPUT_29'>
     </signal>
-    <signal name='INPUT_30' unites='V' axes='time' mdsnode='BE_DT32_01:INPUT_30'>
+    <signal name='INPUT_30' units='V' axes='time' mdsnode='BE_DT32_01:INPUT_30'>
     </signal>
-    <signal name='INPUT_31' unites='V' axes='time' mdsnode='BE_DT32_01:INPUT_31'>
+    <signal name='INPUT_31' units='V' axes='time' mdsnode='BE_DT32_01:INPUT_31'>
     </signal>
-    <signal name='INPUT_32' unites='V' axes='time' mdsnode='BE_DT32_01:INPUT_32'>
+    <signal name='INPUT_32' units='V' axes='time' mdsnode='BE_DT32_01:INPUT_32'>
     </signal>
 </container>
