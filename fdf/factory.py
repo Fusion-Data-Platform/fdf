@@ -179,7 +179,6 @@ class Machine(MutableMapping):
             raise FdfError(txt)
         try:
             if signal._raw_of is not None:
-                print('in raw of')
                 data = data.raw_of()
         except:
             pass
@@ -196,7 +195,6 @@ class Machine(MutableMapping):
         data = data.value_of().value
         try:
             if signal._transpose is not None:
-                print('in transpose')
                 data = data.transpose(signal._transpose)
         except:
             pass
