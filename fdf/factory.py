@@ -97,12 +97,14 @@ class Machine(MutableMapping):
             print('Precaching MDS server connections...')
             for _ in range(2):
                 try:
-                    self._connections[mds.Connection(MDS_SERVERS[self._name])] = None
+                    connection = mds.Connection(MDS_SERVERS[self._name])
+                    connection.tree = None
+                    self._connections.append(connection)
                 except:
                     txt = 'MDSplus connection to {} failed.'.format(MDS_SERVERS[self._name])
                     raise FdfError(txt)
             print('Finished.')
-
+        
         # add shots
         if shotlist or xp or date:
             self.addshot(shotlist=shotlist, xp=xp, date=date)
@@ -148,7 +150,7 @@ class Machine(MutableMapping):
 
     def _get_connection(self, shot, tree):
         for connection in self._connections:
-            if self._connections.tree == (shot, tree):
+            if connection.tree == (shot, tree):
                 self._connections.remove(connection)
                 self._connections.insert = (0, connection)
                 return connection
@@ -157,7 +159,8 @@ class Machine(MutableMapping):
             connection.closeAllTrees()
         except:
             pass
-        connection.tree(tree, shot)
+        connection.openTree(tree, shot)
+        connection.tree = (tree, shot)
         self._connections.insert(0, connection)
         return connection
 
@@ -176,17 +179,24 @@ class Machine(MutableMapping):
             raise FdfError(txt)
         try:
             if signal._raw_of is not None:
+                print('in raw of')
                 data = data.raw_of()
         except:
             pass
         try:
             if signal._dim_of is not None:
+                print('in dim of')
                 data = data.dim_of()
+                print(data[0:10])
+                tmp = data.value_of().value
+                print(tmp[0:10])
+                print('dim of complete')
         except:
             pass
         data = data.value_of().value
         try:
             if signal._transpose is not None:
+                print('in transpose')
                 data = data.transpose(signal._transpose)
         except:
             pass
@@ -793,9 +803,7 @@ class Node(object):
             return attr
 
 if __name__ == '__main__':
-    nstx = Machine(shotlist=140000)
-    dir(nstx.s140000)
-    dir(nstx.s140000.bes)
-    dir(nstx.s140000.bes.INPUT_01)
-    nstx.s140000.bes.INPUT_01.plot()
+    nstx = Machine(shotlist=141000)
+    s = nstx.s141000
+    s.bes.ch_01.plot()
 
