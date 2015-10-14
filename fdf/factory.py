@@ -23,7 +23,7 @@ import fdf_globals
 from fdf_signal import Signal
 import numpy as np
 import modules
-from collections import MutableMapping, OrderedDict
+from collections import MutableMapping
 import MDSplus as mds
 import types
 import inspect
@@ -72,7 +72,7 @@ class Machine(MutableMapping):
     # Maintain a dictionary of cached MDS server connections to speed up
     # access for multiple shots and trees. This is a static class variable
     # to avoid proliferation of MDS server connections
-    _connections = OrderedDict()
+    _connections = []
     _parent = None
     _modules = None
 
@@ -96,7 +96,9 @@ class Machine(MutableMapping):
             print('Precaching MDS server connections...')
             for _ in range(2):
                 try:
-                    self._connections[mds.Connection(MDS_SERVERS[self._name])] = None
+                    connection = mds.Connection(MDS_SERVERS[self._name])
+                    connection.tree = None
+                    self._connections.append(connection)
                 except:
                     txt = 'MDSplus connection to {} failed.'.format(MDS_SERVERS[self._name])
                     raise FdfError(txt)
@@ -147,17 +149,18 @@ class Machine(MutableMapping):
 
     def _get_connection(self, shot, tree):
         for connection in self._connections:
-            if self._connections[connection] == (shot, tree):
-                self._connections.pop(connection)
-                self._connections[connection] = (shot, tree)
+            if connection.tree == (shot, tree):
+                self._connections.remove(connection)
+                self._connections.insert(0, connection)
                 return connection
-        connection, _ = self._connections.popitem(last=False)
+        connection = self._connections.pop()
         try:
             connection.closeAllTrees()
         except:
             pass
         connection.openTree(tree, shot)
-        self._connections[connection] = (shot, tree)
+        connection.tree = (shot, tree)
+        self._connections.insert(0, connection)
         return connection
 
     def _get_mdsdata(self, signal):
@@ -167,7 +170,11 @@ class Machine(MutableMapping):
             print('No MDS data exists for model tree')
             return None
         connection = self._get_connection(shot, signal._mdstree)
-        data = connection.get(signal._mdsnode)
+        try:
+            data = connection.get(signal._mdsnode)
+        except:
+            print('Data error for node {}.'.format(signal._mdsnode))
+            return None
         try:
             if signal._raw_of is not None:
                 data = data.raw_of()
@@ -519,6 +526,7 @@ class Container(object):
                 cls._classes[NodeClassName] = NodeClass
             else:
                 NodeClass = cls._classes[NodeClassName]
+            NodeClass._mdstree = parse_mdstree(self, node)
             setattr(self, node.get('name'), NodeClass(node, parent=self))
 
         for element in module_tree.findall('axis'):
@@ -760,7 +768,26 @@ class Node(object):
     def __init__(self, element, parent=None):
         self._parent = parent
         self._name = element.get('name')
-        self.mdspath = parse_mdspath(self, element)
+        self._mdsnode = parse_mdspath(self, element)
+        self._data = None
+
+    def __repr__(self):
+        if self._data is None:
+            self._data = self._root._get_mdsdata(self)
+        return str(self._data)
+
+    def __getattr__(self, attribute):
+        if attribute is '_parent':
+            raise AttributeError("'{}' object has no attribute '{}'".format(
+                                 type(self), attribute))
+        if self._parent is None:
+            raise AttributeError("'{}' object has no attribute '{}'".format(
+                                 type(self), attribute))
+        attr = getattr(self._parent, attribute)
+        if inspect.ismethod(attr):
+            return types.MethodType(attr.im_func, self)
+        else:
+            return attr
 
 
 if __name__ == '__main__':
