@@ -184,12 +184,12 @@ class Machine(MutableMapping):
             pass
         try:
             if signal._dim_of is not None:
-                print('in dim of')
+                print('start: dim of')
                 data = data.dim_of()
                 print(data[0:10])
                 tmp = data.value_of().value
                 print(tmp[0:10])
-                print('dim of complete')
+                print('end: dim of')
         except:
             pass
         data = data.value_of().value
