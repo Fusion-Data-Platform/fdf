@@ -10,7 +10,6 @@ import matplotlib.pyplot as plt
 import math as math
 
 def plot(signal, overwrite=False):
-    print(signal._name)
     
     if signal._name in ['vloop']:
         if not overwrite:
