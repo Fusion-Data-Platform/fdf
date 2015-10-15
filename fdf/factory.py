@@ -79,7 +79,7 @@ class Machine(MutableMapping):
     def __init__(self, name='nstx', shotlist=[], xp=[], date=[]):
         self._shots = {}  # shot dictionary with shot number (int) keys
         self._classlist = {}
-        self._name = name.lower()
+        self._name = fdf_globals.name(name)
 
         if self._name not in LOGBOOK_CREDENTIALS or \
                 self._name not in MDS_SERVERS:
