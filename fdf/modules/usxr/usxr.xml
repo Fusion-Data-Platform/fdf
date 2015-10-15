@@ -1,15 +1,16 @@
 <?xml version='1.0'?>
 <container name='usxr' mdstree='usxr'>
+    <method name='_postprocess'></method>
     <container name='vtop'>
-        <axis name='time' units='s' mdsnode='\usxr_vtop_00' dim_of='0'></axis>
-        <signal name='vtop{}' units='DN' axes='time' mdsnode='\usxr_vtop_{}' range='16'></signal>
+        <axis name='time' units='s' mdsnode='\usxr_vtop_00.raw' dim_of='0'></axis>
+        <signal name='vtop{}' units='DN' axes='time' mdsnode='\usxr_vtop_{}.raw' range='16'></signal>
     </container>
     <container name='hup'>
-        <axis name='time' units='s' mdsnode='\usxr_hup_00' dim_of='0'></axis>
-        <signal name='hup{}' units='DN' axes='time' mdsnode='\usxr_hup_{}' range='16'></signal>
+        <axis name='time' units='s' mdsnode='\usxr_hup_00.raw' dim_of='0'></axis>
+        <signal name='hup{}' units='DN' axes='time' mdsnode='\usxr_hup_{}.raw' range='16'></signal>
     </container>
     <container name='hdown'>
-        <axis name='time' units='s' mdsnode='\usxr_hdown_00' dim_of='0'></axis>
-        <signal name='hdown{}' units='DN' axes='time' mdsnode='\usxr_hdown_{}' range='16'></signal>
+        <axis name='time' units='s' mdsnode='\usxr_hdown_00.raw' dim_of='0'></axis>
+        <signal name='hdown{}' units='DN' axes='time' mdsnode='\usxr_hdown_{}.raw' range='16'></signal>
     </container>
 </container>

@@ -39,7 +39,7 @@ FdfError = fdf_globals.FdfError
 class Machine(MutableMapping):
     """
     Factory root class that contains shot objects and MDS access methods.
-    
+
     Note that fdf.factory.Machine is exposed in fdf.__init__, so fdf.Machine
     is valid.
 
@@ -189,6 +189,10 @@ class Machine(MutableMapping):
         try:
             if signal._transpose is not None:
                 data = data.transpose(signal._transpose)
+        except:
+            pass
+        try:
+            data = signal._postprocess(data)
         except:
             pass
         return data
