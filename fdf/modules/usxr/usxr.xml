@@ -2,15 +2,15 @@
 <container name='usxr' mdstree='usxr'>
     <method name='_postprocess'></method>
     <container name='vtop'>
-        <axis name='time' units='s' mdsnode='\usxr_vtop_00.raw' dim_of='0'></axis>
+        <axis name='time' units='s' mdsnode='dim_of(\usxr_vtop_00.raw)'></axis>
         <signal name='vtop{}' units='DN' axes='time' mdsnode='\usxr_vtop_{}.raw' range='16'></signal>
     </container>
     <container name='hup'>
-        <axis name='time' units='s' mdsnode='\usxr_hup_00.raw' dim_of='0'></axis>
+        <axis name='time' units='s' mdsnode='dim_of(\usxr_hup_00.raw)'></axis>
         <signal name='hup{}' units='DN' axes='time' mdsnode='\usxr_hup_{}.raw' range='16'></signal>
     </container>
     <container name='hdown'>
-        <axis name='time' units='s' mdsnode='\usxr_hdown_00.raw' dim_of='0'></axis>
+        <axis name='time' units='s' mdsnode='dim_of(\usxr_hdown_00.raw)'></axis>
         <signal name='hdown{}' units='DN' axes='time' mdsnode='\usxr_hdown_{}.raw' range='16'></signal>
     </container>
 </container>
