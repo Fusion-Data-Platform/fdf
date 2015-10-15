@@ -29,21 +29,33 @@ LOGBOOK_CREDENTIALS = {
         'table': 'entries'
     }
 }
+
+_ALIASES = {
+    'nstx': ['nstx', 'nstxu', 'nstx-u'],
+}
 """Dictionary: machine-name key paired with logbook login credentials"""
+
+
+def name(alias):
+    global _ALIASES
+
+    for key, value in iter(_ALIASES.items()):
+        if alias.lower() in value:
+            return key
+    raise FdfError('{} not a valid machine name'.format(alias))
 
 
 class FdfError(Exception):
     """
     Error class for FDF package
-    
+
     **Usage**::
-    
+
     raise FdfError('my error message')
-    
+
     """
     def __init__(self, message=''):
         self.message = message
+
     def __str__(self):
         return self.message
-
-

@@ -29,6 +29,7 @@ import MDSplus as mds
 import types
 import inspect
 import pymssql
+import matplotlib.pyplot as plt
 
 
 FDF_DIR = fdf_globals.FDF_DIR
@@ -40,7 +41,7 @@ FdfError = fdf_globals.FdfError
 class Machine(MutableMapping):
     """
     Factory root class that contains shot objects and MDS access methods.
-    
+
     Note that fdf.factory.Machine is exposed in fdf.__init__, so fdf.Machine
     is valid.
 
@@ -80,7 +81,7 @@ class Machine(MutableMapping):
     def __init__(self, name='nstx', shotlist=[], xp=[], date=[]):
         self._shots = {}  # shot dictionary with shot number (int) keys
         self._classlist = {}
-        self._name = name.lower()
+        self._name = fdf_globals.name(name)
 
         if self._name not in LOGBOOK_CREDENTIALS or \
                 self._name not in MDS_SERVERS:
@@ -198,6 +199,10 @@ class Machine(MutableMapping):
                 data = data.transpose(signal._transpose)
         except:
             pass
+        try:
+            data = signal._postprocess(data)
+        except:
+            pass
         return data
 
     def _get_modules(self):
@@ -264,17 +269,22 @@ class Shot(MutableMapping):
         self._logbook = root._logbook
         self._logbook_entries = []
         modules = root._get_modules()
-        self._signals = {module: Factory(module, root=root, shot=shot,
-                                         parent=self) for module in modules}
+        self._signals = {module: None for module in modules}
+#        self._signals = {module: Factory(module, root=root, shot=shot,
+#                                         parent=self) for module in modules}
         self.xp = self._get_xp()
         self.date = self._get_date()
 
     def __getattr__(self, name):
-        name_lower = name.lower()
+        name_low = name.lower()
+        if self._signals[name_low] is None:
+            self._signals[name_low] = Factory(name_low, root=self._root,
+                                              shot=self.shot, parent=self)
         try:
-            return self._signals[name_lower]
-        except:
-            pass
+            return self._signals[name_low]
+        except KeyError:
+            raise AttributeError("{} Shot: {} has no module '{}'".format(
+                                 self._root._name, self.shot, name))
 
     def __repr__(self):
         return '<Shot {}>'.format(self.shot)
@@ -599,6 +609,21 @@ class Container(object):
         return [item for item in set(items).difference(self._base_items)
                 if item[0] is not '_']
 
+    def plot(self, overwrite=False):
+
+        if not overwrite:
+            plt.figure()
+            plt.subplot(1, 1, 1)
+        plt.plot(self.time[:], self[:])
+        if not overwrite:
+            plt.suptitle('Shot #{}'.format(self.shot), x=0.5, y=1.00,
+                         fontsize=12, horizontalalignment='center')
+            plt.title('{} {}'.format(self._diagnostic, self._name),
+                      fontsize=12)
+            plt.ylabel('{} ({})'.format(self._name, self.units))
+            plt.xlabel('{} ({})'.format(self.time._name, self.time.units))
+            plt.show()
+
 
 def init_class(cls, module_tree, **kwargs):
 
@@ -643,8 +668,8 @@ def base_container(container):
 def parse_signal(obj, element):
     units = parse_units(obj, element)
     axes, transpose = parse_axes(obj, element)
-    num = element.get('range')
-    if num is None:
+    number_range = element.get('range')
+    if number_range is None:
         name = element.get('name')
         mdspath, dim_of = parse_mdspath(obj, element)
         mdstree = parse_mdstree(obj, element)
@@ -654,10 +679,16 @@ def parse_signal(obj, element):
                         '_dim_of': dim_of, '_error': error, '_parent': obj,
                         '_transpose': transpose}]
     else:
-        num = int(num)
+        number_list = number_range.split(',')
+        if len(number_list) == 1:
+            start = 0
+            end = int(number_list[0])
+        else:
+            start = int(number_list[0])
+            end = int(number_list[1])+1
         signal_dict = []
-        digits = int(np.ceil(np.log10(num-1)))
-        for index in range(num):
+        digits = int(np.ceil(np.log10(end-1)))
+        for index in range(start, end):
             name = element.get('name').format(str(index).zfill(digits))
             mdspath, dim_of = parse_mdspath(obj, element)
             mdspath = mdspath.format(str(index).zfill(digits))
