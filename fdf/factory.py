@@ -22,6 +22,7 @@ import os
 import fdf_globals
 from fdf_signal import Signal
 import numpy as np
+import datetime as dt
 import modules
 from collections import MutableMapping
 import MDSplus as mds
@@ -104,7 +105,7 @@ class Machine(MutableMapping):
                     txt = 'MDSplus connection to {} failed.'.format(MDS_SERVERS[self._name])
                     raise FdfError(txt)
             print('Finished.')
-
+        
         # add shots
         if shotlist or xp or date:
             self.addshot(shotlist=shotlist, xp=xp, date=date)
@@ -152,7 +153,7 @@ class Machine(MutableMapping):
         for connection in self._connections:
             if connection.tree == (shot, tree):
                 self._connections.remove(connection)
-                self._connections.insert(0, connection)
+                self._connections.insert = (0, connection)
                 return connection
         connection = self._connections.pop()
         try:
@@ -160,7 +161,7 @@ class Machine(MutableMapping):
         except:
             pass
         connection.openTree(tree, shot)
-        connection.tree = (shot, tree)
+        connection.tree = (tree, shot)
         self._connections.insert(0, connection)
         return connection
 
@@ -174,8 +175,9 @@ class Machine(MutableMapping):
         try:
             data = connection.get(signal._mdsnode)
         except:
-            print('Data error for node {}.'.format(signal._mdsnode))
-            return None
+            txt = 'MDSplus connection error for tree {} and node {}'.format(
+                signal._mdstree, signal._mdsnode)
+            raise FdfError(txt)
         try:
             if signal._raw_of is not None:
                 data = data.raw_of()
@@ -183,7 +185,12 @@ class Machine(MutableMapping):
             pass
         try:
             if signal._dim_of is not None:
+                print('start: dim of')
                 data = data.dim_of()
+                print(data[0:10])
+                tmp = data.value_of().value
+                print(tmp[0:10])
+                print('end: dim of')
         except:
             pass
         data = data.value_of().value
@@ -414,12 +421,17 @@ class Logbook(object):
                          'ORDER BY shot ASC, entered ASC'
                          ).format(self._shot_query_prefix, sh)
                 cursor.execute(query)
-                self.logbook[sh] = cursor.fetchall()  # list of logbook entries
+                rows = cursor.fetchall()  # list of logbook entries
+                for row in rows:
+                    rundate = repr(row['rundate'])
+                    yr=rundate[0:4]; mon=rundate[4:6]; day = rundate[6:8]
+                    row['rundate'] = dt.date(int(yr), int(mon), int(day))
+                self.logbook[sh] = rows
 
     def get_shotlist(self, date=[], xp=[], verbose=False):
         # return list of shots for date and/or XP
         cursor = self._get_cursor()
-
+        rows = []
         shotlist = []   # start with empty shotlist
 
         date_list = date
@@ -429,15 +441,8 @@ class Logbook(object):
             query = ('{0} and rundate={1} ORDER BY shot ASC'.
                      format(self._shotlist_query_prefix, date))
             cursor.execute(query)
-            rows = cursor.fetchall()
-            if verbose:
-                print('date {}'.format(date))
-                for row in rows:
-                    print('   {shot} in XP {xp}'.format(**row))
-            # add shots to shotlist
-            shotlist.extend([row['shot'] for row in rows
-                            if row['shot'] is not None])
-
+            rows.extend(cursor.fetchall())
+            
         xp_list = xp
         if not iterable(xp_list):           # if it's just a single xp
             xp_list = [xp_list]             # put it into a list
@@ -445,14 +450,19 @@ class Logbook(object):
             query = ('{0} and xp={1} ORDER BY shot ASC'.
                      format(self._shotlist_query_prefix, xp))
             cursor.execute(query)
-            rows = cursor.fetchall()
-            if verbose:
-                print('XP {}'.format(xp))
-                for row in rows:
-                    print('   {shot} on date {rundate}'.format(**row))
-            # add shots to shotlist
-            shotlist.extend([row['shot'] for row in rows
-                            if row['shot'] is not None])
+            rows.extend(cursor.fetchall())
+            
+        for row in rows:
+            rundate = repr(row['rundate'])
+            yr=rundate[0:4]; mon=rundate[4:6]; day = rundate[6:8]
+            row['rundate'] = dt.date(int(yr), int(mon), int(day))
+        if verbose:
+            print('date {}'.format(rows[0]['rundate']))
+            for row in rows:
+                print('   {shot} in XP {xp}'.format(**row))
+        # add shots to shotlist
+        shotlist.extend([row['shot'] for row in rows
+                        if row['shot'] is not None])
 
         cursor.close()
         return np.unique(shotlist)
@@ -470,6 +480,7 @@ class Logbook(object):
             if sh in self.logbook:
                 entries.extend(self.logbook[sh])
         return entries
+
 
 _tree_dict = {}
 
@@ -820,11 +831,8 @@ class Node(object):
         else:
             return attr
 
-
 if __name__ == '__main__':
-    nstx = Machine('nstx')
-    #nstx.s140000.logbook()
-    nstx.addshot(xp=1048)
-    nstx.listshot()
-
+    nstx = Machine(name='nstxu', shotlist=141000)
+    s = nstx.s141000
+    s.bes.ch01.plot()
 
