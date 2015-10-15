@@ -262,17 +262,22 @@ class Shot(MutableMapping):
         self._logbook = root._logbook
         self._logbook_entries = []
         modules = root._get_modules()
-        self._signals = {module: Factory(module, root=root, shot=shot,
-                                         parent=self) for module in modules}
+        self._signals = {module: None for module in modules}
+#        self._signals = {module: Factory(module, root=root, shot=shot,
+#                                         parent=self) for module in modules}
         self.xp = self._get_xp()
         self.date = self._get_date()
 
     def __getattr__(self, name):
-        name_lower = name.lower()
+        name_low = name.lower()
+        if self._signals[name_low] is None:
+            self._signals[name_low] = Factory(name_low, root=self._root,
+                                              shot=self.shot, parent=self)
         try:
-            return self._signals[name_lower]
-        except:
-            pass
+            return self._signals[name_low]
+        except KeyError:
+            raise AttributeError("{} Shot: {} has no module '{}'".format(
+                                 self._root._name, self.shot, name))
 
     def __repr__(self):
         return '<Shot {}>'.format(self.shot)
