@@ -28,6 +28,7 @@ import MDSplus as mds
 import types
 import inspect
 import pymssql
+import matplotlib.pyplot as plt
 
 
 FDF_DIR = fdf_globals.FDF_DIR
@@ -592,6 +593,21 @@ class Container(object):
         return [item for item in set(items).difference(self._base_items)
                 if item[0] is not '_']
 
+    def plot(self, overwrite=False):
+
+        if not overwrite:
+            plt.figure()
+            plt.subplot(1, 1, 1)
+        plt.plot(self.time[:], self[:])
+        if not overwrite:
+            plt.suptitle('Shot #{}'.format(self.shot), x=0.5, y=1.00,
+                         fontsize=12, horizontalalignment='center')
+            plt.title('{} {}'.format(self._diagnostic, self._name),
+                      fontsize=12)
+            plt.ylabel('{} ({})'.format(self._name, self.units))
+            plt.xlabel('{} ({})'.format(self.time._name, self.time.units))
+            plt.show()
+
 
 def init_class(cls, module_tree, **kwargs):
 
@@ -636,8 +652,8 @@ def base_container(container):
 def parse_signal(obj, element):
     units = parse_units(obj, element)
     axes, transpose = parse_axes(obj, element)
-    num = element.get('range')
-    if num is None:
+    number_range = element.get('range')
+    if number_range is None:
         name = element.get('name')
         mdspath, dim_of = parse_mdspath(obj, element)
         mdstree = parse_mdstree(obj, element)
@@ -647,10 +663,16 @@ def parse_signal(obj, element):
                         '_dim_of': dim_of, '_error': error, '_parent': obj,
                         '_transpose': transpose}]
     else:
-        num = int(num)
+        number_list = number_range.split(',')
+        if len(number_list) == 1:
+            start = 0
+            end = int(number_list[0])
+        else:
+            start = int(number_list[0])
+            end = int(number_list[1])+1
         signal_dict = []
-        digits = int(np.ceil(np.log10(num-1)))
-        for index in range(num):
+        digits = int(np.ceil(np.log10(end-1)))
+        for index in range(start, end):
             name = element.get('name').format(str(index).zfill(digits))
             mdspath, dim_of = parse_mdspath(obj, element)
             mdspath = mdspath.format(str(index).zfill(digits))
