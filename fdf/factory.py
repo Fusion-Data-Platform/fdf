@@ -832,7 +832,7 @@ class Node(object):
             return attr
 
 if __name__ == '__main__':
-    nstx = Machine(shotlist=141000)
+    nstx = Machine(name='nstxu', shotlist=141000)
     s = nstx.s141000
-    s.bes.ch_01.plot()
+    s.bes.ch01.plot()
 
