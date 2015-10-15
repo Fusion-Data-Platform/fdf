@@ -31,7 +31,7 @@ LOGBOOK_CREDENTIALS = {
 }
 """Dictionary: machine-name key paired with logbook login credentials"""
 
-_ALIASES = {
+ALIASES = {
     'nstx': ['nstx', 'nstxu', 'nstx-u'],
 }
 
@@ -39,7 +39,7 @@ _ALIASES = {
 def name(alias):
     #global _ALIASES
 
-    for key, value in iter(_ALIASES.items()):
+    for key, value in iter(ALIASES.items()):
         if alias.lower() in value:
             return key
     raise FdfError('{} not a valid machine name'.format(alias))
