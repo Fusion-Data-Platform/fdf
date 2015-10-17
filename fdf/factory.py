@@ -835,4 +835,6 @@ if __name__ == '__main__':
     nstx = Machine(name='nstxu', shotlist=141000)
     s = nstx.s141000
     s.bes.ch01.plot()
+    s.mpts.ne.plot()
+    s.usxr.hup.hup00.plot()
 
