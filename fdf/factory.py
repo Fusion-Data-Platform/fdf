@@ -18,7 +18,7 @@ Created on Thu Jun 18 10:38:40 2015
 """
 
 import xml.etree.ElementTree as ET
-import os
+import sys, os, importlib
 import fdf_globals
 from fdf_signal import Signal
 import numpy as np
@@ -29,6 +29,7 @@ import MDSplus as mds
 import types
 import inspect
 import pymssql
+import matplotlib.pyplot as plt
 
 
 FDF_DIR = fdf_globals.FDF_DIR
@@ -40,7 +41,7 @@ FdfError = fdf_globals.FdfError
 class Machine(MutableMapping):
     """
     Factory root class that contains shot objects and MDS access methods.
-    
+
     Note that fdf.factory.Machine is exposed in fdf.__init__, so fdf.Machine
     is valid.
 
@@ -81,7 +82,7 @@ class Machine(MutableMapping):
         self._shots = {}  # shot dictionary with shot number (int) keys
         self._xps = {} # XP dictionary
         self._classlist = {}
-        self._name = name.lower()
+        self._name = fdf_globals.name(name)
 
         if self._name not in LOGBOOK_CREDENTIALS or \
                 self._name not in MDS_SERVERS:
@@ -164,7 +165,7 @@ class Machine(MutableMapping):
         for connection in self._connections:
             if connection.tree == (shot, tree):
                 self._connections.remove(connection)
-                self._connections.insert(0, connection)
+                self._connections.insert = (0, connection)
                 return connection
         connection = self._connections.pop()
         try:
@@ -172,7 +173,7 @@ class Machine(MutableMapping):
         except:
             pass
         connection.openTree(tree, shot)
-        connection.tree = (shot, tree)
+        connection.tree = (tree, shot)
         self._connections.insert(0, connection)
         return connection
 
@@ -186,8 +187,9 @@ class Machine(MutableMapping):
         try:
             data = connection.get(signal._mdsnode)
         except:
-            print('Data error for node {}.'.format(signal._mdsnode))
-            return None
+            txt = 'MDSplus connection error for tree {} and node {}'.format(
+                signal._mdstree, signal._mdsnode)
+            raise FdfError(txt)
         try:
             if signal._raw_of is not None:
                 data = data.raw_of()
@@ -195,13 +197,22 @@ class Machine(MutableMapping):
             pass
         try:
             if signal._dim_of is not None:
+                print('start: dim of')
                 data = data.dim_of()
+                print(data[0:10])
+                tmp = data.value_of().value
+                print(tmp[0:10])
+                print('end: dim of')
         except:
             pass
         data = data.value_of().value
         try:
             if signal._transpose is not None:
                 data = data.transpose(signal._transpose)
+        except:
+            pass
+        try:
+            data = signal._postprocess(data)
         except:
             pass
         return data
@@ -328,17 +339,22 @@ class Shot(MutableMapping):
             raise FdfError(txt)
         self._logbook_entries = []
         modules = root._get_modules()
-        self._signals = {module: Factory(module, root=root, shot=shot,
-                                         parent=self) for module in modules}
+        self._signals = {module: None for module in modules}
+#        self._signals = {module: Factory(module, root=root, shot=shot,
+#                                         parent=self) for module in modules}
         self.xp = self._get_xp()
         self.date = self._get_date()
 
     def __getattr__(self, name):
-        name_lower = name.lower()
+        name_low = name.lower()
+        if self._signals[name_low] is None:
+            self._signals[name_low] = Factory(name_low, root=self._root,
+                                              shot=self.shot, parent=self)
         try:
-            return self._signals[name_lower]
-        except:
-            pass
+            return self._signals[name_low]
+        except KeyError:
+            raise AttributeError("{} Shot: {} has no module '{}'".format(
+                                 self._root._name, self.shot, name))
 
     def __repr__(self):
         return '<Shot {}>'.format(self.shot)
@@ -500,7 +516,6 @@ class Logbook(object):
                      format(self._shotlist_query_prefix, date))
             cursor.execute(query)
             rows.extend(cursor.fetchall())
-            
         xp_list = xp
         if not iterable(xp_list):           # if it's just a single xp
             xp_list = [xp_list]             # put it into a list
@@ -509,7 +524,6 @@ class Logbook(object):
                      format(self._shotlist_query_prefix, xp))
             cursor.execute(query)
             rows.extend(cursor.fetchall())
-            
         for row in rows:
             rundate = repr(row['rundate'])
             yr=rundate[0:4]; mon=rundate[4:6]; day = rundate[6:8]
@@ -544,7 +558,7 @@ class Logbook(object):
 _tree_dict = {}
 
 
-def Factory(module, root=None, shot=None, parent=None):
+def Factory(module_branch, root=None, shot=None, parent=None):
     global _tree_dict
 
     """
@@ -552,22 +566,25 @@ def Factory(module, root=None, shot=None, parent=None):
     """
 
     try:
-        module = module.lower()
-        if module not in _tree_dict:
-            module_path = os.path.join(FDF_DIR, 'modules', module)
+        module_branch = module_branch.lower()
+        module_list = module_branch.split('.')
+        module = module_list[-1]
+        branch_str = ''.join([word.capitalize() for word in module_list])
+        if module_branch not in _tree_dict:
+            module_path = os.path.join(FDF_DIR, 'modules', *module_list)
             parse_tree = ET.parse(os.path.join(module_path,
                                                ''.join([module, '.xml'])))
             module_tree = parse_tree.getroot()
-            _tree_dict[module] = module_tree
-        DiagnosticClassName = ''.join(['Diagnostic', module.capitalize()])
+            _tree_dict[module_branch] = module_tree
+        DiagnosticClassName = ''.join(['Diagnostic', branch_str])
         if DiagnosticClassName not in Container._classes:
             DiagnosticClass = type(DiagnosticClassName, (Container,), {})
-            init_class(DiagnosticClass, _tree_dict[module], root=root, diagnostic=module)
+            init_class(DiagnosticClass, _tree_dict[module_branch], root=root, diagnostic=module, classparent=parent.__class__)
             Container._classes[DiagnosticClassName] = DiagnosticClass
         else:
             DiagnosticClass = Container._classes[DiagnosticClassName]
 
-        return DiagnosticClass(_tree_dict[module], shot=shot, parent=parent)
+        return DiagnosticClass(_tree_dict[module_branch], shot=shot, parent=parent)
 
     except IOError:
         print("{} not found in modules directory".format(module))
@@ -584,6 +601,7 @@ class Container(object):
     def __init__(self, module_tree, **kwargs):
 
         cls = self.__class__
+        self._subcontainers = {}
 
         for read_only in ['parent']:
             setattr(self, '_'+read_only, kwargs.get(read_only, None))
@@ -652,7 +670,20 @@ class Container(object):
                     setattr(SignalObj, axis, getattr(self, '_'+ref))
                 setattr(self, signal_dict['_name'], SignalObj)
 
+        self._get_subcontainers()
+
     def __getattr__(self, attribute):
+
+        try:
+            if self._subcontainers[attribute] is None:
+                branch_path = '.'.join([self._get_branch(), attribute])
+                self._subcontainers[attribute] = Factory(branch_path, root=self._root,
+                                                  shot=self.shot, parent=self)
+
+            return self._subcontainers[attribute]
+        except KeyError:
+            pass
+
         if not hasattr(self, '_parent') or self._parent is None:
             raise AttributeError("'{}' object has no attribute '{}'".format(
                                  type(self), attribute))
@@ -662,11 +693,57 @@ class Container(object):
         else:
             return attr
 
+    def _get_subcontainers(self):
+        if len(self._subcontainers) is 0:
+            container_dir = self._get_path()
+            if not os.path.isdir(container_dir):
+                return
+            files = os.listdir(container_dir)
+            self._subcontainers = {container: None for container in
+                        os.listdir(container_dir) if os.path.isdir(
+                        os.path.join(container_dir, container)) and
+                        container[0] is not '_'}
+
+    @classmethod
+    def _get_path(cls):
+        branch = cls._get_branch().split('.')
+        path = os.path.join(FDF_DIR, 'modules')
+        for step in branch:
+            newpath = os.path.join(path, step)
+            if not os.path.isdir(newpath):
+                break
+            path = newpath
+        return path
+
     def __dir__(self):
         items = self.__dict__.keys()
         items.extend(self.__class__.__dict__.keys())
         return [item for item in set(items).difference(self._base_items)
                 if item[0] is not '_']
+
+    def plot(self, overwrite=False):
+
+        if not overwrite:
+            plt.figure()
+            plt.subplot(1, 1, 1)
+        plt.plot(self.time[:], self[:])
+        if not overwrite:
+            plt.suptitle('Shot #{}'.format(self.shot), x=0.5, y=1.00,
+                         fontsize=12, horizontalalignment='center')
+            plt.title('{} {}'.format(self._diagnostic, self._name),
+                      fontsize=12)
+            plt.ylabel('{} ({})'.format(self._name, self.units))
+            plt.xlabel('{} ({})'.format(self.time._name, self.time.units))
+            plt.show()
+
+    @classmethod
+    def _get_branch(cls):
+        branch = cls._name
+        parent = cls._classparent
+        while parent is not Shot:
+            branch = '.'.join([parent._name, branch])
+            parent = parent._classparent
+        return branch
 
 
 def init_class(cls, module_tree, **kwargs):
@@ -675,10 +752,10 @@ def init_class(cls, module_tree, **kwargs):
     if cls not in cls._instances:
         cls._instances[cls] = {}
 
-    for read_only in ['root', 'diagnostic']:
+    for read_only in ['root', 'diagnostic', 'classparent']:
         try:
             setattr(cls, '_'+read_only, kwargs[read_only])
-            print(cls._name, read_only, kwargs.get(read_only, 'Not there'))
+            # print(cls._name, read_only, kwargs.get(read_only, 'Not there'))
         except:
             pass
 
@@ -692,14 +769,16 @@ def init_class(cls, module_tree, **kwargs):
 
 
 def parse_method(obj, module_tree):
-    diagnostic = modules.__getattribute__(obj._diagnostic)
+    objpath = obj._get_path()
+    sys.path.insert(0, objpath)
     for method in module_tree.findall('method'):
         method_text = method.text
         if method_text is None:
             method_text = method.get('name')
-        module_file = diagnostic.__getattribute__(method_text)
-        method_from_file = module_file.__getattribute__(method_text)
-        setattr(obj, method.get('name'), method_from_file)
+        module_object = importlib.import_module(method_text)
+        method_from_object = module_object.__getattribute__(method_text)
+        setattr(obj, method.get('name'), method_from_object)
+    sys.path.pop(0)
 
 
 def base_container(container):
@@ -712,8 +791,8 @@ def base_container(container):
 def parse_signal(obj, element):
     units = parse_units(obj, element)
     axes, transpose = parse_axes(obj, element)
-    num = element.get('range')
-    if num is None:
+    number_range = element.get('range')
+    if number_range is None:
         name = element.get('name')
         mdspath, dim_of = parse_mdspath(obj, element)
         mdstree = parse_mdstree(obj, element)
@@ -723,10 +802,16 @@ def parse_signal(obj, element):
                         '_dim_of': dim_of, '_error': error, '_parent': obj,
                         '_transpose': transpose}]
     else:
-        num = int(num)
+        number_list = number_range.split(',')
+        if len(number_list) == 1:
+            start = 0
+            end = int(number_list[0])
+        else:
+            start = int(number_list[0])
+            end = int(number_list[1])+1
         signal_dict = []
-        digits = int(np.ceil(np.log10(num-1)))
-        for index in range(num):
+        digits = int(np.ceil(np.log10(end-1)))
+        for index in range(start, end):
             name = element.get('name').format(str(index).zfill(digits))
             mdspath, dim_of = parse_mdspath(obj, element)
             mdspath = mdspath.format(str(index).zfill(digits))
@@ -869,11 +954,8 @@ class Node(object):
         else:
             return attr
 
-
 if __name__ == '__main__':
-    nstx = Machine('nstx')
-    nstx.get_shotlist(xp=1013, verbose=True)
-    nstx.addxp(1013)
-    nstx.listshot()
-
+    nstx = Machine(name='nstxu', shotlist=141000)
+    s = nstx.s141000
+    s.bes.ch01.plot()
 
