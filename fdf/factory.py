@@ -18,7 +18,7 @@ Created on Thu Jun 18 10:38:40 2015
 """
 
 import xml.etree.ElementTree as ET
-import os
+import sys, os, importlib
 import fdf_globals
 from fdf_signal import Signal
 import numpy as np
@@ -105,7 +105,7 @@ class Machine(MutableMapping):
                     txt = 'MDSplus connection to {} failed.'.format(MDS_SERVERS[self._name])
                     raise FdfError(txt)
             print('Finished.')
-        
+
         # add shots
         if shotlist or xp or date:
             self.addshot(shotlist=shotlist, xp=xp, date=date)
@@ -442,7 +442,7 @@ class Logbook(object):
                      format(self._shotlist_query_prefix, date))
             cursor.execute(query)
             rows.extend(cursor.fetchall())
-            
+
         xp_list = xp
         if not iterable(xp_list):           # if it's just a single xp
             xp_list = [xp_list]             # put it into a list
@@ -451,7 +451,7 @@ class Logbook(object):
                      format(self._shotlist_query_prefix, xp))
             cursor.execute(query)
             rows.extend(cursor.fetchall())
-            
+
         for row in rows:
             rundate = repr(row['rundate'])
             yr=rundate[0:4]; mon=rundate[4:6]; day = rundate[6:8]
@@ -485,7 +485,7 @@ class Logbook(object):
 _tree_dict = {}
 
 
-def Factory(module, root=None, shot=None, parent=None):
+def Factory(module_branch, root=None, shot=None, parent=None):
     global _tree_dict
 
     """
@@ -493,22 +493,25 @@ def Factory(module, root=None, shot=None, parent=None):
     """
 
     try:
-        module = module.lower()
-        if module not in _tree_dict:
-            module_path = os.path.join(FDF_DIR, 'modules', module)
+        module_branch = module_branch.lower()
+        module_list = module_branch.split('.')
+        module = module_list[-1]
+        branch_str = ''.join([word.capitalize() for word in module_list])
+        if module_branch not in _tree_dict:
+            module_path = os.path.join(FDF_DIR, 'modules', *module_list)
             parse_tree = ET.parse(os.path.join(module_path,
                                                ''.join([module, '.xml'])))
             module_tree = parse_tree.getroot()
-            _tree_dict[module] = module_tree
-        DiagnosticClassName = ''.join(['Diagnostic', module.capitalize()])
+            _tree_dict[module_branch] = module_tree
+        DiagnosticClassName = ''.join(['Diagnostic', branch_str])
         if DiagnosticClassName not in Container._classes:
             DiagnosticClass = type(DiagnosticClassName, (Container,), {})
-            init_class(DiagnosticClass, _tree_dict[module], root=root, diagnostic=module)
+            init_class(DiagnosticClass, _tree_dict[module_branch], root=root, diagnostic=module, classparent=parent.__class__)
             Container._classes[DiagnosticClassName] = DiagnosticClass
         else:
             DiagnosticClass = Container._classes[DiagnosticClassName]
 
-        return DiagnosticClass(_tree_dict[module], shot=shot, parent=parent)
+        return DiagnosticClass(_tree_dict[module_branch], shot=shot, parent=parent)
 
     except IOError:
         print("{} not found in modules directory".format(module))
@@ -525,6 +528,7 @@ class Container(object):
     def __init__(self, module_tree, **kwargs):
 
         cls = self.__class__
+        self._subcontainers = {}
 
         for read_only in ['parent']:
             setattr(self, '_'+read_only, kwargs.get(read_only, None))
@@ -593,7 +597,20 @@ class Container(object):
                     setattr(SignalObj, axis, getattr(self, '_'+ref))
                 setattr(self, signal_dict['_name'], SignalObj)
 
+        self._get_subcontainers()
+
     def __getattr__(self, attribute):
+
+        try:
+            if self._subcontainers[attribute] is None:
+                branch_path = '.'.join([self._get_branch(), attribute])
+                self._subcontainers[attribute] = Factory(branch_path, root=self._root,
+                                                  shot=self.shot, parent=self)
+
+            return self._subcontainers[attribute]
+        except KeyError:
+            pass
+
         if not hasattr(self, '_parent') or self._parent is None:
             raise AttributeError("'{}' object has no attribute '{}'".format(
                                  type(self), attribute))
@@ -602,6 +619,28 @@ class Container(object):
             return types.MethodType(attr.im_func, self)
         else:
             return attr
+
+    def _get_subcontainers(self):
+        if len(self._subcontainers) is 0:
+            container_dir = self._get_path()
+            if not os.path.isdir(container_dir):
+                return
+            files = os.listdir(container_dir)
+            self._subcontainers = {container: None for container in
+                        os.listdir(container_dir) if os.path.isdir(
+                        os.path.join(container_dir, container)) and
+                        container[0] is not '_'}
+
+    @classmethod
+    def _get_path(cls):
+        branch = cls._get_branch().split('.')
+        path = os.path.join(FDF_DIR, 'modules')
+        for step in branch:
+            newpath = os.path.join(path, step)
+            if not os.path.isdir(newpath):
+                break
+            path = newpath
+        return path
 
     def __dir__(self):
         items = self.__dict__.keys()
@@ -624,6 +663,15 @@ class Container(object):
             plt.xlabel('{} ({})'.format(self.time._name, self.time.units))
             plt.show()
 
+    @classmethod
+    def _get_branch(cls):
+        branch = cls._name
+        parent = cls._classparent
+        while parent is not Shot:
+            branch = '.'.join([parent._name, branch])
+            parent = parent._classparent
+        return branch
+
 
 def init_class(cls, module_tree, **kwargs):
 
@@ -631,10 +679,10 @@ def init_class(cls, module_tree, **kwargs):
     if cls not in cls._instances:
         cls._instances[cls] = {}
 
-    for read_only in ['root', 'diagnostic']:
+    for read_only in ['root', 'diagnostic', 'classparent']:
         try:
             setattr(cls, '_'+read_only, kwargs[read_only])
-            print(cls._name, read_only, kwargs.get(read_only, 'Not there'))
+            # print(cls._name, read_only, kwargs.get(read_only, 'Not there'))
         except:
             pass
 
@@ -648,14 +696,16 @@ def init_class(cls, module_tree, **kwargs):
 
 
 def parse_method(obj, module_tree):
-    diagnostic = modules.__getattribute__(obj._diagnostic)
+    objpath = obj._get_path()
+    sys.path.insert(0, objpath)
     for method in module_tree.findall('method'):
         method_text = method.text
         if method_text is None:
             method_text = method.get('name')
-        module_file = diagnostic.__getattribute__(method_text)
-        method_from_file = module_file.__getattribute__(method_text)
-        setattr(obj, method.get('name'), method_from_file)
+        module_object = importlib.import_module(method_text)
+        method_from_object = module_object.__getattribute__(method_text)
+        setattr(obj, method.get('name'), method_from_object)
+    sys.path.pop(0)
 
 
 def base_container(container):

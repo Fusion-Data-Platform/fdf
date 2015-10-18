@@ -197,6 +197,21 @@ class Signal(np.ndarray):
             return attr
 
     def __repr__(self):
+        if self._verbose:
+            print('Called custom __repr__')
+        if len(self) == 0:
+            data = self._root._get_mdsdata(self)
+            self.resize(data.shape, refcheck=False)
+            self[:] = data
+        return np.asarray(self).__repr__()
+
+    def __str__(self):
+        if self._verbose:
+            print('Called custom __str__')
+        if len(self) == 0:
+            data = self._root._get_mdsdata(self)
+            self.resize(data.shape, refcheck=False)
+            self[:] = data
         return np.asarray(self).__repr__()
 
     def __getslice__(self, start, stop):
