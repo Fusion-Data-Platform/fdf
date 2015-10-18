@@ -268,8 +268,8 @@ class Shot(MutableMapping):
         self._parent = parent
         self._logbook = root._logbook
         self._logbook_entries = []
-        modules = root._get_modules()
-        self._signals = {module: None for module in modules}
+        _modules = root._get_modules()
+        self._signals = {module: None for module in _modules}
 #        self._signals = {module: Factory(module, root=root, shot=shot,
 #                                         parent=self) for module in modules}
         self.xp = self._get_xp()
