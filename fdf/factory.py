@@ -36,6 +36,7 @@ FDF_DIR = fdf_globals.FDF_DIR
 MDS_SERVERS = fdf_globals.MDS_SERVERS
 LOGBOOK_CREDENTIALS = fdf_globals.LOGBOOK_CREDENTIALS
 FdfError = fdf_globals.FdfError
+machineAlias = fdf_globals.machineAlias
 
 
 class Machine(MutableMapping):
@@ -81,16 +82,7 @@ class Machine(MutableMapping):
     def __init__(self, name='nstx', shotlist=[], xp=[], date=[]):
         self._shots = {}  # shot dictionary with shot number (int) keys
         self._classlist = {}
-        self._name = fdf_globals.name(name)
-
-        if self._name not in LOGBOOK_CREDENTIALS or \
-                self._name not in MDS_SERVERS:
-            txt = '\n{} is not a valid machine.\n'.format(self._name.upper())
-            txt = txt + 'Valid machines are:\n'
-            for machine in LOGBOOK_CREDENTIALS:
-                txt = txt + '  {}\n'.format(machine.upper())
-            raise FdfError(txt)
-
+        self._name = machineAlias(name)
         self._logbook = Logbook(name=self._name, root=self)
         self.s0 = Shot(0, root=self, parent=self)
 
@@ -100,13 +92,15 @@ class Machine(MutableMapping):
                 try:
                     connection = mds.Connection(MDS_SERVERS[self._name])
                     connection.tree = None
+                    print(type(connection))
+                    print(dir(connection))
+                    print(mds.Connection)
                     self._connections.append(connection)
                 except:
-                    txt = 'MDSplus connection to {} failed.'.format(MDS_SERVERS[self._name])
+                    txt = 'MDSplus connection to {} failed'.format(MDS_SERVERS[self._name])
                     raise FdfError(txt)
             print('Finished.')
 
-        # add shots
         if shotlist or xp or date:
             self.addshot(shotlist=shotlist, xp=xp, date=date)
 
@@ -121,7 +115,7 @@ class Machine(MutableMapping):
         return self._shots[shot]
 
     def __repr__(self):
-        return '<machine {}>'.format(self._name)
+        return '<machine {}>'.format(self._name.upper())
 
     def __iter__(self):
         # return iter(self._shots.values())

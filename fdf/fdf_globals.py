@@ -31,18 +31,20 @@ LOGBOOK_CREDENTIALS = {
 }
 """Dictionary: machine-name key paired with logbook login credentials"""
 
-ALIASES = {
-    'nstx': ['nstx', 'nstxu', 'nstx-u'],
-}
+def machineAlias(machine):
 
-
-def name(alias):
-    #global _ALIASES
-
+    ALIASES = {
+        'nstx': ['nstx', 'nstxu', 'nstx-u'],
+    }
+    
     for key, value in iter(ALIASES.items()):
-        if alias.lower() in value:
+        if machine.lower() in value:
             return key
-    raise FdfError('{} not a valid machine name'.format(alias))
+    txt = '\n{} is not a valid machine.\n'.format(machine)
+    txt = txt + 'Valid machines are:\n'
+    for machinekey in ALIASES:
+        txt = txt + '  {}\n'.format(machinekey.upper())
+    raise FdfError(txt)
 
 
 class FdfError(Exception):
