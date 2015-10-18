@@ -7,6 +7,7 @@ setup(name='fdf',
       description=['A data access, visualization, and management framework '
           'for magnetic fusion experiments'],
       packages=['fdf'],
+      package_data={'fdf':['modules/*/*.xml']},
       author="John Schmitt, David R. Smith, Kevin Tritz, and Howard Yuh",
       url="https://github.com/Fusion-Data-Framework/fdf",
       requires=['pymysql>=0.6.6'],

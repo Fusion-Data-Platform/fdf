@@ -23,7 +23,7 @@ import fdf_globals
 from fdf_signal import Signal
 import numpy as np
 import datetime as dt
-import modules
+#import modules   # I think this import is not necessary - DRS 10/17/15
 from collections import MutableMapping
 import MDSplus as mds
 import types
@@ -627,7 +627,7 @@ class Container(object):
                 return
             files = os.listdir(container_dir)
             self._subcontainers = {container: None for container in
-                        os.listdir(container_dir) if os.path.isdir(
+                        files if os.path.isdir(
                         os.path.join(container_dir, container)) and
                         container[0] is not '_'}
 
