@@ -19,13 +19,13 @@ import types
 import fdf_globals
 
 MDS_SERVERS = fdf_globals.MDS_SERVERS
-# TODO: implement MDS_SERVERS in place of hard-coded MDS server
+# implemented MDS_SERVERS from fdf_globals in place of hard-coded MDS server - DRS 10/18/15
 FdfError = fdf_globals.FdfError
 
 
-class MdsError(Exception):
-    # TODO: implement FdfError from fdf_globals
-    pass
+# commented out and replaced with FdfError - DRS 10/18/15
+#class MdsError(Exception):
+#    pass
 
 class Signal(np.ndarray):
     """
@@ -310,12 +310,15 @@ class Signal(np.ndarray):
             self.resize(data.shape,refcheck=0)
             self[:]=data
         except:
-            raise MdsError('Error populating signal from MDSplus')
+            msg = 'MDSplus error in Signal class: shot {} tree {} node{}'.format(
+                self.mdsshot, self.mdstree, self.mdsnode)
+            raise FdfError(msg)
 
 class RootContainer(object):
-    mds_servers = {
-        'nstx': 'skylark:8501'
-        }
+    # implemented fdf_globals MDS_SERVERS - DRS 10/18/15
+    #    mds_servers = {
+    #        'nstx': 'skylark:8501'
+    #        }
 
     def __init__(self, mdsConnectionsMax=20,**kwargs):
             self.mdsConnectionsList=OrderedDict({x: None for x in range(20)})
@@ -335,13 +338,16 @@ class RootContainer(object):
                 self.mdsConnectionsList.__setitem__(shotTree, oldestConnection)
                 return self.mdsConnectionsList[shotTree].get(node).data()
             except AttributeError:
-                newConnection=mds.Connection(self.mds_servers['nstx'])
+                # implemented fdf_globals MDS_SERVERS - DRS 10/18/15
+                newConnection=mds.Connection(MDS_SERVERS['nstx'])
                 newConnection.openTree(tree,shotnum)
                 print('_mdsget: newConnection is %s' % newConnection)
                 self.mdsConnectionsList.__setitem__(shotTree, newConnection)
                 return self.mdsConnectionsList[shotTree].get(node).data()
             except:
-                raise MdsError('Error opening tree or making MDS server connection')
+                msg = 'MDSplus error in RootContainer class: shot {} tree {} node{}'.format(
+                    self.mdsshot, self.mdstree, self.mdsnode)
+                raise FdfError(msg)
 
 class shotContainer(object):
     def __init__(self,shotnum=140000,tree='activespec',**kwargs):

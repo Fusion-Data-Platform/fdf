@@ -97,8 +97,9 @@ class Machine(MutableMapping):
                     print(mds.Connection)
                     self._connections.append(connection)
                 except:
-                    txt = 'MDSplus connection to {} failed'.format(MDS_SERVERS[self._name])
-                    raise FdfError(txt)
+                    msg = 'MDSplus connection to {} failed'.format(
+                        MDS_SERVERS[self._name])
+                    raise FdfError(msg)
             print('Finished.')
 
         if shotlist or xp or date:
@@ -169,9 +170,9 @@ class Machine(MutableMapping):
         try:
             data = connection.get(signal._mdsnode)
         except:
-            txt = 'MDSplus connection error for tree {} and node {}'.format(
+            msg = 'MDSplus connection error for tree {} and node {}'.format(
                 signal._mdstree, signal._mdsnode)
-            raise FdfError(txt)
+            raise FdfError(msg)
         try:
             if signal._raw_of is not None:
                 data = data.raw_of()
@@ -402,7 +403,7 @@ class Logbook(object):
             cursor = self._logbook_connection.cursor()
             cursor.execute('SET ROWCOUNT 500')
         except:
-            raise FdfError('Cursor error.')
+            raise FdfError('Cursor error')
         return cursor
 
     def _shot_query(self, shot=[]):

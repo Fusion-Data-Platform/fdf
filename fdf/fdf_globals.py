@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Package-level constants and FdfError class
+Package-level attributes, methods, and FdfError class
 """
 
 """
