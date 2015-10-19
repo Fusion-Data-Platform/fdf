@@ -651,9 +651,11 @@ class Container(object):
 
         if not hasattr(self, '_parent') or self._parent is None:
             raise AttributeError("Attribute '{}' not found".format(attribute))
-        if self._parent.__class__ is Shot and \
-                attribute not in self._parent.__dict__:
+
+        if hasattr(self._parent, '_signals') and \
+                attribute in self._parent._signals:
             raise AttributeError("Attribute '{}' not found".format(attribute))
+
         attr = getattr(self._parent, attribute)
         if inspect.ismethod(attr):
             return types.MethodType(attr.im_func, self)
