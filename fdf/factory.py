@@ -180,12 +180,7 @@ class Machine(MutableMapping):
             pass
         try:
             if signal._dim_of is not None:
-                print('start: dim of')
                 data = data.dim_of()
-                print(data[0:10])
-                tmp = data.value_of().value
-                print(tmp[0:10])
-                print('end: dim of')
         except:
             pass
         data = data.value_of().value
@@ -265,8 +260,6 @@ class Shot(MutableMapping):
         self._logbook_entries = []
         _modules = root._get_modules()
         self._signals = {module: None for module in _modules}
-#        self._signals = {module: Factory(module, root=root, shot=shot,
-#                                         parent=self) for module in modules}
         self.xp = self._get_xp()
         self.date = self._get_date()
 

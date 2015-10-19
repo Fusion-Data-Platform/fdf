@@ -33,16 +33,15 @@ LOGBOOK_CREDENTIALS = {
 
 def machineAlias(machine):
 
-    ALIASES = {
+    aliases = {
         'nstx': ['nstx', 'nstxu', 'nstx-u'],
     }
     
-    for key, value in iter(ALIASES.items()):
+    for key, value in iter(aliases.items()):
         if machine.lower() in value:
             return key
-    txt = '\n{} is not a valid machine.\n'.format(machine)
-    txt = txt + 'Valid machines are:\n'
-    for machinekey in ALIASES:
+    txt = '{} is not a valid machine; valid machines are:\n'.format(machine)
+    for machinekey in aliases:
         txt = txt + '  {}\n'.format(machinekey.upper())
     raise FdfError(txt)
 
