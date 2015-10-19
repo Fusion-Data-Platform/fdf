@@ -268,23 +268,30 @@ class Shot(MutableMapping):
         self._parent = parent
         self._logbook = root._logbook
         self._logbook_entries = []
-        modules = root._get_modules()
-        self._signals = {module: None for module in modules}
-#        self._signals = {module: Factory(module, root=root, shot=shot,
-#                                         parent=self) for module in modules}
+        self._signals = {module: None for module in root._get_modules()}
         self.xp = self._get_xp()
         self.date = self._get_date()
 
-    def __getattr__(self, name):
-        name_low = name.lower()
-        if self._signals[name_low] is None:
-            self._signals[name_low] = Factory(name_low, root=self._root,
-                                              shot=self.shot, parent=self)
+    def __getattr__(self, attribute):
+
+        # first see if the attribute is in the Machine object
         try:
-            return self._signals[name_low]
-        except KeyError:
-            raise AttributeError("{} Shot: {} has no module '{}'".format(
-                                 self._root._name, self.shot, name))
+            attr = getattr(self._parent, attribute)
+            if inspect.ismethod(attr):
+                return types.MethodType(attr.im_func, self)
+            else:
+                return attr
+        except:
+            pass  # failed, so check other locations
+
+        if attribute in self._signals:
+            if self._signals[attribute] is None:
+                self._signals[attribute] = Factory(attribute, root=self._root,
+                                                   shot=self.shot, parent=self)
+            return self._signals[attribute]
+
+        raise AttributeError("{} shot: {} has no attribute '{}'".format(
+                                 self._root._name, self.shot, attribute))
 
     def __repr__(self):
         return '<Shot {}>'.format(self.shot)
@@ -347,6 +354,23 @@ class Shot(MutableMapping):
             print('************************************')
         else:
             print('No logbook entries for {}'.format(self.shot))
+
+    def plot(self, overwrite=False):
+
+        if not overwrite:
+            plt.figure()
+            plt.subplot(1, 1, 1)
+        plt.plot(self.time[:], self[:])
+        title = self._title if self._title else self._name
+        if not overwrite:
+            plt.suptitle('Shot #{}'.format(self.shot), x=0.5, y=1.00,
+                         fontsize=12, horizontalalignment='center')
+            plt.title('{} {}'.format(self._container.upper(), title),
+                      fontsize=12)
+            plt.ylabel('{} ({})'.format(self._name.upper(), self.units))
+            plt.xlabel('{} ({})'.format(self.time._name.capitalize(),
+                                        self.time.units))
+            plt.show()
 
 
 class Logbook(object):
@@ -424,8 +448,10 @@ class Logbook(object):
                 rows = cursor.fetchall()  # list of logbook entries
                 for row in rows:
                     rundate = repr(row['rundate'])
-                    yr=rundate[0:4]; mon=rundate[4:6]; day = rundate[6:8]
-                    row['rundate'] = dt.date(int(yr), int(mon), int(day))
+                    year = rundate[0:4]
+                    month = rundate[4:6]
+                    day = rundate[6:8]
+                    row['rundate'] = dt.date(int(year), int(month), int(day))
                 self.logbook[sh] = rows
 
     def get_shotlist(self, date=[], xp=[], verbose=False):
@@ -454,8 +480,10 @@ class Logbook(object):
 
         for row in rows:
             rundate = repr(row['rundate'])
-            yr=rundate[0:4]; mon=rundate[4:6]; day = rundate[6:8]
-            row['rundate'] = dt.date(int(yr), int(mon), int(day))
+            year = rundate[0:4]
+            month = rundate[4:6]
+            day = rundate[6:8]
+            row['rundate'] = dt.date(int(year), int(month), int(day))
         if verbose:
             print('date {}'.format(rows[0]['rundate']))
             for row in rows:
@@ -503,15 +531,17 @@ def Factory(module_branch, root=None, shot=None, parent=None):
                                                ''.join([module, '.xml'])))
             module_tree = parse_tree.getroot()
             _tree_dict[module_branch] = module_tree
-        DiagnosticClassName = ''.join(['Diagnostic', branch_str])
-        if DiagnosticClassName not in Container._classes:
-            DiagnosticClass = type(DiagnosticClassName, (Container,), {})
-            init_class(DiagnosticClass, _tree_dict[module_branch], root=root, diagnostic=module, classparent=parent.__class__)
-            Container._classes[DiagnosticClassName] = DiagnosticClass
+        ContainerClassName = ''.join(['Container', branch_str])
+        if ContainerClassName not in Container._classes:
+            ContainerClass = type(ContainerClassName, (Container,), {})
+            init_class(ContainerClass, _tree_dict[module_branch], root=root,
+                       container=module, classparent=parent.__class__)
+            Container._classes[ContainerClassName] = ContainerClass
         else:
-            DiagnosticClass = Container._classes[DiagnosticClassName]
+            ContainerClass = Container._classes[ContainerClassName]
 
-        return DiagnosticClass(_tree_dict[module_branch], shot=shot, parent=parent)
+        return ContainerClass(_tree_dict[module_branch], shot=shot,
+                              parent=parent, top=True)
 
     except IOError:
         print("{} not found in modules directory".format(module))
@@ -525,10 +555,12 @@ class Container(object):
     _instances = {}
     _classes = {}
 
-    def __init__(self, module_tree, **kwargs):
+    def __init__(self, module_tree, top=False, **kwargs):
 
         cls = self.__class__
-        self._subcontainers = {}
+
+        self._title = module_tree.get('title')
+        self._desc = module_tree.get('desc')
 
         for read_only in ['parent']:
             setattr(self, '_'+read_only, kwargs.get(read_only, None))
@@ -544,6 +576,9 @@ class Container(object):
             except:
                 cls._instances[cls][self.shot] = [self]
 
+        if top:
+            self._get_subcontainers()
+
         for node in module_tree.findall('node'):
             NodeClassName = ''.join(['Node', cls._name.capitalize()])
             if NodeClassName not in cls._classes:
@@ -557,7 +592,7 @@ class Container(object):
         for element in module_tree.findall('axis'):
             signal_list = parse_signal(self, element)
             for signal_dict in signal_list:
-                SignalClassName = ''.join(['Signal', cls._name.capitalize()])
+                SignalClassName = ''.join(['Axis', cls._name.capitalize()])
                 if SignalClassName not in cls._classes:
                     SignalClass = type(SignalClassName, (Signal, cls), {})
                     parse_method(SignalClass, element)
@@ -565,14 +600,16 @@ class Container(object):
                 else:
                     SignalClass = cls._classes[SignalClassName]
                 SignalObj = SignalClass(**signal_dict)
-                setattr(self, ''.join(['_',signal_dict['_name']]), SignalObj)
+                setattr(self, ''.join(['_', signal_dict['_name']]), SignalObj)
 
         for branch in module_tree.findall('container'):
             name = branch.get('name')
-            ContainerClassName = ''.join(['Container', name.capitalize()])
+            branch_str = self._get_branchstr()
+            ContainerClassName = ''.join(['Container', branch_str,
+                                          name.capitalize()])
             if ContainerClassName not in cls._classes:
                 ContainerClass = type(ContainerClassName, (cls, Container), {})
-                init_class(ContainerClass, branch)
+                init_class(ContainerClass, branch, classparent=cls)
                 cls._classes[ContainerClassName] = ContainerClass
             else:
                 ContainerClass = cls._classes[ContainerClassName]
@@ -581,8 +618,10 @@ class Container(object):
 
         for element in module_tree.findall('signal'):
             signal_list = parse_signal(self, element)
+            branch_str = self._get_branchstr()
             for signal_dict in signal_list:
-                SignalClassName = ''.join(['Signal', cls._name.capitalize()])
+                # name = element.get('name').format('').capitalize()
+                SignalClassName = ''.join(['Signal', branch_str])
                 if SignalClassName not in cls._classes:
                     SignalClass = type(SignalClassName, (Signal, cls), {})
                     parse_method(SignalClass, element)
@@ -597,39 +636,41 @@ class Container(object):
                     setattr(SignalObj, axis, getattr(self, '_'+ref))
                 setattr(self, signal_dict['_name'], SignalObj)
 
-        self._get_subcontainers()
-
     def __getattr__(self, attribute):
 
         try:
             if self._subcontainers[attribute] is None:
                 branch_path = '.'.join([self._get_branch(), attribute])
-                self._subcontainers[attribute] = Factory(branch_path, root=self._root,
-                                                  shot=self.shot, parent=self)
+                self._subcontainers[attribute] = \
+                    Factory(branch_path, root=self._root,
+                            shot=self.shot, parent=self)
 
             return self._subcontainers[attribute]
         except KeyError:
             pass
 
         if not hasattr(self, '_parent') or self._parent is None:
-            raise AttributeError("'{}' object has no attribute '{}'".format(
-                                 type(self), attribute))
+            raise AttributeError("Attribute '{}' not found".format(attribute))
+        if self._parent.__class__ is Shot and \
+                attribute not in self._parent.__dict__:
+            raise AttributeError("Attribute '{}' not found".format(attribute))
         attr = getattr(self._parent, attribute)
         if inspect.ismethod(attr):
             return types.MethodType(attr.im_func, self)
         else:
             return attr
 
-    def _get_subcontainers(self):
-        if len(self._subcontainers) is 0:
-            container_dir = self._get_path()
+    @classmethod
+    def _get_subcontainers(cls):
+        if len(cls._subcontainers) is 0:
+            container_dir = cls._get_path()
             if not os.path.isdir(container_dir):
                 return
             files = os.listdir(container_dir)
-            self._subcontainers = {container: None for container in
-                        os.listdir(container_dir) if os.path.isdir(
-                        os.path.join(container_dir, container)) and
-                        container[0] is not '_'}
+            cls._subcontainers = {container: None for container in
+                                  files if os.path.isdir(
+                                  os.path.join(container_dir, container)) and
+                                  container[0] is not '_'}
 
     @classmethod
     def _get_path(cls):
@@ -645,23 +686,10 @@ class Container(object):
     def __dir__(self):
         items = self.__dict__.keys()
         items.extend(self.__class__.__dict__.keys())
+        if Signal not in self.__class__.mro():
+            items.extend(self._subcontainers.keys())
         return [item for item in set(items).difference(self._base_items)
                 if item[0] is not '_']
-
-    def plot(self, overwrite=False):
-
-        if not overwrite:
-            plt.figure()
-            plt.subplot(1, 1, 1)
-        plt.plot(self.time[:], self[:])
-        if not overwrite:
-            plt.suptitle('Shot #{}'.format(self.shot), x=0.5, y=1.00,
-                         fontsize=12, horizontalalignment='center')
-            plt.title('{} {}'.format(self._diagnostic, self._name),
-                      fontsize=12)
-            plt.ylabel('{} ({})'.format(self._name, self.units))
-            plt.xlabel('{} ({})'.format(self.time._name, self.time.units))
-            plt.show()
 
     @classmethod
     def _get_branch(cls):
@@ -672,6 +700,11 @@ class Container(object):
             parent = parent._classparent
         return branch
 
+    @classmethod
+    def _get_branchstr(cls):
+        branch = cls._get_branch()
+        return ''.join([sub.capitalize() for sub in branch.split('.')])
+
 
 def init_class(cls, module_tree, **kwargs):
 
@@ -679,7 +712,7 @@ def init_class(cls, module_tree, **kwargs):
     if cls not in cls._instances:
         cls._instances[cls] = {}
 
-    for read_only in ['root', 'diagnostic', 'classparent']:
+    for read_only in ['root', 'container', 'classparent']:
         try:
             setattr(cls, '_'+read_only, kwargs[read_only])
             # print(cls._name, read_only, kwargs.get(read_only, 'Not there'))
@@ -692,6 +725,7 @@ def init_class(cls, module_tree, **kwargs):
             setattr(cls, item, getitem)
 
     cls._base_items = set(cls.__dict__.keys())
+    cls._subcontainers = {}
     parse_method(cls, module_tree)
 
 
@@ -721,13 +755,16 @@ def parse_signal(obj, element):
     number_range = element.get('range')
     if number_range is None:
         name = element.get('name')
+        title = element.get('title')
+        desc = element.get('desc')
         mdspath, dim_of = parse_mdspath(obj, element)
         mdstree = parse_mdstree(obj, element)
         error = parse_error(obj, element)
         signal_dict = [{'_name': name, 'units': units, 'axes': axes,
                         '_mdsnode': mdspath, '_mdstree': mdstree,
                         '_dim_of': dim_of, '_error': error, '_parent': obj,
-                        '_transpose': transpose}]
+                        '_transpose': transpose, '_title': title,
+                        '_desc': desc}]
     else:
         number_list = number_range.split(',')
         if len(number_list) == 1:
@@ -740,6 +777,12 @@ def parse_signal(obj, element):
         digits = int(np.ceil(np.log10(end-1)))
         for index in range(start, end):
             name = element.get('name').format(str(index).zfill(digits))
+            title = None
+            if element.get('title'):
+                title = element.get('title').format(str(index).zfill(digits))
+            desc = None
+            if element.get('desc'):
+                desc = element.get('desc').format(str(index).zfill(digits))
             mdspath, dim_of = parse_mdspath(obj, element)
             mdspath = mdspath.format(str(index).zfill(digits))
             mdstree = parse_mdstree(obj, element)
@@ -747,7 +790,8 @@ def parse_signal(obj, element):
             signal_dict.append({'_name': name, 'units': units, 'axes': axes,
                                 '_mdsnode': mdspath, '_mdstree': mdstree,
                                 '_dim_of': dim_of, '_error': error,
-                                '_parent': obj, '_transpose': transpose})
+                                '_parent': obj, '_transpose': transpose,
+                                '_title': title, '_desc': desc})
     return signal_dict
 
 
@@ -862,10 +906,12 @@ class Node(object):
         self._name = element.get('name')
         self._mdsnode = parse_mdspath(self, element)
         self._data = None
+        self._title = element.get('title')
+        self._desc = element.get('desc')
 
     def __repr__(self):
         if self._data is None:
-            self._data = self._root._get_mdsdata(self)
+            self._data = self._get_mdsdata()
         return str(self._data)
 
     def __getattr__(self, attribute):
@@ -885,4 +931,3 @@ if __name__ == '__main__':
     nstx = Machine(name='nstxu', shotlist=141000)
     s = nstx.s141000
     s.bes.ch01.plot()
-
