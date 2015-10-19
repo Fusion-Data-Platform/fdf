@@ -729,6 +729,8 @@ def init_class(cls, module_tree, **kwargs):
     cls._base_items = set(cls.__dict__.keys())
     cls._subcontainers = {}
     parse_method(cls, module_tree)
+    if hasattr(cls, '_preprocess'):
+        cls._preprocess()
 
 
 def parse_method(obj, module_tree):
@@ -740,7 +742,7 @@ def parse_method(obj, module_tree):
             method_text = method.get('name')
         module_object = importlib.import_module(method_text)
         method_from_object = module_object.__getattribute__(method_text)
-        setattr(obj, method.get('name'), method_from_object)
+        setattr(obj, method.get('name'), classmethod(method_from_object))
     sys.path.pop(0)
 
 
