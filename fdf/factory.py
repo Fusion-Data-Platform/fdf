@@ -659,17 +659,10 @@ class Container(object):
             if not os.path.isdir(container_dir):
                 return
             files = os.listdir(container_dir)
-<<<<<<< HEAD
-            self._subcontainers = {container: None for container in
-                        files if os.path.isdir(
-                        os.path.join(container_dir, container)) and
-                        container[0] is not '_'}
-=======
             cls._subcontainers = {container: None for container in
                                   files if os.path.isdir(
                                   os.path.join(container_dir, container)) and
                                   container[0] is not '_'}
->>>>>>> master
 
     @classmethod
     def _get_path(cls):
@@ -932,9 +925,5 @@ if __name__ == '__main__':
     nstx = Machine(name='nstxu', shotlist=141000)
     s = nstx.s141000
     s.bes.ch01.plot()
-<<<<<<< HEAD
     s.mpts.ne.plot()
     s.usxr.hup.hup00.plot()
-
-=======
->>>>>>> master
