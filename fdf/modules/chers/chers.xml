@@ -4,7 +4,7 @@
     <node name='valid' mdsnode='valid'></node>
     <axis name='radius' units='cm' mdsnode='radius'></axis>
     <axis name='time' units='s' mdsnode='time'></axis>
-    <signal name='ti' units='keV' error='dti' axes='radius, time' mdsnode='ti'></signal>
+    <signal name='ti' units='keV' error='dti' axes='radius, time' mdsnode='ti' transpose='1'></signal>
     <signal name='vt' units='km/s' error='dvt' axes='radius,time' mdsnode='vt'></signal>
     <signal name='ft' units='Hz' error='dft' axes='radius,time' mdsnode='ft'></signal>
     <signal name='nc' units='1e13/cm^3' error='dnc' axes='radius,time' mdsnode='nc'></signal>
