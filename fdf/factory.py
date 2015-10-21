@@ -151,18 +151,22 @@ class Machine(MutableMapping):
 
     def _get_connection(self, shot, tree):
         for connection in self._connections:
-            if connection.tree == (shot, tree):
+            if connection.tree == (tree, shot):
                 self._connections.remove(connection)
-                self._connections.insert = (0, connection)
+                self._connections.insert(0, connection)
                 return connection
         connection = self._connections.pop()
         try:
             connection.closeAllTrees()
         except:
             pass
-        connection.openTree(tree, shot)
-        connection.tree = (tree, shot)
-        self._connections.insert(0, connection)
+        try:
+            connection.openTree(tree, shot)
+            connection.tree = (tree, shot)
+        except mds.MdsException:
+            connection.tree = (None, None)
+        finally:
+            self._connections.insert(0, connection)
         return connection
 
     def _get_mdsdata(self, signal):
@@ -268,9 +272,10 @@ class Shot(MutableMapping):
         self._parent = parent
         self._logbook = root._logbook
         self._logbook_entries = []
-        self._signals = {module: None for module in root._get_modules()}
+        self._modules = {module: None for module in root._get_modules()}
         self.xp = self._get_xp()
         self.date = self._get_date()
+        self._efits = []
 
     def __getattr__(self, attribute):
 
@@ -284,11 +289,11 @@ class Shot(MutableMapping):
         except:
             pass  # failed, so check other locations
 
-        if attribute in self._signals:
-            if self._signals[attribute] is None:
-                self._signals[attribute] = Factory(attribute, root=self._root,
+        if attribute in self._modules:
+            if self._modules[attribute] is None:
+                self._modules[attribute] = Factory(attribute, root=self._root,
                                                    shot=self.shot, parent=self)
-            return self._signals[attribute]
+            return self._modules[attribute]
 
         raise AttributeError("{} shot: {} has no attribute '{}'".format(
                                  self._root._name, self.shot, attribute))
@@ -297,26 +302,26 @@ class Shot(MutableMapping):
         return '<Shot {}>'.format(self.shot)
 
     def __iter__(self):
-        # return iter(self._signals.values())
-        return iter(self._signals)
+        # return iter(self._modules.values())
+        return iter(self._modules)
 
     def __contains__(self, value):
-        return value in self._signals
+        return value in self._modules
 
     def __len__(self):
-        return len(self._signals.keys())
+        return len(self._modules.keys())
 
     def __delitem__(self, item):
         pass
 
     def __getitem__(self, item):
-        return self._signals[item]
+        return self._modules[item]
 
     def __setitem__(self, item, value):
         pass
 
     def __dir__(self):
-        return self._signals.keys()
+        return self._modules.keys()
 
     def _get_xp(self):
         # query logbook for XP, return XP (list if needed)
@@ -371,6 +376,25 @@ class Shot(MutableMapping):
             plt.xlabel('{} ({})'.format(self.time._name.capitalize(),
                                         self.time.units))
             plt.show()
+
+    def check_efit(self):
+        if len(self._efits):
+            return self._efits
+        trees = ['efit{}'.format(str(index).zfill(2)) for index in range(1, 7)]
+        trees.extend(['lrdfit{}'.format(str(index).zfill(2))
+                      for index in range(1, 13)])
+        tree_exists = []
+        for tree in trees:
+            data = None
+            connection = self._get_connection(self.shot, tree)
+            try:
+                data = connection.get('\{}::userid'.format(tree)).value
+            except:
+                pass
+            if data and data is not '*':
+                tree_exists.append(tree)
+        self._efits = tree_exists
+        return self._efits
 
 
 class Logbook(object):
@@ -543,7 +567,7 @@ def Factory(module_branch, root=None, shot=None, parent=None):
         return ContainerClass(_tree_dict[module_branch], shot=shot,
                               parent=parent, top=True)
 
-    except IOError:
+    except None:
         print("{} not found in modules directory".format(module))
         raise
 
@@ -615,6 +639,7 @@ class Container(object):
                 ContainerClass = cls._classes[ContainerClassName]
             ContainerObj = ContainerClass(branch, parent=self)
             setattr(self, name, ContainerObj)
+            self._containers[name] = ContainerObj
 
         for element in module_tree.findall('signal'):
             signal_list = parse_signal(self, element)
@@ -635,6 +660,10 @@ class Container(object):
                 for axis, ref in zip(SignalObj.axes, refs):
                     setattr(SignalObj, axis, getattr(self, '_'+ref))
                 setattr(self, signal_dict['_name'], SignalObj)
+                self._signals[signal_dict['_name']] = SignalObj
+
+        if top and hasattr(self, '_preprocess'):
+            self._preprocess()
 
     def __getattr__(self, attribute):
 
@@ -657,6 +686,8 @@ class Container(object):
             raise AttributeError("Attribute '{}' not found".format(attribute))
 
         attr = getattr(self._parent, attribute)
+        if Container in attr.__class__.mro() and attribute[0] is not '_':
+            raise AttributeError("Attribute '{}' not found".format(attribute))
         if inspect.ismethod(attr):
             return types.MethodType(attr.im_func, self)
         else:
@@ -693,11 +724,19 @@ class Container(object):
         return [item for item in set(items).difference(self._base_items)
                 if item[0] is not '_']
 
+    def __iter__(self):
+        if not len(self._signals):
+            items = self._containers.values()
+            items.extend(self._subcontainers.values())
+        else:
+            items = self._signals.values()
+        return iter(items)
+
     @classmethod
     def _get_branch(cls):
         branch = cls._name
         parent = cls._classparent
-        while parent is not Shot:
+        while parent is not Shot and parent.__class__ is not Shot:
             branch = '.'.join([parent._name, branch])
             parent = parent._classparent
         return branch
@@ -728,9 +767,9 @@ def init_class(cls, module_tree, **kwargs):
 
     cls._base_items = set(cls.__dict__.keys())
     cls._subcontainers = {}
+    cls._containers = {}
+    cls._signals = {}
     parse_method(cls, module_tree)
-    if hasattr(cls, '_preprocess'):
-        cls._preprocess()
 
 
 def parse_method(obj, module_tree):
@@ -742,7 +781,7 @@ def parse_method(obj, module_tree):
             method_text = method.get('name')
         module_object = importlib.import_module(method_text)
         method_from_object = module_object.__getattribute__(method_text)
-        setattr(obj, method.get('name'), classmethod(method_from_object))
+        setattr(obj, method.get('name'), method_from_object)
     sys.path.pop(0)
 
 
