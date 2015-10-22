@@ -123,6 +123,7 @@ class Signal(np.ndarray):
         self.axes = getattr(obj, 'axes', None)
         self._verbose = getattr(obj, '_verbose', False)
         self._transpose = getattr(obj, '_transpose', None)
+        self._parent = getattr(obj, '_parent', None)
         if hasattr(obj,'axes'):
             if obj.axes is not None:
                 for i, axis in enumerate(obj.axes):
@@ -236,14 +237,14 @@ class Signal(np.ndarray):
         for kwarg, values in kwargs.items():
             if kwarg not in self.axes:
                 print('{} is not a valid axis.'.format(kwarg))
-                return None
+                raise TypeError
             axis = self.axes.index(kwarg)
+            axis_value = getattr(self, kwarg)
             try:
-                axis_value = getattr(self, kwarg)
                 axis_inds = [np.abs(value-axis_value[:]).argmin()
                              for value in values]
             except TypeError:
-                axis_ind = np.abs(values-axis_value).argmin()
+                axis_ind = np.abs(values-axis_value[:]).argmin()
                 axis_inds = [axis_ind, axis_ind+1]
             slc[axis] = slice(axis_inds[0], axis_inds[1])
         return self[slc]
