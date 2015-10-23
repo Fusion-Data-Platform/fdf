@@ -360,22 +360,23 @@ class Shot(MutableMapping):
         else:
             print('No logbook entries for {}'.format(self.shot))
 
-    def plot(self, overwrite=False):
+    def plot(self, overwrite=False, label=None, multi=False):
 
-        if not overwrite:
+        if not overwrite and not multi:
             plt.figure()
             plt.subplot(1, 1, 1)
-        plt.plot(self.time[:], self[:])
+        plt.plot(self.time[:], self[:], label=label)
         title = self._title if self._title else self._name
-        if not overwrite:
+        if not overwrite or multi:
             plt.suptitle('Shot #{}'.format(self.shot), x=0.5, y=1.00,
                          fontsize=12, horizontalalignment='center')
+            plt.ylabel('{} ({})'.format(self._name.upper(), self.units))
             plt.title('{} {}'.format(self._container.upper(), title),
                       fontsize=12)
-            plt.ylabel('{} ({})'.format(self._name.upper(), self.units))
             plt.xlabel('{} ({})'.format(self.time._name.capitalize(),
                                         self.time.units))
-            plt.show()
+        plt.legend()
+        plt.show()
 
     def check_efit(self):
         if len(self._efits):
@@ -583,6 +584,10 @@ class Container(object):
 
         cls = self.__class__
 
+        self._signals = {}
+        self._containers = {}
+        self._subcontainers = {}
+
         self._title = module_tree.get('title')
         self._desc = module_tree.get('desc')
 
@@ -591,6 +596,7 @@ class Container(object):
 
         try:
             self.shot = kwargs['shot']
+            self._mdstree = kwargs['mdstree']
         except:
             pass
 
@@ -624,6 +630,11 @@ class Container(object):
                 else:
                     SignalClass = cls._classes[SignalClassName]
                 SignalObj = SignalClass(**signal_dict)
+                refs = parse_refs(self, element, SignalObj._transpose)
+                if not refs:
+                    refs = SignalObj.axes
+                for axis, ref in zip(SignalObj.axes, refs):
+                    setattr(SignalObj, axis, getattr(self, '_'+ref))
                 setattr(self, ''.join(['_', signal_dict['_name']]), SignalObj)
 
         for branch in module_tree.findall('container'):
@@ -693,14 +704,13 @@ class Container(object):
         else:
             return attr
 
-    @classmethod
-    def _get_subcontainers(cls):
-        if len(cls._subcontainers) is 0:
-            container_dir = cls._get_path()
+    def _get_subcontainers(self):
+        if len(self._subcontainers) is 0:
+            container_dir = self._get_path()
             if not os.path.isdir(container_dir):
                 return
             files = os.listdir(container_dir)
-            cls._subcontainers = {container: None for container in
+            self._subcontainers = {container: None for container in
                                   files if os.path.isdir(
                                   os.path.join(container_dir, container)) and
                                   container[0] is not '_'}
@@ -727,7 +737,7 @@ class Container(object):
     def __iter__(self):
         if not len(self._signals):
             items = self._containers.values()
-            items.extend(self._subcontainers.values())
+            # items.extend(self._subcontainers.values())
         else:
             items = self._signals.values()
         return iter(items)
@@ -763,12 +773,9 @@ def init_class(cls, module_tree, **kwargs):
     for item in ['mdstree', 'mdspath', 'units']:
         getitem = module_tree.get(item)
         if getitem is not None:
-            setattr(cls, item, getitem)
+            setattr(cls, '_'+item, getitem)
 
     cls._base_items = set(cls.__dict__.keys())
-    cls._subcontainers = {}
-    cls._containers = {}
-    cls._signals = {}
     parse_method(cls, module_tree)
 
 
@@ -886,7 +893,7 @@ def parse_error(obj, element):
         mdspath = element.get('mdspath')
         if mdspath is None:
             try:
-                mdspath = obj.mdspath
+                mdspath = obj._mdspath
                 error = '.'.join([mdspath, error])
             except:
                 pass
@@ -912,7 +919,7 @@ def parse_mdspath(obj, element):
             dim_of = None
         if mdspath is None:
             try:
-                mdspath = obj.mdspath
+                mdspath = obj._mdspath
             except:
                 pass
         if mdspath is not None:
@@ -925,8 +932,8 @@ def parse_mdspath(obj, element):
 
 def parse_mdstree(obj, element):
     mdstree = element.get('mdstree')
-    if mdstree is None:
-        mdstree = obj.mdstree
+    if mdstree is None and hasattr(obj, '_mdstree'):
+        mdstree = obj._mdstree
     return mdstree
 
 
