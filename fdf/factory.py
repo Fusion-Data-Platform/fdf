@@ -124,8 +124,8 @@ class Machine(MutableMapping):
         return '<machine {}>'.format(self._name)
 
     def __iter__(self):
-        # return iter(self._shots.values())
-        return iter(self._shots)
+        return iter(self._shots.values())
+        #return iter(self._shots)
 
     def __contains__(self, value):
         return value in self._shots
