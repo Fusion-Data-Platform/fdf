@@ -630,6 +630,11 @@ class Container(object):
                 else:
                     SignalClass = cls._classes[SignalClassName]
                 SignalObj = SignalClass(**signal_dict)
+                refs = parse_refs(self, element, SignalObj._transpose)
+                if not refs:
+                    refs = SignalObj.axes
+                for axis, ref in zip(SignalObj.axes, refs):
+                    setattr(SignalObj, axis, getattr(self, '_'+ref))
                 setattr(self, ''.join(['_', signal_dict['_name']]), SignalObj)
 
         for branch in module_tree.findall('container'):
