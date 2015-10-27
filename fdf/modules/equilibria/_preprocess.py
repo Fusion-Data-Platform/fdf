@@ -12,10 +12,10 @@ import os
 
 def _preprocess(self):
 
-    efits = []
+    ContainerClassName = 'ContainerEquilibria'
     for efit in self.check_efit():
         branch = '.'.join(['equilibria', efit])
-        ContainerClassName = ''.join(['Equilibria', efit.capitalize()])
+        # ContainerClassName = ''.join(['Equilibria', efit.capitalize()])
         if branch not in _tree_dict:
             filepath = os.path.join(FDF_DIR, 'modules', 'equilibria',
                                     'efit.xml')
@@ -29,14 +29,14 @@ def _preprocess(self):
             ContainerClass = type(ContainerClassName, (Container,), {})
             init_class(ContainerClass, _tree_dict[branch], root=self._root,
                        container='equilibria', classparent=self.__class__)
+            ContainerClass._name = 'efit'
             Container._classes[ContainerClassName] = ContainerClass
         else:
             ContainerClass = Container._classes[ContainerClassName]
 
         efitobj = ContainerClass(_tree_dict[branch], shot=self.shot,
-                                 parent=self)
+                                 parent=self, mdstree=efit)
 
-        efits.append(efitobj)
+        efitobj._title = efit
         setattr(self, efit, efitobj)
         self._containers[efit] = efitobj
-    self._efits = efits
