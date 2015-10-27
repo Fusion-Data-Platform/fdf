@@ -192,7 +192,11 @@ class Signal(np.ndarray):
                  else: newindex=[index]
              elif type(index) is tuple:
                  newindex = [slice(i,i+1) if (type(i) is int or type(i) is long or type(i) is float) else i for i in index]
-             for i in range(dims-len(newindex)):newindex.append(slice(None))
+             if Ellipsis in newindex:
+                 slcpadding=([slice(None)]*(dims-len(newindex)+1)) 
+                 newindex=newindex[:newindex.index(Ellipsis)] + slcpadding + newindex[newindex.index(Ellipsis)+1:]
+             else:
+                 newindex=newindex + ([slice(None)]*(dims-len(newindex)))
              return tuple(newindex)
 
         if self._verbose:
