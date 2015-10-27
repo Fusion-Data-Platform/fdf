@@ -984,3 +984,7 @@ if __name__ == '__main__':
     s.usxr.hup.hup00.plot()
     s.mpts.ne.plot()
     s.chers.ti.plot()
+    s.chers.vt.plot()
+    s.chers.ft.plot()
+    s.chers.derived.zeff.plot()
+    s.chers.derived.pi.plot()
