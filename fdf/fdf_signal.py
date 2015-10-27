@@ -190,6 +190,7 @@ class Signal(np.ndarray):
              if (type(index) is list or type(index) is slice):
                  if dims <= 1: return index
                  else: newindex=[index]
+             elif type(index) is int or type(index) is long or type(index) is float: newindex=[slice(index,index+1)]
              elif type(index) is tuple:
                  newindex = [slice(i,i+1) if (type(i) is int or type(i) is long or type(i) is float) else i for i in index]
              if Ellipsis in newindex:
@@ -202,8 +203,9 @@ class Signal(np.ndarray):
         if self._verbose:
             print('Called __getitem__:')
 
-        self._slic=parseindex(index, self.ndim)
-
+        slcindex=parseindex(index, self.ndim)
+        self._slic=slcindex
+        
         #Get the data
         if self._empty is True:
 #            try:
@@ -221,7 +223,7 @@ class Signal(np.ndarray):
             #print '__getitem__: new is type %s' % type(new)
             print('__getitem__: self is type %s' % type(self))
             #print('__getitem__: self has len %s ' % len(self))
-        return super(Signal,self).__getitem__(index)
+        return super(Signal,self).__getitem__(slcindex)
 
         
     def __getattr__(self, attribute):
