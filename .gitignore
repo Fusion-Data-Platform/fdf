@@ -4,3 +4,4 @@ fdf/.spyderproject
 *.pyc
 *.ipynb
 *~
+.spyderproject

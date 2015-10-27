@@ -119,8 +119,8 @@ class Machine(MutableMapping):
         return '<machine {}>'.format(self._name.upper())
 
     def __iter__(self):
-        # return iter(self._shots.values())
-        return iter(self._shots)
+        return iter(self._shots.values())
+        #return iter(self._shots)
 
     def __contains__(self, value):
         return value in self._shots
@@ -146,18 +146,22 @@ class Machine(MutableMapping):
 
     def _get_connection(self, shot, tree):
         for connection in self._connections:
-            if connection.tree == (shot, tree):
+            if connection.tree == (tree, shot):
                 self._connections.remove(connection)
-                self._connections.insert = (0, connection)
+                self._connections.insert(0, connection)
                 return connection
         connection = self._connections.pop()
         try:
             connection.closeAllTrees()
         except:
             pass
-        connection.openTree(tree, shot)
-        connection.tree = (tree, shot)
-        self._connections.insert(0, connection)
+        try:
+            connection.openTree(tree, shot)
+            connection.tree = (tree, shot)
+        except mds.MdsException:
+            connection.tree = (None, None)
+        finally:
+            self._connections.insert(0, connection)
         return connection
 
     def _get_mdsdata(self, signal):
@@ -258,9 +262,10 @@ class Shot(MutableMapping):
         self._parent = parent
         self._logbook = root._logbook
         self._logbook_entries = []
-        self._signals = {module: None for module in root._get_modules()}
+        self._modules = {module: None for module in root._get_modules()}
         self.xp = self._get_xp()
         self.date = self._get_date()
+        self._efits = []
 
     def __getattr__(self, attribute):
 
@@ -274,11 +279,11 @@ class Shot(MutableMapping):
         except:
             pass  # failed, so check other locations
 
-        if attribute in self._signals:
-            if self._signals[attribute] is None:
-                self._signals[attribute] = Factory(attribute, root=self._root,
+        if attribute in self._modules:
+            if self._modules[attribute] is None:
+                self._modules[attribute] = Factory(attribute, root=self._root,
                                                    shot=self.shot, parent=self)
-            return self._signals[attribute]
+            return self._modules[attribute]
 
         raise AttributeError("{} shot: {} has no attribute '{}'".format(
                                  self._root._name, self.shot, attribute))
@@ -287,26 +292,26 @@ class Shot(MutableMapping):
         return '<Shot {}>'.format(self.shot)
 
     def __iter__(self):
-        # return iter(self._signals.values())
-        return iter(self._signals)
+        # return iter(self._modules.values())
+        return iter(self._modules)
 
     def __contains__(self, value):
-        return value in self._signals
+        return value in self._modules
 
     def __len__(self):
-        return len(self._signals.keys())
+        return len(self._modules.keys())
 
     def __delitem__(self, item):
         pass
 
     def __getitem__(self, item):
-        return self._signals[item]
+        return self._modules[item]
 
     def __setitem__(self, item, value):
         pass
 
     def __dir__(self):
-        return self._signals.keys()
+        return self._modules.keys()
 
     def _get_xp(self):
         # query logbook for XP, return XP (list if needed)
@@ -345,22 +350,42 @@ class Shot(MutableMapping):
         else:
             print('No logbook entries for {}'.format(self.shot))
 
-    def plot(self, overwrite=False):
+    def plot(self, overwrite=False, label=None, multi=False):
 
-        if not overwrite:
+        if not overwrite and not multi:
             plt.figure()
             plt.subplot(1, 1, 1)
-        plt.plot(self.time[:], self[:])
+        plt.plot(self.time[:], self[:], label=label)
         title = self._title if self._title else self._name
-        if not overwrite:
+        if not overwrite or multi:
             plt.suptitle('Shot #{}'.format(self.shot), x=0.5, y=1.00,
                          fontsize=12, horizontalalignment='center')
+            plt.ylabel('{} ({})'.format(self._name.upper(), self.units))
             plt.title('{} {}'.format(self._container.upper(), title),
                       fontsize=12)
-            plt.ylabel('{} ({})'.format(self._name.upper(), self.units))
             plt.xlabel('{} ({})'.format(self.time._name.capitalize(),
                                         self.time.units))
-            plt.show()
+        plt.legend()
+        plt.show()
+
+    def check_efit(self):
+        if len(self._efits):
+            return self._efits
+        trees = ['efit{}'.format(str(index).zfill(2)) for index in range(1, 7)]
+        trees.extend(['lrdfit{}'.format(str(index).zfill(2))
+                      for index in range(1, 13)])
+        tree_exists = []
+        for tree in trees:
+            data = None
+            connection = self._get_connection(self.shot, tree)
+            try:
+                data = connection.get('\{}::userid'.format(tree)).value
+            except:
+                pass
+            if data and data is not '*':
+                tree_exists.append(tree)
+        self._efits = tree_exists
+        return self._efits
 
 
 class Logbook(object):
@@ -533,7 +558,7 @@ def Factory(module_branch, root=None, shot=None, parent=None):
         return ContainerClass(_tree_dict[module_branch], shot=shot,
                               parent=parent, top=True)
 
-    except IOError:
+    except None:
         print("{} not found in modules directory".format(module))
         raise
 
@@ -549,6 +574,10 @@ class Container(object):
 
         cls = self.__class__
 
+        self._signals = {}
+        self._containers = {}
+        self._subcontainers = {}
+
         self._title = module_tree.get('title')
         self._desc = module_tree.get('desc')
 
@@ -557,6 +586,7 @@ class Container(object):
 
         try:
             self.shot = kwargs['shot']
+            self._mdstree = kwargs['mdstree']
         except:
             pass
 
@@ -590,6 +620,11 @@ class Container(object):
                 else:
                     SignalClass = cls._classes[SignalClassName]
                 SignalObj = SignalClass(**signal_dict)
+                refs = parse_refs(self, element, SignalObj._transpose)
+                if not refs:
+                    refs = SignalObj.axes
+                for axis, ref in zip(SignalObj.axes, refs):
+                    setattr(SignalObj, axis, getattr(self, '_'+ref))
                 setattr(self, ''.join(['_', signal_dict['_name']]), SignalObj)
 
         for branch in module_tree.findall('container'):
@@ -605,6 +640,7 @@ class Container(object):
                 ContainerClass = cls._classes[ContainerClassName]
             ContainerObj = ContainerClass(branch, parent=self)
             setattr(self, name, ContainerObj)
+            self._containers[name] = ContainerObj
 
         for element in module_tree.findall('signal'):
             signal_list = parse_signal(self, element)
@@ -625,6 +661,10 @@ class Container(object):
                 for axis, ref in zip(SignalObj.axes, refs):
                     setattr(SignalObj, axis, getattr(self, '_'+ref))
                 setattr(self, signal_dict['_name'], SignalObj)
+                self._signals[signal_dict['_name']] = SignalObj
+
+        if top and hasattr(self, '_preprocess'):
+            self._preprocess()
 
     def __getattr__(self, attribute):
 
@@ -647,19 +687,20 @@ class Container(object):
             raise AttributeError("Attribute '{}' not found".format(attribute))
 
         attr = getattr(self._parent, attribute)
+        if Container in attr.__class__.mro() and attribute[0] is not '_':
+            raise AttributeError("Attribute '{}' not found".format(attribute))
         if inspect.ismethod(attr):
             return types.MethodType(attr.im_func, self)
         else:
             return attr
 
-    @classmethod
-    def _get_subcontainers(cls):
-        if len(cls._subcontainers) is 0:
-            container_dir = cls._get_path()
+    def _get_subcontainers(self):
+        if len(self._subcontainers) is 0:
+            container_dir = self._get_path()
             if not os.path.isdir(container_dir):
                 return
             files = os.listdir(container_dir)
-            cls._subcontainers = {container: None for container in
+            self._subcontainers = {container: None for container in
                                   files if os.path.isdir(
                                   os.path.join(container_dir, container)) and
                                   container[0] is not '_'}
@@ -683,11 +724,19 @@ class Container(object):
         return [item for item in set(items).difference(self._base_items)
                 if item[0] is not '_']
 
+    def __iter__(self):
+        if not len(self._signals):
+            items = self._containers.values()
+            # items.extend(self._subcontainers.values())
+        else:
+            items = self._signals.values()
+        return iter(items)
+
     @classmethod
     def _get_branch(cls):
         branch = cls._name
         parent = cls._classparent
-        while parent is not Shot:
+        while parent is not Shot and parent.__class__ is not Shot:
             branch = '.'.join([parent._name, branch])
             parent = parent._classparent
         return branch
@@ -714,13 +763,10 @@ def init_class(cls, module_tree, **kwargs):
     for item in ['mdstree', 'mdspath', 'units']:
         getitem = module_tree.get(item)
         if getitem is not None:
-            setattr(cls, item, getitem)
+            setattr(cls, '_'+item, getitem)
 
     cls._base_items = set(cls.__dict__.keys())
-    cls._subcontainers = {}
     parse_method(cls, module_tree)
-    if hasattr(cls, '_preprocess'):
-        cls._preprocess()
 
 
 def parse_method(obj, module_tree):
@@ -732,7 +778,7 @@ def parse_method(obj, module_tree):
             method_text = method.get('name')
         module_object = importlib.import_module(method_text)
         method_from_object = module_object.__getattribute__(method_text)
-        setattr(obj, method.get('name'), classmethod(method_from_object))
+        setattr(obj, method.get('name'), method_from_object)
     sys.path.pop(0)
 
 
@@ -837,7 +883,7 @@ def parse_error(obj, element):
         mdspath = element.get('mdspath')
         if mdspath is None:
             try:
-                mdspath = obj.mdspath
+                mdspath = obj._mdspath
                 error = '.'.join([mdspath, error])
             except:
                 pass
@@ -863,7 +909,7 @@ def parse_mdspath(obj, element):
             dim_of = None
         if mdspath is None:
             try:
-                mdspath = obj.mdspath
+                mdspath = obj._mdspath
             except:
                 pass
         if mdspath is not None:
@@ -876,8 +922,8 @@ def parse_mdspath(obj, element):
 
 def parse_mdstree(obj, element):
     mdstree = element.get('mdstree')
-    if mdstree is None:
-        mdstree = obj.mdstree
+    if mdstree is None and hasattr(obj, '_mdstree'):
+        mdstree = obj._mdstree
     return mdstree
 
 
@@ -925,5 +971,7 @@ if __name__ == '__main__':
     nstx = Machine(name='nstxu', shotlist=141000)
     s = nstx.s141000
     s.bes.ch01.plot()
-    s.mpts.ne.plot()
     s.usxr.hup.hup00.plot()
+    s.mpts.ne.plot()
+    s.chers.ti.plot()
+    s.chers.derived.zeff.plot()
