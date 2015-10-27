@@ -187,14 +187,17 @@ class Signal(np.ndarray):
         #This passes index to array_finalize after a new signal obj is created to assign axes
         def parseindex(index, dims):
              #format index to account for single elements and pad with appropriate slices.
-             if (type(index) is list or type(index) is slice):
+             if isinstance(index, (list, slice, np.ndarray)):
                  if dims <= 1: return index
                  else: newindex=[index]
-             elif type(index) is tuple:
-                 newindex = [slice(i,i+1) if (type(i) is int or type(i) is long or type(i) is float) else i for i in index]
-             if Ellipsis in newindex:
-                 slcpadding=([slice(None)]*(dims-len(newindex)+1)) 
-                 newindex=newindex[:newindex.index(Ellipsis)] + slcpadding + newindex[newindex.index(Ellipsis)+1:]
+             elif isinstance(index, (int, long, float, np.generic)): newindex=[slice(int(index),int(index)+1)]
+             elif isinstance(index, tuple):
+                 newindex = [slice(int(i),int(i)+1) if isinstance(i, (int, long, float, np.generic)) else i for i in index]
+             ellipsisbool=[Ellipsis is i for i in newindex]
+             if sum(ellipsisbool) > 0:
+                 ellipsisindex=ellipsisbool.index(True)
+                 slcpadding=([slice(None)]*(dims-len(newindex)+1))
+                 newindex=newindex[:ellipsisindex] + slcpadding + newindex[ellipsisindex+1:]
              else:
                  newindex=newindex + ([slice(None)]*(dims-len(newindex)))
              return tuple(newindex)
@@ -202,8 +205,9 @@ class Signal(np.ndarray):
         if self._verbose:
             print('Called __getitem__:')
 
-        self._slic=parseindex(index, self.ndim)
-
+        slcindex=parseindex(index, self.ndim)
+        self._slic=slcindex
+        
         #Get the data
         if self._empty is True:
 #            try:
@@ -221,7 +225,7 @@ class Signal(np.ndarray):
             #print '__getitem__: new is type %s' % type(new)
             print('__getitem__: self is type %s' % type(self))
             #print('__getitem__: self has len %s ' % len(self))
-        return super(Signal,self).__getitem__(index)
+        return super(Signal,self).__getitem__(slcindex)
 
         
     def __getattr__(self, attribute):
