@@ -191,9 +191,11 @@ class Signal(np.ndarray):
              if isinstance(index, (list, slice, np.ndarray)):
                  if dims <= 1: return index
                  else: newindex=[index]
-             elif isinstance(index, (int, long, float, np.generic)): newindex=[int2slc(index)]
+             #elif isinstance(index, (int, long, float, np.generic)): newindex=[int2slc(index)]
+             elif isinstance(index, (int, long, float, np.generic)): newindex=[int(index)]
              elif isinstance(index, tuple):
-                 newindex = [int2slc(i) if isinstance(i, (int, long, float, np.generic)) else i for i in index]
+                 #newindex = [int2slc(i) if isinstance(i, (int, long, float, np.generic)) else i for i in index]
+                 newindex = [int(i) if isinstance(i, (float, np.generic)) else i for i in index]
              ellipsisbool=[Ellipsis is i for i in newindex]
              if sum(ellipsisbool) > 0:
                  ellipsisindex=ellipsisbool.index(True)
@@ -250,9 +252,8 @@ class Signal(np.ndarray):
             self.resize(data.shape, refcheck=False)
             self[:] = data
             self._empty=False
-
-        return np.asarray(self).__repr__()
-        #return super(Signal,self).__repr__()
+        return super(Signal,self).__repr__()
+        #return np.asarray(self).__repr__()
 
     def __str__(self):
         if self._verbose:
@@ -262,8 +263,8 @@ class Signal(np.ndarray):
             self.resize(data.shape, refcheck=False)
             self[:] = data
             self._empty=False
-        #return super(Signal,self).__str__()
-        return np.asarray(self).__str__()
+        return super(Signal,self).__str__()
+        #return np.asarray(self).__str__()
 
     def __getslice__(self, start, stop):
         if self._verbose:
