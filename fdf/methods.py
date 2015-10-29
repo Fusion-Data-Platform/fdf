@@ -37,6 +37,9 @@ def plot(signal, **kwargs):
     if multi_axis in signal.axes and dims > 1:
         plot_multi(signal, **kwargs)
         return
+    if dims is 1:
+        plot1d(signal, getattr(signal, signal.axes[0]))
+        return
 
 
 def plot_multi(signal, **kwargs):
@@ -48,11 +51,11 @@ def plot_multi(signal, **kwargs):
     ax = plt.subplot(111)
     ax.grid()
     legend = kwargs.pop('legend', False)
-    for index, label in enumerate(np.asarray(multi_axis)):
+    for index, label in enumerate(multi_axis):
         label = '{} = {:.3f} {}'.format(axis_name, label, multi_axis.units)
         data = np.take(signal, index, axis=axis_index)
-        plot_axes = [np.take(axis, index, axis=axis_index)
-                     if multi_axis in axis.axes else axis for axis in axes]
+        plot_axes = [np.take(axis, index, axis=axis.axes.index(axis_name))
+                     if axis_name in axis.axes else axis for axis in axes]
         plot_methods[data.ndim](data, *plot_axes, label=label, **kwargs)
     if legend:
         plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
