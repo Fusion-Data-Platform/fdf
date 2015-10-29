@@ -187,12 +187,13 @@ class Signal(np.ndarray):
         #This passes index to array_finalize after a new signal obj is created to assign axes
         def parseindex(index, dims):
              #format index to account for single elements and pad with appropriate slices.
+             int2slc=lambda i: slice(-1,-2,-1) if int(i) == -1 else slice(int(i),int(i)+1)
              if isinstance(index, (list, slice, np.ndarray)):
                  if dims <= 1: return index
                  else: newindex=[index]
-             elif isinstance(index, (int, long, float, np.generic)): newindex=[slice(int(index),int(index)+1)]
+             elif isinstance(index, (int, long, float, np.generic)): newindex=[int2slc(index)]
              elif isinstance(index, tuple):
-                 newindex = [slice(int(i),int(i)+1) if isinstance(i, (int, long, float, np.generic)) else i for i in index]
+                 newindex = [int2slc(i) if isinstance(i, (int, long, float, np.generic)) else i for i in index]
              ellipsisbool=[Ellipsis is i for i in newindex]
              if sum(ellipsisbool) > 0:
                  ellipsisindex=ellipsisbool.index(True)
@@ -249,7 +250,9 @@ class Signal(np.ndarray):
             self.resize(data.shape, refcheck=False)
             self[:] = data
             self._empty=False
+
         return np.asarray(self).__repr__()
+        #return super(Signal,self).__repr__()
 
     def __str__(self):
         if self._verbose:
@@ -259,7 +262,8 @@ class Signal(np.ndarray):
             self.resize(data.shape, refcheck=False)
             self[:] = data
             self._empty=False
-        return np.asarray(self).__repr__()
+        #return super(Signal,self).__str__()
+        return np.asarray(self).__str__()
 
     def __getslice__(self, start, stop):
         if self._verbose:
@@ -296,6 +300,8 @@ class Signal(np.ndarray):
             slc[axis] = slice(axis_inds[0], axis_inds[1])
         return self[tuple(slc)]
 
+    def __nonzero__(self):
+        return True
 
     """
     mdsclient = mds.Connection('skylark')
