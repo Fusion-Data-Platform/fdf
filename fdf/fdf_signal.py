@@ -19,13 +19,13 @@ import types
 import fdf_globals
 
 MDS_SERVERS = fdf_globals.MDS_SERVERS
-# TODO: implement MDS_SERVERS in place of hard-coded MDS server
+# implemented MDS_SERVERS from fdf_globals in place of hard-coded MDS server - DRS 10/18/15
 FdfError = fdf_globals.FdfError
 
 
-class MdsError(Exception):
-    # TODO: implement FdfError from fdf_globals
-    pass
+# commented out and replaced with FdfError - DRS 10/18/15
+#class MdsError(Exception):
+#    pass
 
 class Signal(np.ndarray):
     """

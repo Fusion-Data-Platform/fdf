@@ -50,3 +50,12 @@ Module fdf_globals.py
 .. automodule:: fdf_globals
 
 
+Module tests.py
+====================================
+.. automodule:: tests
+
+
+Class tests.TestShotFixture
+====================================
+.. autoclass:: tests.TestShotFixture
+    :members:

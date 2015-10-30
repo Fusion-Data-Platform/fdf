@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Package-level constants and FdfError class
+Package-level attributes, methods, and FdfError class
 """
 
 """
@@ -31,18 +31,19 @@ LOGBOOK_CREDENTIALS = {
 }
 """Dictionary: machine-name key paired with logbook login credentials"""
 
-ALIASES = {
-    'nstx': ['nstx', 'nstxu', 'nstx-u'],
-}
+def machineAlias(machine):
 
-
-def name(alias):
-    #global _ALIASES
-
-    for key, value in iter(ALIASES.items()):
-        if alias.lower() in value:
+    aliases = {
+        'nstx': ['nstx', 'nstxu', 'nstx-u'],
+    }
+    
+    for key, value in iter(aliases.items()):
+        if machine.lower() in value:
             return key
-    raise FdfError('{} not a valid machine name'.format(alias))
+    txt = '{} is not a valid machine; valid machines are:\n'.format(machine)
+    for machinekey in aliases:
+        txt = txt + '  {}\n'.format(machinekey.upper())
+    raise FdfError(txt)
 
 
 class FdfError(Exception):
