@@ -268,7 +268,6 @@ class Shot(MutableMapping):
         self._efits = []
 
     def __getattr__(self, attribute):
-
         # first see if the attribute is in the Machine object
         try:
             attr = getattr(self._parent, attribute)
@@ -278,13 +277,11 @@ class Shot(MutableMapping):
                 return attr
         except:
             pass  # failed, so check other locations
-
         if attribute in self._modules:
             if self._modules[attribute] is None:
                 self._modules[attribute] = Factory(attribute, root=self._root,
                                                    shot=self.shot, parent=self)
             return self._modules[attribute]
-
         raise AttributeError("{} shot: {} has no attribute '{}'".format(
                                  self._root._name, self.shot, attribute))
 
@@ -975,3 +972,4 @@ if __name__ == '__main__':
     s.mpts.ne.plot()
     s.chers.ti.plot()
     s.chers.derived.zeff.plot()
+    s.ip.plot()

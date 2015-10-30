@@ -1,6 +1,5 @@
 <?xml version='1.0'?>
 <container name='chers' mdstree='activespec' mdspath='\chers_best'>
-    <method name='plot'></method>
     <node name='valid' mdsnode='valid'></node>
     <axis name='radius' units='cm' mdsnode='radius'></axis>
     <axis name='time' units='s' mdsnode='time'></axis>
