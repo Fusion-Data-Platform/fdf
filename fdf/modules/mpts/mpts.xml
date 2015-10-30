@@ -2,7 +2,7 @@
 <container name='mpts' mdstree='activespec' mdspath='\top.mpts.output_data.best' title='Multipoint Thomson Scattering' desc='test'>
     <node name='comment' mdsnode='comment'></node>
     <node name='valid' mdsnode='valid'></node>
-    <method name='plot'></method>
+    <method name='_postprocess'></method>
     <axis name='radius' units='cm' error='fit_r_width' mdsnode='fit_radii'></axis>
     <axis name='time' units='s' mdsnode='ts_times'></axis>
     <signal name='te' units='keV' axes='radius, time' error='fit_te_err' mdsnode='fit_te' title='Electron Temperature'>
