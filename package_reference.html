@@ -263,6 +263,32 @@ sig=fdf.Signal(units=&#8217;m/s&#8217;, axes=[&#8216;radius&#8217;,&#8217;time&#
 </div>
 <div class="section" id="class-tests-testshotfixture">
 <h2>Class tests.TestShotFixture<a class="headerlink" href="#class-tests-testshotfixture" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="tests.TestShotFixture">
+<em class="property">class </em><code class="descclassname">tests.</code><code class="descname">TestShotFixture</code><span class="sig-paren">(</span><em>methodName='runTest'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests.html#TestShotFixture"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.TestShotFixture" title="Permalink to this definition">¶</a></dt>
+<dd><p>A test fixture to validate the data structure in shot objects</p>
+<dl class="method">
+<dt id="tests.TestShotFixture.setUp">
+<code class="descname">setUp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests.html#TestShotFixture.setUp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.TestShotFixture.setUp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Setup method for all test cases in this text fixture</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="tests.TestShotFixture.testShotCase">
+<code class="descname">testShotCase</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests.html#TestShotFixture.testShotCase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.TestShotFixture.testShotCase" title="Permalink to this definition">¶</a></dt>
+<dd><p>A test case for shot objects to ensure:</p>
+<ul class="simple">
+<li>Every containter contains at least a signal or sub-container</li>
+<li>Every signal contains at least 1 axis</li>
+<li>Every axis is listed in signal.axes</li>
+<li>Every item is signal.axes is a valid axis object</li>
+<li>Every signal possesses a valid plot method</li>
+</ul>
+<p>TODO: Ensure signal axes are consistent with signal.axes</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 </div>
 

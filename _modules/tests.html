@@ -1,0 +1,308 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>tests &mdash; Fusion Data Framework 0.0.0 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Fusion Data Framework 0.0.0 documentation" href="../index.html"/>
+        <link rel="up" title="Module code" href="index.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+          <a href="../index.html" class="fa fa-home"> Fusion Data Framework</a>
+        
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../introduction.html#about-fdf">About FDF</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../introduction.html#about-this-documentation">About this documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../introduction.html#license">License</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started.html#user-guide">User Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started.html#developer-guide">Developer Guide</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../usage_examples.html">Usage Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../usage_examples.html#initiate-a-machine-instance">Initiate a machine instance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../usage_examples.html#load-shots-and-xps">Load shots and XPs</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../git_command_guide.html">Git Command Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../git_command_guide.html#tutorials">Tutorials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../git_command_guide.html#command-summary">Command summary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../git_command_guide.html#detailed-command-reference">Detailed command reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../package_reference.html">Package Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../package_reference.html#module-fdf.__init__">Package overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package_reference.html#module-factory">Module factory.py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package_reference.html#class-factory-machine">Class factory.Machine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package_reference.html#class-factory-shot">Class factory.Shot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package_reference.html#class-factory-logbook">Class factory.Logbook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package_reference.html#module-fdf_signal">Module fdf_signal.py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package_reference.html#class-fdf-signal-signal">Class fdf_signal.Signal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package_reference.html#module-fdf_globals">Module fdf_globals.py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package_reference.html#module-tests-py">Module tests.py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package_reference.html#class-tests-testshotfixture">Class tests.TestShotFixture</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../project_documents.html">Project Documents</a></li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">Fusion Data Framework</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index.html">Module code</a> &raquo;</li>
+      
+    <li>tests</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <h1>Source code for tests</h1><div class="highlight"><pre>
+<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Test module for the FDF package.</span>
+
+<span class="sd">https://docs.python.org/2/library/unittest.html</span>
+
+<span class="sd">**Usage**::</span>
+
+<span class="sd">    % python tests.py</span>
+
+<span class="sd">**Test scenarios**</span>
+
+<span class="sd">* Verify plot methods for all diagnostic containers and signals</span>
+<span class="sd">* Verify caching of MDS connections</span>
+<span class="sd">* Verify correct import of sample diagnostic module</span>
+<span class="sd">* Verify server pings</span>
+<span class="sd">* Verify SQL server connection</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">unittest</span>
+<span class="kn">import</span> <span class="nn">fdf</span>
+
+<div class="viewcode-block" id="TestShotFixture"><a class="viewcode-back" href="../package_reference.html#tests.TestShotFixture">[docs]</a><span class="k">class</span> <span class="nc">TestShotFixture</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A test fixture to validate the data structure in shot objects</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestShotFixture.setUp"><a class="viewcode-back" href="../package_reference.html#tests.TestShotFixture.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Setup method for all test cases in this text fixture</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">nstx</span> <span class="o">=</span> <span class="n">fdf</span><span class="o">.</span><span class="n">Machine</span><span class="p">(</span><span class="s">&#39;nstx&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shot</span> <span class="o">=</span> <span class="n">nstx</span><span class="o">.</span><span class="n">s141000</span>
+        </div>
+<div class="viewcode-block" id="TestShotFixture.testShotCase"><a class="viewcode-back" href="../package_reference.html#tests.TestShotFixture.testShotCase">[docs]</a>    <span class="k">def</span> <span class="nf">testShotCase</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A test case for shot objects to ensure:</span>
+<span class="sd">        </span>
+<span class="sd">        * Every containter contains at least a signal or sub-container</span>
+<span class="sd">        * Every signal contains at least 1 axis</span>
+<span class="sd">        * Every axis is listed in signal.axes</span>
+<span class="sd">        * Every item is signal.axes is a valid axis object</span>
+<span class="sd">        * Every signal possesses a valid plot method</span>
+<span class="sd">        </span>
+<span class="sd">        TODO: Ensure signal axes are consistent with signal.axes</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">attrName</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shot</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">attrName</span> <span class="o">==</span> <span class="s">&#39;ip&#39;</span> <span class="ow">or</span> <span class="n">attrName</span> <span class="o">==</span> <span class="s">&#39;vloop&#39;</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">diagnostic</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shot</span><span class="p">,</span> <span class="n">attrName</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertIs</span><span class="p">(</span><span class="n">isContainer</span><span class="p">(</span><span class="n">diagnostic</span><span class="p">),</span> <span class="bp">True</span><span class="p">,</span> 
+                          <span class="s">&#39;{} is not a container&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">diagnostic</span><span class="p">)))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parseContainer</span><span class="p">(</span><span class="n">diagnostic</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shot</span><span class="p">)</span>
+</div>
+    <span class="k">def</span> <span class="nf">parseContainer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctnr</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&#39;Container: {} under {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">ctnr</span><span class="p">),</span> <span class="nb">type</span><span class="p">(</span><span class="n">parent</span><span class="p">)))</span>
+        <span class="n">containsSignal</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">for</span> <span class="n">attrName</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">ctnr</span><span class="p">):</span>
+            <span class="n">attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ctnr</span><span class="p">,</span> <span class="n">attrName</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">isSignal</span><span class="p">(</span><span class="n">attr</span><span class="p">):</span>
+                <span class="n">containsSignal</span> <span class="o">=</span> <span class="bp">True</span> <span class="c"># True when ctnr contains Signal</span>
+                <span class="n">axes</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">axes</span>
+                <span class="n">sigAttrNames</span> <span class="o">=</span> <span class="nb">dir</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
+                <span class="k">print</span><span class="p">(</span><span class="s">&#39;  Signal {} with axes {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">attrName</span><span class="p">,</span> <span class="n">axes</span><span class="p">))</span>
+                <span class="k">for</span> <span class="n">axis</span> <span class="ow">in</span> <span class="n">axes</span><span class="p">:</span>
+                    <span class="c"># loop over axes in signal.axes</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">assertIs</span><span class="p">(</span><span class="n">isAxis</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">axis</span><span class="p">)),</span> <span class="bp">True</span><span class="p">,</span> 
+                                  <span class="s">&#39;{} is not an axis&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">axis</span><span class="p">))</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">sigAttrNames</span><span class="p">,</span> 
+                                  <span class="s">&#39;{} axis is not an attribute&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">axis</span><span class="p">))</span>
+                <span class="n">containsAxis</span> <span class="o">=</span> <span class="bp">False</span>
+                <span class="k">for</span> <span class="n">sigAttrName</span> <span class="ow">in</span> <span class="n">sigAttrNames</span><span class="p">:</span>
+                    <span class="c"># loop over signal attributes</span>
+                    <span class="n">sigAttr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">sigAttrName</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">isAxis</span><span class="p">(</span><span class="n">sigAttr</span><span class="p">):</span>
+                        <span class="n">containsAxis</span> <span class="o">=</span> <span class="bp">True</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="n">sigAttrName</span><span class="p">,</span> <span class="n">axes</span><span class="p">,</span> 
+                                      <span class="s">&#39;{} axis not in Axes&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sigAttrName</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">assertIs</span><span class="p">(</span><span class="n">containsAxis</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> 
+                              <span class="s">&#39;{} does not contain an axis&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">attr</span><span class="p">)))</span>
+                <span class="n">containsPlot</span> <span class="o">=</span> <span class="bp">False</span>
+                <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">attr</span><span class="o">.</span><span class="n">plot</span><span class="p">):</span>
+                    <span class="c"># set True when plot is callable method for Signal</span>
+                    <span class="n">containsPlot</span> <span class="o">=</span> <span class="bp">True</span>
+                    <span class="c">#print(&#39;  Plot method name: {}&#39;.format(attr.plot.__name__))</span>
+                    <span class="c">#print(&#39;  Plot method module: {}&#39;.format(attr.plot.__module__))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">assertIs</span><span class="p">(</span><span class="n">containsPlot</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span>
+                              <span class="s">&#39;{} does not contain plot method&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">attr</span><span class="p">)))</span>
+        <span class="k">for</span> <span class="n">attrName</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">ctnr</span><span class="p">):</span>
+            <span class="n">attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ctnr</span><span class="p">,</span> <span class="n">attrName</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">isContainer</span><span class="p">(</span><span class="n">attr</span><span class="p">):</span>
+                <span class="n">containsSignal</span> <span class="o">=</span> <span class="bp">True</span> <span class="c"># true when cntr contains another container</span>
+                <span class="c">#print(&#39;Sub-container: {}&#39;.format(attrName))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">parseContainer</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">ctnr</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIs</span><span class="p">(</span><span class="n">containsSignal</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> 
+                      <span class="s">&#39;{} does not contain a signal&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">ctnr</span><span class="p">)))</span>
+
+</div>
+<span class="k">def</span> <span class="nf">isContainer</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">__class__</span><span class="p">,</span> <span class="n">fdf</span><span class="o">.</span><span class="n">factory</span><span class="o">.</span><span class="n">Container</span><span class="p">)</span> <span class="ow">and</span> <span class="s">&#39;Container&#39;</span> <span class="ow">in</span> <span class="nb">repr</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span>
+
+<span class="k">def</span> <span class="nf">isSignal</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">__class__</span><span class="p">,</span> <span class="n">fdf</span><span class="o">.</span><span class="n">fdf_signal</span><span class="o">.</span><span class="n">Signal</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="s">&#39;Signal&#39;</span> <span class="ow">in</span> <span class="nb">repr</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)))</span>
+
+<span class="k">def</span> <span class="nf">isAxis</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">__class__</span><span class="p">,</span> <span class="n">fdf</span><span class="o">.</span><span class="n">fdf_signal</span><span class="o">.</span><span class="n">Signal</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="s">&#39;Axis&#39;</span> <span class="ow">in</span> <span class="nb">repr</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)))</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">unittest</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+    
+</pre></div>
+
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015, John Schmitt, David R. Smith, Kevin Tritz, Howard Yuh.
+    </p>
+  </div>
+
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.0.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
