@@ -52,7 +52,7 @@ Module fdf_globals.py
 
 Module tests.py
 ====================================
-.. automodule:: tests.tests.py
+.. automodule:: tests
 
 
 Class tests.TestShotFixture
