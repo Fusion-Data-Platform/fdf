@@ -143,7 +143,8 @@
 </div>
 <div class="section" id="command-summary">
 <h2>Command summary<a class="headerlink" href="#command-summary" title="Permalink to this headline">¶</a></h2>
-<div class="line-block">
+<blockquote>
+<div><div class="line-block">
 <div class="line"><code class="docutils literal"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">&lt;URL&gt;</span></code> - clone a local copy of a remote repo in a new directory</div>
 <div class="line"><code class="docutils literal"><span class="pre">git</span> <span class="pre">remote</span></code> - manage remote repo names (e.g. “origin”) and URLs</div>
 <div class="line"><code class="docutils literal"><span class="pre">git</span> <span class="pre">fetch</span> <span class="pre">&lt;remote&gt;</span></code> - fetch updates from remote repo</div>
@@ -157,6 +158,7 @@
 <div class="line"><code class="docutils literal"><span class="pre">git</span> <span class="pre">log</span></code> - view commit log of current local branch</div>
 <div class="line"><code class="docutils literal"><span class="pre">git</span> <span class="pre">diff</span></code> - view differences between working directory and index</div>
 </div>
+</div></blockquote>
 </div>
 <div class="section" id="detailed-command-reference">
 <h2>Detailed command reference<a class="headerlink" href="#detailed-command-reference" title="Permalink to this headline">¶</a></h2>
@@ -208,8 +210,12 @@
 <div class="highlight-python"><div class="highlight"><pre>% git branch
 </pre></div>
 </div>
-<p>Create new branch in local repo (copy of master branch):</p>
+<p>Create new branch from master branch in local repo:</p>
 <div class="highlight-python"><div class="highlight"><pre>% git branch &lt;new branch&gt;
+</pre></div>
+</div>
+<p>Create new branch from existing branch in local repo:</p>
+<div class="highlight-python"><div class="highlight"><pre>% git branch &lt;new branch&gt; &lt;existing branch&gt;
 </pre></div>
 </div>
 <p>Delete local branch:</p>
