@@ -5,7 +5,6 @@ Fusion Data Framework (FDF) is a data access, management, and visualization fram
 
 * `Code repository <https://github.com/Fusion-Data-Framework/fdf>`_
 * `Documentation <http://fusion-data-framework.github.io/fdf/>`_
-* `Project documents <http://fusion-data-framework.github.io/fdf/project_documents.html>`_
 * `Submit bugs or feature requests <https://github.com/Fusion-Data-Framework/fdf/issues>`_
 
 Created by:

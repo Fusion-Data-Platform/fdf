@@ -10,14 +10,14 @@ Fusion Data Framework
     .. include:: html_preamble.rst
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
     
     introduction.rst
     getting_started.rst
     usage_examples.rst
-    git_command_guide.rst
     package_reference.rst
     project_documents.rst
+    git_command_guide.rst
 
 .. only:: html
 
