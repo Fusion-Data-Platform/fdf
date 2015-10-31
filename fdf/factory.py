@@ -252,6 +252,21 @@ class Machine(MutableMapping):
         # return a list of shots
         return self._logbook.get_shotlist(date=date, xp=xp, verbose=verbose)
 
+    def filter(self, date=[], xp=[]):
+        if not iterable(xp):
+            xp = [xp]
+        if not iterable(date):
+            date = [date]
+        flist = []
+        for shot in self:
+            for sxp in shot.xp:
+                if sxp in xp:
+                    flist.append(shot)
+            if shot.date in date:
+                flist.append(shot)
+        return flist
+        
+
 
 class Shot(MutableMapping):
 
@@ -317,11 +332,7 @@ class Shot(MutableMapping):
         xplist = []
         for entry in self._logbook_entries:
             xplist.append(entry['xp'])
-        if len(np.unique(xplist)) == 1:
-            xp = xplist.pop(0)
-        else:
-            xp = np.unique(xplist)
-        return xp
+        return np.unique(xplist)
 
     def _get_date(self):
         # query logbook for rundate, return rundate
@@ -965,11 +976,13 @@ class Node(object):
             return attr
 
 if __name__ == '__main__':
-    nstx = Machine(name='nstxu', shotlist=141000)
-    s = nstx.s141000
-    s.bes.ch01.plot()
-    s.usxr.hup.hup00.plot()
-    s.mpts.ne.plot()
-    s.chers.ti.plot()
-    s.chers.derived.zeff.plot()
-    s.ip.plot()
+    nstx = Machine(name='nstxu', xp=[1013, 1048])
+    nstx.listshot()
+    xp1013 = nstx.filter(xp=1013)
+#    s = nstx.s141000
+#    s.bes.ch01.plot()
+#    s.usxr.hup.hup00.plot()
+#    s.mpts.ne.plot()
+#    s.chers.ti.plot()
+#    s.chers.derived.zeff.plot()
+#    #s.ip.plot()
