@@ -106,5 +106,8 @@ def isAxis(obj):
     return issubclass(obj.__class__, fdf.fdf_signal.Signal) and ('Axis' in repr(type(obj)))
 
 if __name__ == '__main__':
-    unittest.main()
+    f = open('test_output.txt', 'w')
+    runner = unittest.TextTestRunner(f)
+    unittest.main(testRunner=runner)
+    f.close()
     
