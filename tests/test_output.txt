@@ -1,5 +1,15 @@
-.
+F.
+======================================================================
+FAIL: testContainer (__main__.TestShotFixture)
 ----------------------------------------------------------------------
-Ran 1 test in 2.657s
+Traceback (most recent call last):
+  File "/u/drsmith/fdf/tests/tests.py", line 51, in testContainer
+    self.testContainer(attr)
+  File "/u/drsmith/fdf/tests/tests.py", line 55, in testContainer
+    '{} is not a valid container'.format(type(cntr)))
+AssertionError: <class 'fdf.factory.ContainerBes'> is not a valid container
 
-OK
+----------------------------------------------------------------------
+Ran 2 tests in 2.816s
+
+FAILED (failures=1)

@@ -23,91 +23,98 @@ import fdf
 
 class TestShotFixture(unittest.TestCase):
     """
-    A test fixture to validate the data structure in shot objects
+    Test fixture for shot objects
     """
     
     def setUp(self):
         """
-        Setup method for all test cases in this text fixture
+        Setup method for text cases
         """
         nstx = fdf.Machine('nstx')
         self.shot = nstx.s141000
-        
-    def testShotCase(self):
+
+    def testContainer(self, container=None):
         """
-        A test case for shot objects to ensure:
-        
-        * Every containter contains at least a signal or sub-container
-        * Every signal contains at least 1 axis
-        * Every axis is listed in signal.axes
-        * Every item is signal.axes is a valid axis object
-        * Every signal possesses a valid plot method
-        
+        Test case to ensure every containter contains at least a signal
+        or subcontainer
         """
-        for attrName in dir(self.shot):
+        if not container:
+            container = self.shot
+        validContainer = False
+        # test: container contains signal or sub-container
+        for attrName in dir(container):
             if attrName == 'ip' or attrName == 'vloop':
                 continue
-            diagnostic = getattr(self.shot, attrName)
-            self.assertIs(isContainer(diagnostic), True, 
-                          '{} is not a container'.format(type(diagnostic)))
-            self.parseContainer(diagnostic, self.shot)
-
-    def parseContainer(self, ctnr, parent=None):
-        print('Container: {} under {}'.format(type(ctnr), type(parent)))
-        containsSignal = False
-        for attrName in dir(ctnr):
-            attr = getattr(ctnr, attrName)
+            attr = getattr(container, attrName)
+            if isContainer(attr):
+                validContainer = True
+                self.testContainer(attr)
             if isSignal(attr):
-                containsSignal = True # True when ctnr contains Signal
+                validContainer = True
+        self.assertIs(validContainer, True, 
+                      '{} is not a valid container'.format(type(container)))
+        
+    def testSignalAxes(self, container=None):
+        """
+        Test case to validate signal axes
+        """
+        if not container:
+            container = self.shot
+        for attrName in dir(container):
+            if attrName == 'ip' or attrName == 'vloop':
+                continue
+            attr = getattr(container, attrName)
+            if isContainer(attr):
+                self.testSignalAxes(attr)
+            if isSignal(attr):
+                # test: signal contains axes attribute
+                self.assertIn('axes', attr, 
+                    '{} in {} does not contain axes attribute'.format(attrName, type(container)))
                 axes = attr.axes
-                sigAttrNames = dir(attr)
-                print('  Signal {} with axes {}'.format(attrName, axes))
-                for axis in axes:
-                    # loop over axes in signal.axes
-                    self.assertIs(isAxis(getattr(attr, axis)), True, 
-                                  '{} is not an axis'.format(axis))
-                    self.assertIn(axis, sigAttrNames, 
-                                  '{} axis is not an attribute'.format(axis))
+                # test: axes elements are axis objects
+                for axisName in axes:
+                    axis = getattr(attr, axisName)
+                    self.assertIs(isAxis(axis), True, 
+                        '{} in {} in {} is not an axis'.format(axisName, attrName, type(container)))
+                # test: all axis objects are elements in axes attribute
+                # test: signal contains at least 1 axis attribute
                 containsAxis = False
-                for sigAttrName in sigAttrNames:
-                    # loop over signal attributes
+                for sigAttrName in dir(attr):
                     sigAttr = getattr(attr, sigAttrName)
                     if isAxis(sigAttr):
                         containsAxis = True
                         self.assertIn(sigAttrName, axes, 
-                                      '{} axis not in Axes'.format(sigAttrName))
+                            '{} in {} in {} is an axis not listed in axes attr'.format(sigAttrName, attrName, type(container)))
                 self.assertIs(containsAxis, True, 
-                              '{} does not contain an axis'.format(type(attr)))
-                containsPlot = False
-                if callable(attr.plot):
-                    # set True when plot is callable method for Signal
-                    containsPlot = True
-                    #print('  Plot method name: {}'.format(attr.plot.__name__))
-                    #print('  Plot method module: {}'.format(attr.plot.__module__))
-                self.assertIs(containsPlot, True,
-                              '{} does not contain plot method'.format(type(attr)))
-        for attrName in dir(ctnr):
-            attr = getattr(ctnr, attrName)
+                    '{} in {} does not contain an axis attribute'.format(attrName, type(container)))
+
+    def testSignalPlotMethod(self, container=None):
+        """
+        Test case to ensure signal objects contain plot methods
+        """
+        if not container:
+            container = self.shot
+        for attrName in dir(container):
+            if attrName == 'ip' or attrName == 'vloop':
+                continue
+            attr = getattr(container, attrName)
             if isContainer(attr):
-                containsSignal = True # true when cntr contains another container
-                #print('Sub-container: {}'.format(attrName))
-                self.parseContainer(attr, ctnr)
-        self.assertIs(containsSignal, True, 
-                      '{} does not contain a signal'.format(type(ctnr)))
+                self.testSignalPlotMethod(attr)
+            if isSignal(attr):
+                # test: signal possesses plot method
+                self.assertIs(callable(attr.plot), True, 
+                    '{} in {} does not possess plot method'.format(attrName, type(container)))
 
 
 def isContainer(obj):
     return issubclass(obj.__class__, fdf.factory.Container) and 'Container' in repr(type(obj))
 
 def isSignal(obj):
-    return issubclass(obj.__class__, fdf.fdf_signal.Signal) and ('Signal' in repr(type(obj)))
+    return issubclass(obj.__class__, fdf.fdf_signal.Signal) and 'Signal' in repr(type(obj))
 
 def isAxis(obj):
-    return issubclass(obj.__class__, fdf.fdf_signal.Signal) and ('Axis' in repr(type(obj)))
+    return issubclass(obj.__class__, fdf.fdf_signal.Signal) and 'Axis' in repr(type(obj))
 
 if __name__ == '__main__':
-    f = open('test_output.txt', 'w')
-    runner = unittest.TextTestRunner(f)
-    unittest.main(testRunner=runner)
-    f.close()
+    unittest.main()
     
