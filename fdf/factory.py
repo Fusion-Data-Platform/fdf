@@ -534,6 +534,7 @@ class Logbook(object):
 
 
 _tree_dict = {}
+print(type(_tree_dict))
 
 
 def Factory(module_branch, root=None, shot=None, parent=None):
@@ -554,6 +555,7 @@ def Factory(module_branch, root=None, shot=None, parent=None):
                                                ''.join([module, '.xml'])))
             module_tree = parse_tree.getroot()
             _tree_dict[module_branch] = module_tree
+            print(type(_tree_dict))
         ContainerClassName = ''.join(['Container', branch_str])
         if ContainerClassName not in Container._classes:
             ContainerClass = type(ContainerClassName, (Container,), {})
@@ -977,9 +979,13 @@ class Node(object):
 
 if __name__ == '__main__':
     nstx = Machine(name='nstxu', xp=[1013, 1048])
-    nstx.listshot()
-    xp1013 = nstx.filter(xp=1013)
-#    s = nstx.s141000
+#    nstx.listshot()
+#    xp1013 = nstx.filter(xp=1013)
+    s = nstx.s141000
+    print(s)
+    print(type(s))
+    print(s.__class__)
+    print(s.__name__)
 #    s.bes.ch01.plot()
 #    s.usxr.hup.hup00.plot()
 #    s.mpts.ne.plot()

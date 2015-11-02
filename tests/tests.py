@@ -43,8 +43,9 @@ class TestShotFixture(unittest.TestCase):
         validContainer = False
         # test: container contains signal or sub-container
         for attrName in dir(container):
-            if attrName == 'ip' or attrName == 'vloop':
+            if attrName == 'ip' or attrName == 'vloop' or attrName=='equilibria':
                 continue
+            #print('{} with type {}'.format(attrName, type(container)))
             attr = getattr(container, attrName)
             if isContainer(attr):
                 validContainer = True
@@ -68,7 +69,7 @@ class TestShotFixture(unittest.TestCase):
                 self.testSignalAxes(attr)
             if isSignal(attr):
                 # test: signal contains axes attribute
-                self.assertIn('axes', attr, 
+                self.assertIs(hasattr(attr, 'axes'), True, 
                     '{} in {} does not contain axes attribute'.format(attrName, type(container)))
                 axes = attr.axes
                 # test: axes elements are axis objects

@@ -16,6 +16,7 @@ def _preprocess(self):
     for efit in self.check_efit():
         branch = '.'.join(['equilibria', efit])
         # ContainerClassName = ''.join(['Equilibria', efit.capitalize()])
+        print(type(_tree_dict))
         if branch not in _tree_dict:
             filepath = os.path.join(FDF_DIR, 'modules', 'equilibria',
                                     'efit.xml')
