@@ -92,9 +92,9 @@ class Machine(MutableMapping):
                 try:
                     connection = mds.Connection(MDS_SERVERS[self._name])
                     connection.tree = None
-                    print(type(connection))
-                    print(dir(connection))
-                    print(mds.Connection)
+                    #print(type(connection))
+                    #print(dir(connection))
+                    #print(mds.Connection)
                     self._connections.append(connection)
                 except:
                     msg = 'MDSplus connection to {} failed'.format(
@@ -297,8 +297,7 @@ class Shot(MutableMapping):
                 self._modules[attribute] = Factory(attribute, root=self._root,
                                                    shot=self.shot, parent=self)
             return self._modules[attribute]
-        raise AttributeError("{} shot: {} has no attribute '{}'".format(
-                                 self._root._name, self.shot, attribute))
+        raise AttributeError("Shot object has no attribute '{}'".format(attribute))
 
     def __repr__(self):
         return '<Shot {}>'.format(self.shot)
@@ -534,7 +533,6 @@ class Logbook(object):
 
 
 _tree_dict = {}
-print(type(_tree_dict))
 
 
 def Factory(module_branch, root=None, shot=None, parent=None):
@@ -555,7 +553,6 @@ def Factory(module_branch, root=None, shot=None, parent=None):
                                                ''.join([module, '.xml'])))
             module_tree = parse_tree.getroot()
             _tree_dict[module_branch] = module_tree
-            print(type(_tree_dict))
         ContainerClassName = ''.join(['Container', branch_str])
         if ContainerClassName not in Container._classes:
             ContainerClass = type(ContainerClassName, (Container,), {})
@@ -695,7 +692,6 @@ class Container(object):
         if hasattr(self._parent, '_signals') and \
                 attribute in self._parent._signals:
             raise AttributeError("Attribute '{}' not found".format(attribute))
-
         attr = getattr(self._parent, attribute)
         if Container in attr.__class__.mro() and attribute[0] is not '_':
             raise AttributeError("Attribute '{}' not found".format(attribute))
@@ -978,17 +974,14 @@ class Node(object):
             return attr
 
 if __name__ == '__main__':
-    nstx = Machine(name='nstxu', xp=[1013, 1048])
+    nstx = Machine()
 #    nstx.listshot()
 #    xp1013 = nstx.filter(xp=1013)
     s = nstx.s141000
-    print(s)
-    print(type(s))
-    print(s.__class__)
-    print(s.__name__)
-#    s.bes.ch01.plot()
-#    s.usxr.hup.hup00.plot()
+    s.bes.ch01.plot()
+    s.usxr.hup.hup00.plot()
 #    s.mpts.ne.plot()
 #    s.chers.ti.plot()
 #    s.chers.derived.zeff.plot()
-#    #s.ip.plot()
+#    s.ip.plot()
+#    s.vloop.plot()

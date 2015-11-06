@@ -43,9 +43,8 @@ class TestShotFixture(unittest.TestCase):
         validContainer = False
         # test: container contains signal or sub-container
         for attrName in dir(container):
-            if attrName == 'ip' or attrName == 'vloop' or attrName=='equilibria':
+            if attrName == 'ip' or attrName == 'vloop':
                 continue
-            #print('{} with type {}'.format(attrName, type(container)))
             attr = getattr(container, attrName)
             if isContainer(attr):
                 validContainer = True
