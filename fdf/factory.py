@@ -985,7 +985,7 @@ if __name__ == '__main__':
     s = nstx.s141000
     s.bes.ch01.plot()
     s.usxr.hup.hup00.plot()
-    s.magnetics.hn_mirnov_10.plot()
+    s.magnetics.highn.highn_10.plot()
 #    s.mpts.ne.plot()
 #    s.chers.ti.plot()
 #    s.chers.derived.zeff.plot()
