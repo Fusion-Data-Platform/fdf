@@ -174,7 +174,7 @@ class Machine(MutableMapping):
         try:
             data = connection.get(signal._mdsnode)
         except:
-            msg = 'MDSplus connection error for tree {} and node {}'.format(
+            msg = "MDSplus connection error for tree '{}' and node '{}'".format(
                 signal._mdstree, signal._mdsnode)
             raise FdfError(msg)
         try:
@@ -813,14 +813,19 @@ def parse_signal(obj, element):
                         '_desc': desc}]
     else:
         number_list = number_range.split(',')
-        if len(number_list) == 1:
+        len_number_list = len(number_list)
+        if len_number_list == 1:
             start = 0
             end = int(number_list[0])
         else:
             start = int(number_list[0])
             end = int(number_list[1])+1
         signal_dict = []
-        digits = int(np.ceil(np.log10(end-1)))
+        if len_number_list == 3:
+            # 3rd item, if present, controls zero padding (cf. BES and magnetics)
+            digits = int(number_list[2])
+        else:
+            digits = int(np.ceil(np.log10(end-1)))
         for index in range(start, end):
             name = element.get('name').format(str(index).zfill(digits))
             title = None
@@ -980,6 +985,7 @@ if __name__ == '__main__':
     s = nstx.s141000
     s.bes.ch01.plot()
     s.usxr.hup.hup00.plot()
+    s.magnetics.hn_mirnov_10.plot()
 #    s.mpts.ne.plot()
 #    s.chers.ti.plot()
 #    s.chers.derived.zeff.plot()
