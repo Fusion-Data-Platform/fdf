@@ -362,6 +362,9 @@ class Shot(MutableMapping):
         if not overwrite and not multi:
             plt.figure()
             plt.subplot(1, 1, 1)
+        if self.size==0 or self.time.size==0:
+            msg = 'Data and/or time axis is empty: {}'.format(self._name)
+            raise FdfError(msg)
         plt.plot(self.time[:], self[:], label=label)
         title = self._title if self._title else self._name
         if not overwrite or multi:
@@ -723,6 +726,7 @@ class Container(object):
         return path
 
     def __dir__(self):
+#        print('in dir')
         items = self.__dict__.keys()
         items.extend(self.__class__.__dict__.keys())
         if Signal not in self.__class__.mro():
@@ -983,9 +987,12 @@ if __name__ == '__main__':
 #    nstx.listshot()
 #    xp1013 = nstx.filter(xp=1013)
     s = nstx.s141000
-    s.bes.ch01.plot()
-    s.usxr.hup.hup00.plot()
-    s.magnetics.highn.highn_10.plot()
+#    for diag in s.filterscopes:
+#        diag.plot()
+#    s.bes.ch01.plot()
+#    s.usxr.hup.hup00.plot()
+#    s.magnetics.highn.highn_10.plot()
+#    s.filterscopes.bayg_dalpha_eies.plot()
 #    s.mpts.ne.plot()
 #    s.chers.ti.plot()
 #    s.chers.derived.zeff.plot()

@@ -43,8 +43,10 @@ class TestShotFixture(unittest.TestCase):
         validContainer = False
         # test: container contains signal or sub-container
         for attrName in dir(container):
-            if attrName == 'ip' or attrName == 'vloop':
+            if attrName == 'ip' or attrName == 'vloop' or attrName == 'equilibria':
                 continue
+            self.assertIs(hasattr(container, attrName), True,
+                          '{} in dir({}) is not a valid attr'.format(attrName, container))
             attr = getattr(container, attrName)
             if isContainer(attr):
                 validContainer = True
@@ -61,21 +63,23 @@ class TestShotFixture(unittest.TestCase):
         if not container:
             container = self.shot
         for attrName in dir(container):
-            if attrName == 'ip' or attrName == 'vloop':
+            if attrName == 'ip' or attrName == 'vloop' or attrName == 'equilibria':
                 continue
+            self.assertIs(hasattr(container, attrName), True,
+                          '{} in dir({}) is not a valid attr'.format(attrName, container))
             attr = getattr(container, attrName)
             if isContainer(attr):
                 self.testSignalAxes(attr)
             if isSignal(attr):
                 # test: signal contains axes attribute
                 self.assertIs(hasattr(attr, 'axes'), True, 
-                    '{} in {} does not contain axes attribute'.format(attrName, type(container)))
+                    '{} in {} does not contain axes attribute'.format(attrName, container))
                 axes = attr.axes
                 # test: axes elements are axis objects
                 for axisName in axes:
                     axis = getattr(attr, axisName)
                     self.assertIs(isAxis(axis), True, 
-                        '{} in {} in {} is not an axis'.format(axisName, attrName, type(container)))
+                        '{} in {} in {} is not an axis'.format(axisName, attrName, container))
                 # test: all axis objects are elements in axes attribute
                 # test: signal contains at least 1 axis attribute
                 containsAxis = False
@@ -86,7 +90,7 @@ class TestShotFixture(unittest.TestCase):
                         self.assertIn(sigAttrName, axes, 
                             '{} in {} in {} is an axis not listed in axes attr'.format(sigAttrName, attrName, type(container)))
                 self.assertIs(containsAxis, True, 
-                    '{} in {} does not contain an axis attribute'.format(attrName, type(container)))
+                    '{} in {} does not contain an axis attribute'.format(attrName, container))
 
     def testSignalPlotMethod(self, container=None):
         """
@@ -95,15 +99,36 @@ class TestShotFixture(unittest.TestCase):
         if not container:
             container = self.shot
         for attrName in dir(container):
-            if attrName == 'ip' or attrName == 'vloop':
+            if attrName == 'ip' or attrName == 'vloop' or attrName == 'equilibria':
                 continue
+            self.assertIs(hasattr(container, attrName), True,
+                          '{} in dir({}) is not a valid attr'.format(attrName, container))
             attr = getattr(container, attrName)
             if isContainer(attr):
                 self.testSignalPlotMethod(attr)
             if isSignal(attr):
                 # test: signal possesses plot method
                 self.assertIs(callable(attr.plot), True, 
-                    '{} in {} does not possess plot method'.format(attrName, type(container)))
+                    '{} in {} does not possess plot method'.format(attrName, container))
+    
+    def testSignalTimeAttribute(self, container=None):
+        """
+        Test case to ensure all signals possess a 'time' attribute
+        """
+        if not container:
+            container = self.shot
+        for attrName in dir(container):
+            if attrName == 'ip' or attrName == 'vloop' or attrName == 'equilibria':
+                continue
+            self.assertIs(hasattr(container, attrName), True,
+                          '{} in dir({}) is not a valid attr'.format(attrName, container))
+            attr = getattr(container, attrName)
+            if isContainer(attr):
+                self.testSignalTimeAttribute(attr)
+            if isSignal(attr):
+                # test: signal possesses time attribute
+                self.assertIs(hasattr(attr, 'time'), True, 
+                    '{} in {} does not possess time attribute'.format(attrName, container))
 
 
 def isContainer(obj):
