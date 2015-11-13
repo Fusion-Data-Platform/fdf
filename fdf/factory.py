@@ -23,7 +23,7 @@ import fdf_globals
 from fdf_signal import Signal
 import numpy as np
 import datetime as dt
-import modules
+#import modules   # I think this import is not necessary - DRS 10/17/15
 from collections import MutableMapping
 import MDSplus as mds
 import types
@@ -36,6 +36,7 @@ FDF_DIR = fdf_globals.FDF_DIR
 MDS_SERVERS = fdf_globals.MDS_SERVERS
 LOGBOOK_CREDENTIALS = fdf_globals.LOGBOOK_CREDENTIALS
 FdfError = fdf_globals.FdfError
+machineAlias = fdf_globals.machineAlias
 
 
 class Machine(MutableMapping):
@@ -81,16 +82,7 @@ class Machine(MutableMapping):
     def __init__(self, name='nstx', shotlist=[], xp=[], date=[]):
         self._shots = {}  # shot dictionary with shot number (int) keys
         self._classlist = {}
-        self._name = fdf_globals.name(name)
-
-        if self._name not in LOGBOOK_CREDENTIALS or \
-                self._name not in MDS_SERVERS:
-            txt = '\n{} is not a valid machine.\n'.format(self._name.upper())
-            txt = txt + 'Valid machines are:\n'
-            for machine in LOGBOOK_CREDENTIALS:
-                txt = txt + '  {}\n'.format(machine.upper())
-            raise FdfError(txt)
-
+        self._name = machineAlias(name)
         self._logbook = Logbook(name=self._name, root=self)
         self.s0 = Shot(0, root=self, parent=self)
 
@@ -100,13 +92,16 @@ class Machine(MutableMapping):
                 try:
                     connection = mds.Connection(MDS_SERVERS[self._name])
                     connection.tree = None
+                    print(type(connection))
+                    print(dir(connection))
+                    print(mds.Connection)
                     self._connections.append(connection)
                 except:
-                    txt = 'MDSplus connection to {} failed.'.format(MDS_SERVERS[self._name])
-                    raise FdfError(txt)
+                    msg = 'MDSplus connection to {} failed'.format(
+                        MDS_SERVERS[self._name])
+                    raise FdfError(msg)
             print('Finished.')
 
-        # add shots
         if shotlist or xp or date:
             self.addshot(shotlist=shotlist, xp=xp, date=date)
 
@@ -121,7 +116,7 @@ class Machine(MutableMapping):
         return self._shots[shot]
 
     def __repr__(self):
-        return '<machine {}>'.format(self._name)
+        return '<machine {}>'.format(self._name.upper())
 
     def __iter__(self):
         return iter(self._shots.values())
@@ -179,9 +174,9 @@ class Machine(MutableMapping):
         try:
             data = connection.get(signal._mdsnode)
         except:
-            txt = 'MDSplus connection error for tree {} and node {}'.format(
+            msg = 'MDSplus connection error for tree {} and node {}'.format(
                 signal._mdstree, signal._mdsnode)
-            raise FdfError(txt)
+            raise FdfError(msg)
         try:
             if signal._raw_of is not None:
                 data = data.raw_of()
@@ -189,12 +184,7 @@ class Machine(MutableMapping):
             pass
         try:
             if signal._dim_of is not None:
-                print('start: dim of')
                 data = data.dim_of()
-                print(data[0:10])
-                tmp = data.value_of().value
-                print(tmp[0:10])
-                print('end: dim of')
         except:
             pass
         data = data.value_of().value
@@ -278,7 +268,6 @@ class Shot(MutableMapping):
         self._efits = []
 
     def __getattr__(self, attribute):
-
         # first see if the attribute is in the Machine object
         try:
             attr = getattr(self._parent, attribute)
@@ -288,13 +277,11 @@ class Shot(MutableMapping):
                 return attr
         except:
             pass  # failed, so check other locations
-
         if attribute in self._modules:
             if self._modules[attribute] is None:
                 self._modules[attribute] = Factory(attribute, root=self._root,
                                                    shot=self.shot, parent=self)
             return self._modules[attribute]
-
         raise AttributeError("{} shot: {} has no attribute '{}'".format(
                                  self._root._name, self.shot, attribute))
 
@@ -457,7 +444,7 @@ class Logbook(object):
             cursor = self._logbook_connection.cursor()
             cursor.execute('SET ROWCOUNT 500')
         except:
-            raise FdfError('Cursor error.')
+            raise FdfError('Cursor error')
         return cursor
 
     def _shot_query(self, shot=[]):
@@ -986,7 +973,5 @@ if __name__ == '__main__':
     s.usxr.hup.hup00.plot()
     s.mpts.ne.plot()
     s.chers.ti.plot()
-    s.chers.vt.plot()
-    s.chers.ft.plot()
     s.chers.derived.zeff.plot()
-    s.chers.derived.pi.plot()
+    s.ip.plot()
