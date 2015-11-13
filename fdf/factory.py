@@ -362,8 +362,13 @@ class Shot(MutableMapping):
         if not overwrite and not multi:
             plt.figure()
             plt.subplot(1, 1, 1)
+        if self.shape != self.time.shape:
+            msg = 'Dimension mismatch: {}\n  shape data {} shape time ()'.format(
+                self._name, self.shape, self.time.shape)
+            raise FdfError(msg)
         if self.size==0 or self.time.size==0:
-            msg = 'Data and/or time axis is empty: {}'.format(self._name)
+            msg = 'Empty data and/or time axis: {}\n  shape data {} shape time {}'.format(
+                self._name, self.shape, self.time.shape)
             raise FdfError(msg)
         plt.plot(self.time[:], self[:], label=label)
         title = self._title if self._title else self._name
@@ -987,8 +992,7 @@ if __name__ == '__main__':
 #    nstx.listshot()
 #    xp1013 = nstx.filter(xp=1013)
     s = nstx.s141000
-#    for diag in s.filterscopes:
-#        diag.plot()
+    fs = s.filterscopes
 #    s.bes.ch01.plot()
 #    s.usxr.hup.hup00.plot()
 #    s.magnetics.highn.highn_10.plot()
