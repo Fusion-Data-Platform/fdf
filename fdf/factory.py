@@ -176,7 +176,7 @@ class Machine(MutableMapping):
         try:
             data = connection.get(signal._mdsnode)
         except:
-            msg = 'MDSplus connection error for tree {} and node {}'.format(
+            msg = "MDSplus connection error for tree '{}' and node '{}'".format(
                 signal._mdstree, signal._mdsnode)
             raise FdfError(msg)
         try:
@@ -254,6 +254,20 @@ class Machine(MutableMapping):
         # return a list of shots
         return self._logbook.get_shotlist(date=date, xp=xp, verbose=verbose)
 
+    def filter(self, date=[], xp=[]):
+        if not iterable(xp):
+            xp = [xp]
+        if not iterable(date):
+            date = [date]
+        flist = []
+        for shot in self:
+            for sxp in shot.xp:
+                if sxp in xp:
+                    flist.append(shot)
+            if shot.date in date:
+                flist.append(shot)
+        return flist
+        
     def setevent(self, event, shot_number=None, data=None):
         event_data = bytearray()
         if shot_number is not None:
@@ -311,8 +325,7 @@ class Shot(MutableMapping):
                 self._modules[attribute] = Factory(attribute, root=self._root,
                                                    shot=self.shot, parent=self)
             return self._modules[attribute]
-        raise AttributeError("{} shot: {} has no attribute '{}'".format(
-                                 self._root._name, self.shot, attribute))
+        raise AttributeError("Shot object has no attribute '{}'".format(attribute))
 
     def __repr__(self):
         return '<Shot {}>'.format(self.shot)
@@ -346,11 +359,7 @@ class Shot(MutableMapping):
         xplist = []
         for entry in self._logbook_entries:
             xplist.append(entry['xp'])
-        if len(np.unique(xplist)) == 1:
-            xp = xplist.pop(0)
-        else:
-            xp = np.unique(xplist)
-        return xp
+        return np.unique(xplist)
 
     def _get_date(self):
         # query logbook for rundate, return rundate
@@ -381,6 +390,14 @@ class Shot(MutableMapping):
         if not overwrite and not multi:
             plt.figure()
             plt.subplot(1, 1, 1)
+        if self.shape != self.time.shape:
+            msg = 'Dimension mismatch: {}\n  shape data {} shape time ()'.format(
+                self._name, self.shape, self.time.shape)
+            raise FdfError(msg)
+        if self.size==0 or self.time.size==0:
+            msg = 'Empty data and/or time axis: {}\n  shape data {} shape time {}'.format(
+                self._name, self.shape, self.time.shape)
+            raise FdfError(msg)
         plt.plot(self.time[:], self[:], label=label)
         title = self._title if self._title else self._name
         if not overwrite or multi:
@@ -712,7 +729,6 @@ class Container(object):
         if hasattr(self._parent, '_signals') and \
                 attribute in self._parent._signals:
             raise AttributeError("Attribute '{}' not found".format(attribute))
-
         attr = getattr(self._parent, attribute)
         if Container in attr.__class__.mro() and attribute[0] is not '_':
             raise AttributeError("Attribute '{}' not found".format(attribute))
@@ -744,6 +760,7 @@ class Container(object):
         return path
 
     def __dir__(self):
+#        print('in dir')
         items = self.__dict__.keys()
         items.extend(self.__class__.__dict__.keys())
         if Signal not in self.__class__.mro():
@@ -834,14 +851,19 @@ def parse_signal(obj, element):
                         '_desc': desc}]
     else:
         number_list = number_range.split(',')
-        if len(number_list) == 1:
+        len_number_list = len(number_list)
+        if len_number_list == 1:
             start = 0
             end = int(number_list[0])
         else:
             start = int(number_list[0])
             end = int(number_list[1])+1
         signal_dict = []
-        digits = int(np.ceil(np.log10(end-1)))
+        if len_number_list == 3:
+            # 3rd item, if present, controls zero padding (cf. BES and magnetics)
+            digits = int(number_list[2])
+        else:
+            digits = int(np.ceil(np.log10(end-1)))
         for index in range(start, end):
             name = element.get('name').format(str(index).zfill(digits))
             title = None
@@ -996,11 +1018,17 @@ class Node(object):
             return attr
 
 if __name__ == '__main__':
-    nstx = Machine(name='nstxu', shotlist=141000)
+    nstx = Machine()
+#    nstx.listshot()
+#    xp1013 = nstx.filter(xp=1013)
     s = nstx.s141000
-    s.bes.ch01.plot()
-    s.usxr.hup.hup00.plot()
-    s.mpts.ne.plot()
-    s.chers.ti.plot()
-    s.chers.derived.zeff.plot()
-    s.ip.plot()
+    fs = s.filterscopes
+#    s.bes.ch01.plot()
+#    s.usxr.hup.hup00.plot()
+#    s.magnetics.highn.highn_10.plot()
+#    s.filterscopes.bayg_dalpha_eies.plot()
+#    s.mpts.ne.plot()
+#    s.chers.ti.plot()
+#    s.chers.derived.zeff.plot()
+#    s.ip.plot()
+#    s.vloop.plot()
