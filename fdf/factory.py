@@ -163,7 +163,7 @@ class Machine(MutableMapping):
         try:
             connection.openTree(tree, shot)
             connection.tree = (tree, shot)
-        except mds.MdsException:
+        except:
             connection.tree = (None, None)
         finally:
             self._connections.insert(0, connection)
@@ -621,8 +621,9 @@ class Container(object):
 
         for element in module_tree.findall('axis'):
             signal_list = parse_signal(self, element)
+            branch_str = self._get_branchstr()
             for signal_dict in signal_list:
-                SignalClassName = ''.join(['Axis', cls._name.capitalize()])
+                SignalClassName = ''.join(['Axis', branch_str])
                 if SignalClassName not in cls._classes:
                     SignalClass = type(SignalClassName, (Signal, cls), {})
                     parse_method(SignalClass, element)
@@ -958,6 +959,7 @@ class Node(object):
         self._data = None
         self._title = element.get('title')
         self._desc = element.get('desc')
+        self.units = element.get('units')
 
     def __repr__(self):
         if self._data is None:
