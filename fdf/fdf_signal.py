@@ -365,4 +365,4 @@ class Signal(np.ndarray):
             self.resize(data.shape,refcheck=0)
             self[:]=data
         except:
-            raise MdsError('Error populating signal from MDSplus')
+            raise FdfError('Error populating signal from MDSplus')
