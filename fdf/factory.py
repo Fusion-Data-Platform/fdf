@@ -34,6 +34,7 @@ import matplotlib.pyplot as plt
 
 FDF_DIR = fdf_globals.FDF_DIR
 MDS_SERVERS = fdf_globals.MDS_SERVERS
+EVENT_SERVERS = fdf_globals.EVENT_SERVERS
 LOGBOOK_CREDENTIALS = fdf_globals.LOGBOOK_CREDENTIALS
 FdfError = fdf_globals.FdfError
 machineAlias = fdf_globals.machineAlias
@@ -85,6 +86,7 @@ class Machine(MutableMapping):
         self._name = machineAlias(name)
         self._logbook = Logbook(name=self._name, root=self)
         self.s0 = Shot(0, root=self, parent=self)
+        self._eventConnection = mds.Connection(EVENT_SERVERS[self._name])
 
         if len(self._connections) is 0:
             print('Precaching MDS server connections...')
@@ -92,9 +94,9 @@ class Machine(MutableMapping):
                 try:
                     connection = mds.Connection(MDS_SERVERS[self._name])
                     connection.tree = None
-                    #print(type(connection))
-                    #print(dir(connection))
-                    #print(mds.Connection)
+                    # print(type(connection))
+                    # print(dir(connection))
+                    # print(mds.Connection)
                     self._connections.append(connection)
                 except:
                     msg = 'MDSplus connection to {} failed'.format(
@@ -158,7 +160,7 @@ class Machine(MutableMapping):
         try:
             connection.openTree(tree, shot)
             connection.tree = (tree, shot)
-        except mds.MdsException:
+        except:
             connection.tree = (None, None)
         finally:
             self._connections.insert(0, connection)
@@ -266,6 +268,32 @@ class Machine(MutableMapping):
                 flist.append(shot)
         return flist
         
+    def setevent(self, event, shot_number=None, data=None):
+        event_data = bytearray()
+        if shot_number is not None:
+            shot_data = shot_number // 256**np.arange(4) % 256
+            event_data.extend(shot_data.astype(np.ubyte))
+        if data is not None:
+            event_data.extend(str(data))
+        mdsdata = mds.mdsdata.makeData(np.array(event_data))
+        event_string = 'setevent("{}", {})'.format(event, mdsdata)
+        status = self._eventConnection.get(event_string)
+        return status
+
+    def wfevent(self, event, timeout=0):
+        event_string = 'kind(_data=wfevent("{}",*,{})) == 0BU ? "timeout"' \
+                       ': _data'.format(event, timeout)
+        data = self._eventConnection.get(event_string).value
+        if type(data) is str:
+            raise FdfError('Timeout after {}s in wfevent'.format(timeout))
+        if not data.size:
+            return None
+        if data.size > 3:
+            shot_data = data[0:4]
+            shot_number = np.sum(shot_data * 256**np.arange(4))
+            data = data[4:]
+            return shot_number, ''.join(map(chr, data))
+        return data
 
 
 class Shot(MutableMapping):
@@ -626,8 +654,9 @@ class Container(object):
 
         for element in module_tree.findall('axis'):
             signal_list = parse_signal(self, element)
+            branch_str = self._get_branchstr()
             for signal_dict in signal_list:
-                SignalClassName = ''.join(['Axis', cls._name.capitalize()])
+                SignalClassName = ''.join(['Axis', branch_str])
                 if SignalClassName not in cls._classes:
                     SignalClass = type(SignalClassName, (Signal, cls), {})
                     parse_method(SignalClass, element)
@@ -968,6 +997,7 @@ class Node(object):
         self._data = None
         self._title = element.get('title')
         self._desc = element.get('desc')
+        self.units = element.get('units')
 
     def __repr__(self):
         if self._data is None:

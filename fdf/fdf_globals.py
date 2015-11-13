@@ -17,6 +17,11 @@ FDF_DIR = os.path.dirname(os.path.abspath(__file__))
 MDS_SERVERS = {
     'nstx': 'skylark.pppl.gov:8501'
 }
+
+EVENT_SERVERS = {
+    'nstx': 'skylark.pppl.gov:8501',
+    'ltx': 'lithos.pppl.gov:8000'
+}
 """Dictionary: machine-name key paired to MDS server"""
 
 LOGBOOK_CREDENTIALS = {
