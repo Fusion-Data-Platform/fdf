@@ -23,7 +23,7 @@ import fdf_globals
 from fdf_signal import Signal
 import numpy as np
 import datetime as dt
-import modules
+#import modules   # I think this import is not necessary - DRS 10/17/15
 from collections import MutableMapping
 import MDSplus as mds
 import types
@@ -34,8 +34,10 @@ import matplotlib.pyplot as plt
 
 FDF_DIR = fdf_globals.FDF_DIR
 MDS_SERVERS = fdf_globals.MDS_SERVERS
+EVENT_SERVERS = fdf_globals.EVENT_SERVERS
 LOGBOOK_CREDENTIALS = fdf_globals.LOGBOOK_CREDENTIALS
 FdfError = fdf_globals.FdfError
+machineAlias = fdf_globals.machineAlias
 
 
 class Machine(MutableMapping):
@@ -82,18 +84,10 @@ class Machine(MutableMapping):
         self._shots = {}  # shot dictionary with shot number (int) keys
         self._xps = {} # XP dictionary
         self._classlist = {}
-        self._name = fdf_globals.name(name)
-
-        if self._name not in LOGBOOK_CREDENTIALS or \
-                self._name not in MDS_SERVERS:
-            txt = '\n{} is not a valid machine.\n'.format(self._name.upper())
-            txt = txt + 'Valid machines are:\n'
-            for machine in LOGBOOK_CREDENTIALS:
-                txt = txt + '  {}\n'.format(machine.upper())
-            raise FdfError(txt)
-
+        self._name = machineAlias(name)
         self._logbook = Logbook(name=self._name, root=self)
         self.s0 = Shot(0, root=self, parent=self)
+        self._eventConnection = mds.Connection(EVENT_SERVERS[self._name])
 
         if len(self._connections) is 0:
             print('Precaching MDS server connections...')
@@ -101,13 +95,16 @@ class Machine(MutableMapping):
                 try:
                     connection = mds.Connection(MDS_SERVERS[self._name])
                     connection.tree = None
+                    # print(type(connection))
+                    # print(dir(connection))
+                    # print(mds.Connection)
                     self._connections.append(connection)
                 except:
-                    txt = 'MDSplus connection to {} failed.'.format(MDS_SERVERS[self._name])
-                    raise FdfError(txt)
+                    msg = 'MDSplus connection to {} failed'.format(
+                        MDS_SERVERS[self._name])
+                    raise FdfError(msg)
             print('Finished.')
 
-        # add shots
         if shotlist or xp or date:
             self.addshot(shotlist=shotlist, xp=xp, date=date)
 
@@ -132,8 +129,8 @@ class Machine(MutableMapping):
         return '<machine {}>'.format(self._name.upper())
 
     def __iter__(self):
-        # return iter(self._shots.values())
-        return iter(self._shots)
+        return iter(self._shots.values())
+        #return iter(self._shots)
 
     def __contains__(self, value):
         return value in self._shots
@@ -163,18 +160,22 @@ class Machine(MutableMapping):
 
     def _get_connection(self, shot, tree):
         for connection in self._connections:
-            if connection.tree == (shot, tree):
+            if connection.tree == (tree, shot):
                 self._connections.remove(connection)
-                self._connections.insert = (0, connection)
+                self._connections.insert(0, connection)
                 return connection
         connection = self._connections.pop()
         try:
             connection.closeAllTrees()
         except:
             pass
-        connection.openTree(tree, shot)
-        connection.tree = (tree, shot)
-        self._connections.insert(0, connection)
+        try:
+            connection.openTree(tree, shot)
+            connection.tree = (tree, shot)
+        except:
+            connection.tree = (None, None)
+        finally:
+            self._connections.insert(0, connection)
         return connection
 
     def _get_mdsdata(self, signal):
@@ -187,9 +188,9 @@ class Machine(MutableMapping):
         try:
             data = connection.get(signal._mdsnode)
         except:
-            txt = 'MDSplus connection error for tree {} and node {}'.format(
+            msg = "MDSplus connection error for tree '{}' and node '{}'".format(
                 signal._mdstree, signal._mdsnode)
-            raise FdfError(txt)
+            raise FdfError(msg)
         try:
             if signal._raw_of is not None:
                 data = data.raw_of()
@@ -197,12 +198,7 @@ class Machine(MutableMapping):
             pass
         try:
             if signal._dim_of is not None:
-                print('start: dim of')
                 data = data.dim_of()
-                print(data[0:10])
-                tmp = data.value_of().value
-                print(tmp[0:10])
-                print('end: dim of')
         except:
             pass
         data = data.value_of().value
@@ -277,6 +273,47 @@ class Machine(MutableMapping):
         # return a list of shots
         return self._logbook.get_shotlist(date=date, xp=xp, verbose=verbose)
 
+    def filter(self, date=[], xp=[]):
+        if not iterable(xp):
+            xp = [xp]
+        if not iterable(date):
+            date = [date]
+        flist = []
+        for shot in self:
+            for sxp in shot.xp:
+                if sxp in xp:
+                    flist.append(shot)
+            if shot.date in date:
+                flist.append(shot)
+        return flist
+        
+    def setevent(self, event, shot_number=None, data=None):
+        event_data = bytearray()
+        if shot_number is not None:
+            shot_data = shot_number // 256**np.arange(4) % 256
+            event_data.extend(shot_data.astype(np.ubyte))
+        if data is not None:
+            event_data.extend(str(data))
+        mdsdata = mds.mdsdata.makeData(np.array(event_data))
+        event_string = 'setevent("{}", {})'.format(event, mdsdata)
+        status = self._eventConnection.get(event_string)
+        return status
+
+    def wfevent(self, event, timeout=0):
+        event_string = 'kind(_data=wfevent("{}",*,{})) == 0BU ? "timeout"' \
+                       ': _data'.format(event, timeout)
+        data = self._eventConnection.get(event_string).value
+        if type(data) is str:
+            raise FdfError('Timeout after {}s in wfevent'.format(timeout))
+        if not data.size:
+            return None
+        if data.size > 3:
+            shot_data = data[0:4]
+            shot_number = np.sum(shot_data * 256**np.arange(4))
+            data = data[4:]
+            return shot_number, ''.join(map(chr, data))
+        return data
+
 
 class XP(Machine):
     
@@ -338,12 +375,12 @@ class Shot(MutableMapping):
             txt = 'No logbook connection for shot {}'.format(self.shot)
             raise FdfError(txt)
         self._logbook_entries = []
-        self._signals = {module: None for module in root._get_modules()}
+        self._modules = {module: None for module in root._get_modules()}
         self.xp = self._get_xp()
         self.date = self._get_date()
+        self._efits = []
 
     def __getattr__(self, attribute):
-
         # first see if the attribute is in the Machine object
         try:
             attr = getattr(self._parent, attribute)
@@ -353,43 +390,37 @@ class Shot(MutableMapping):
                 return attr
         except:
             pass  # failed, so check other locations
-
-        if attribute in self._signals:
-            if self._signals[attribute] is None:
-                self._signals[attribute] = Factory(attribute, root=self._root,
+        if attribute in self._modules:
+            if self._modules[attribute] is None:
+                self._modules[attribute] = Factory(attribute, root=self._root,
                                                    shot=self.shot, parent=self)
-            return self._signals[attribute]
-
-        raise AttributeError("{} shot: {} has no attribute '{}'".format(
-                                 self._root._name, self.shot, attribute))
+            return self._modules[attribute]
+        raise AttributeError("Shot object has no attribute '{}'".format(attribute))
 
     def __repr__(self):
         return '<Shot {}>'.format(self.shot)
 
     def __iter__(self):
-        # return iter(self._signals.values())
-        return iter(self._signals)
+        # return iter(self._modules.values())
+        return iter(self._modules)
 
     def __contains__(self, value):
-        return value in self._signals
+        return value in self._modules
 
     def __len__(self):
-        return len(self._signals.keys())
+        return len(self._modules.keys())
 
     def __delitem__(self, item):
         pass
 
     def __getitem__(self, item):
-        return self._signals[item]
+        return self._modules[item]
 
     def __setitem__(self, item, value):
         pass
 
     def __dir__(self):
-        # added xp and date to dir(shot), DRS, 10/13/15
-        d = self._signals.keys()
-        d.extend(['xp', 'date'])
-        return d
+        return self._modules.keys()
 
     def _get_xp(self):
         # query logbook for XP, return XP (list if needed)
@@ -399,14 +430,7 @@ class Shot(MutableMapping):
         xplist = []
         for entry in self._logbook_entries:
             xplist.append(entry['xp'])
-        
-        if len(np.unique(xplist)) == 1:
-            xp = xplist.pop(0)
-        elif len(np.unique(xplist)) > 1:
-            xp = np.unique(xplist)
-        else:
-            xp = 0
-        return xp
+        return np.unique(xplist)
 
     def _get_date(self):
         # query logbook for rundate, return rundate
@@ -429,22 +453,50 @@ class Shot(MutableMapping):
                    '{text}').format(**entry))
         print('************************************')
 
-    def plot(self, overwrite=False):
+    def plot(self, overwrite=False, label=None, multi=False):
 
-        if not overwrite:
+        if not overwrite and not multi:
             plt.figure()
             plt.subplot(1, 1, 1)
-        plt.plot(self.time[:], self[:])
+        if self.shape != self.time.shape:
+            msg = 'Dimension mismatch: {}\n  shape data {} shape time ()'.format(
+                self._name, self.shape, self.time.shape)
+            raise FdfError(msg)
+        if self.size==0 or self.time.size==0:
+            msg = 'Empty data and/or time axis: {}\n  shape data {} shape time {}'.format(
+                self._name, self.shape, self.time.shape)
+            raise FdfError(msg)
+        plt.plot(self.time[:], self[:], label=label)
         title = self._title if self._title else self._name
-        if not overwrite:
+        if not overwrite or multi:
             plt.suptitle('Shot #{}'.format(self.shot), x=0.5, y=1.00,
                          fontsize=12, horizontalalignment='center')
+            plt.ylabel('{} ({})'.format(self._name.upper(), self.units))
             plt.title('{} {}'.format(self._container.upper(), title),
                       fontsize=12)
-            plt.ylabel('{} ({})'.format(self._name.upper(), self.units))
             plt.xlabel('{} ({})'.format(self.time._name.capitalize(),
                                         self.time.units))
-            plt.show()
+        plt.legend()
+        plt.show()
+
+    def check_efit(self):
+        if len(self._efits):
+            return self._efits
+        trees = ['efit{}'.format(str(index).zfill(2)) for index in range(1, 7)]
+        trees.extend(['lrdfit{}'.format(str(index).zfill(2))
+                      for index in range(1, 13)])
+        tree_exists = []
+        for tree in trees:
+            data = None
+            connection = self._get_connection(self.shot, tree)
+            try:
+                data = connection.get('\{}::userid'.format(tree)).value
+            except:
+                pass
+            if data and data is not '*':
+                tree_exists.append(tree)
+        self._efits = tree_exists
+        return self._efits
 
 
 class Logbook(object):
@@ -506,7 +558,7 @@ class Logbook(object):
             cursor = self._logbook_connection.cursor()
             cursor.execute('SET ROWCOUNT 500')
         except:
-            raise FdfError('Cursor error.')
+            raise FdfError('Cursor error')
         return cursor
 
     def _shot_query(self, shot=[]):
@@ -616,7 +668,7 @@ def Factory(module_branch, root=None, shot=None, parent=None):
         return ContainerClass(_tree_dict[module_branch], shot=shot,
                               parent=parent, top=True)
 
-    except IOError:
+    except None:
         print("{} not found in modules directory".format(module))
         raise
 
@@ -632,6 +684,10 @@ class Container(object):
 
         cls = self.__class__
 
+        self._signals = {}
+        self._containers = {}
+        self._subcontainers = {}
+
         self._title = module_tree.get('title')
         self._desc = module_tree.get('desc')
 
@@ -640,6 +696,7 @@ class Container(object):
 
         try:
             self.shot = kwargs['shot']
+            self._mdstree = kwargs['mdstree']
         except:
             pass
 
@@ -664,8 +721,9 @@ class Container(object):
 
         for element in module_tree.findall('axis'):
             signal_list = parse_signal(self, element)
+            branch_str = self._get_branchstr()
             for signal_dict in signal_list:
-                SignalClassName = ''.join(['Axis', cls._name.capitalize()])
+                SignalClassName = ''.join(['Axis', branch_str])
                 if SignalClassName not in cls._classes:
                     SignalClass = type(SignalClassName, (Signal, cls), {})
                     parse_method(SignalClass, element)
@@ -673,6 +731,11 @@ class Container(object):
                 else:
                     SignalClass = cls._classes[SignalClassName]
                 SignalObj = SignalClass(**signal_dict)
+                refs = parse_refs(self, element, SignalObj._transpose)
+                if not refs:
+                    refs = SignalObj.axes
+                for axis, ref in zip(SignalObj.axes, refs):
+                    setattr(SignalObj, axis, getattr(self, '_'+ref))
                 setattr(self, ''.join(['_', signal_dict['_name']]), SignalObj)
 
         for branch in module_tree.findall('container'):
@@ -688,6 +751,7 @@ class Container(object):
                 ContainerClass = cls._classes[ContainerClassName]
             ContainerObj = ContainerClass(branch, parent=self)
             setattr(self, name, ContainerObj)
+            self._containers[name] = ContainerObj
 
         for element in module_tree.findall('signal'):
             signal_list = parse_signal(self, element)
@@ -708,6 +772,10 @@ class Container(object):
                 for axis, ref in zip(SignalObj.axes, refs):
                     setattr(SignalObj, axis, getattr(self, '_'+ref))
                 setattr(self, signal_dict['_name'], SignalObj)
+                self._signals[signal_dict['_name']] = SignalObj
+
+        if top and hasattr(self, '_preprocess'):
+            self._preprocess()
 
     def __getattr__(self, attribute):
 
@@ -728,21 +796,21 @@ class Container(object):
         if hasattr(self._parent, '_signals') and \
                 attribute in self._parent._signals:
             raise AttributeError("Attribute '{}' not found".format(attribute))
-
         attr = getattr(self._parent, attribute)
+        if Container in attr.__class__.mro() and attribute[0] is not '_':
+            raise AttributeError("Attribute '{}' not found".format(attribute))
         if inspect.ismethod(attr):
             return types.MethodType(attr.im_func, self)
         else:
             return attr
 
-    @classmethod
-    def _get_subcontainers(cls):
-        if len(cls._subcontainers) is 0:
-            container_dir = cls._get_path()
+    def _get_subcontainers(self):
+        if len(self._subcontainers) is 0:
+            container_dir = self._get_path()
             if not os.path.isdir(container_dir):
                 return
             files = os.listdir(container_dir)
-            cls._subcontainers = {container: None for container in
+            self._subcontainers = {container: None for container in
                                   files if os.path.isdir(
                                   os.path.join(container_dir, container)) and
                                   container[0] is not '_'}
@@ -759,6 +827,7 @@ class Container(object):
         return path
 
     def __dir__(self):
+#        print('in dir')
         items = self.__dict__.keys()
         items.extend(self.__class__.__dict__.keys())
         if Signal not in self.__class__.mro():
@@ -766,11 +835,19 @@ class Container(object):
         return [item for item in set(items).difference(self._base_items)
                 if item[0] is not '_']
 
+    def __iter__(self):
+        if not len(self._signals):
+            items = self._containers.values()
+            # items.extend(self._subcontainers.values())
+        else:
+            items = self._signals.values()
+        return iter(items)
+
     @classmethod
     def _get_branch(cls):
         branch = cls._name
         parent = cls._classparent
-        while parent is not Shot:
+        while parent is not Shot and parent.__class__ is not Shot:
             branch = '.'.join([parent._name, branch])
             parent = parent._classparent
         return branch
@@ -797,13 +874,10 @@ def init_class(cls, module_tree, **kwargs):
     for item in ['mdstree', 'mdspath', 'units']:
         getitem = module_tree.get(item)
         if getitem is not None:
-            setattr(cls, item, getitem)
+            setattr(cls, '_'+item, getitem)
 
     cls._base_items = set(cls.__dict__.keys())
-    cls._subcontainers = {}
     parse_method(cls, module_tree)
-    if hasattr(cls, '_preprocess'):
-        cls._preprocess()
 
 
 def parse_method(obj, module_tree):
@@ -815,7 +889,7 @@ def parse_method(obj, module_tree):
             method_text = method.get('name')
         module_object = importlib.import_module(method_text)
         method_from_object = module_object.__getattribute__(method_text)
-        setattr(obj, method.get('name'), classmethod(method_from_object))
+        setattr(obj, method.get('name'), method_from_object)
     sys.path.pop(0)
 
 
@@ -844,14 +918,19 @@ def parse_signal(obj, element):
                         '_desc': desc}]
     else:
         number_list = number_range.split(',')
-        if len(number_list) == 1:
+        len_number_list = len(number_list)
+        if len_number_list == 1:
             start = 0
             end = int(number_list[0])
         else:
             start = int(number_list[0])
             end = int(number_list[1])+1
         signal_dict = []
-        digits = int(np.ceil(np.log10(end-1)))
+        if len_number_list == 3:
+            # 3rd item, if present, controls zero padding (cf. BES and magnetics)
+            digits = int(number_list[2])
+        else:
+            digits = int(np.ceil(np.log10(end-1)))
         for index in range(start, end):
             name = element.get('name').format(str(index).zfill(digits))
             title = None
@@ -920,7 +999,7 @@ def parse_error(obj, element):
         mdspath = element.get('mdspath')
         if mdspath is None:
             try:
-                mdspath = obj.mdspath
+                mdspath = obj._mdspath
                 error = '.'.join([mdspath, error])
             except:
                 pass
@@ -946,7 +1025,7 @@ def parse_mdspath(obj, element):
             dim_of = None
         if mdspath is None:
             try:
-                mdspath = obj.mdspath
+                mdspath = obj._mdspath
             except:
                 pass
         if mdspath is not None:
@@ -959,8 +1038,8 @@ def parse_mdspath(obj, element):
 
 def parse_mdstree(obj, element):
     mdstree = element.get('mdstree')
-    if mdstree is None:
-        mdstree = obj.mdstree
+    if mdstree is None and hasattr(obj, '_mdstree'):
+        mdstree = obj._mdstree
     return mdstree
 
 
@@ -985,6 +1064,7 @@ class Node(object):
         self._data = None
         self._title = element.get('title')
         self._desc = element.get('desc')
+        self.units = element.get('units')
 
     def __repr__(self):
         if self._data is None:
@@ -1005,6 +1085,17 @@ class Node(object):
             return attr
 
 if __name__ == '__main__':
-    nstx = Machine(name='nstxu', shotlist=141000)
+    nstx = Machine()
+#    nstx.listshot()
+#    xp1013 = nstx.filter(xp=1013)
     s = nstx.s141000
-    s.bes.ch01.plot()
+    fs = s.filterscopes
+#    s.bes.ch01.plot()
+#    s.usxr.hup.hup00.plot()
+#    s.magnetics.highn.highn_10.plot()
+#    s.filterscopes.bayg_dalpha_eies.plot()
+#    s.mpts.ne.plot()
+#    s.chers.ti.plot()
+#    s.chers.derived.zeff.plot()
+#    s.ip.plot()
+#    s.vloop.plot()

@@ -54,6 +54,8 @@ def plot(signal, overwrite=False, timeslice=None):
         r = signal.radius[:]
         t = signal.time[:]
         signal[:]
+#        print('signal: {}\n  radius shape {}\n  time shape {}\n  signal shape {}'.format(
+#            signal._name, r.shape, t.shape, signal.shape))
         t_ind = np.where(t > 0.1)[0]
         r_ind = np.where(np.logical_and(r > 30, r < 135))[0]
         sigmax = signal[t_ind.min():t_ind.max(), r_ind.min():r_ind.max(), ].max()

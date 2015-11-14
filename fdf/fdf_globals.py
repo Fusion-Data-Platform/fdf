@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Package-level constants and FdfError class
+Package-level attributes, methods, and FdfError class
 """
 
 """
@@ -17,6 +17,11 @@ FDF_DIR = os.path.dirname(os.path.abspath(__file__))
 MDS_SERVERS = {
     'nstx': 'skylark.pppl.gov:8501'
 }
+
+EVENT_SERVERS = {
+    'nstx': 'skylark.pppl.gov:8501',
+    'ltx': 'lithos.pppl.gov:8000'
+}
 """Dictionary: machine-name key paired to MDS server"""
 
 LOGBOOK_CREDENTIALS = {
@@ -31,18 +36,19 @@ LOGBOOK_CREDENTIALS = {
 }
 """Dictionary: machine-name key paired with logbook login credentials"""
 
-ALIASES = {
-    'nstx': ['nstx', 'nstxu', 'nstx-u'],
-}
+def machineAlias(machine):
 
-
-def name(alias):
-    #global _ALIASES
-
-    for key, value in iter(ALIASES.items()):
-        if alias.lower() in value:
+    aliases = {
+        'nstx': ['nstx', 'nstxu', 'nstx-u'],
+    }
+    
+    for key, value in iter(aliases.items()):
+        if machine.lower() in value:
             return key
-    raise FdfError('{} not a valid machine name'.format(alias))
+    txt = '{} is not a valid machine; valid machines are:\n'.format(machine)
+    for machinekey in aliases:
+        txt = txt + '  {}\n'.format(machinekey.upper())
+    raise FdfError(txt)
 
 
 class FdfError(Exception):
@@ -55,7 +61,7 @@ class FdfError(Exception):
 
     """
     def __init__(self, message=''):
-        self.message = message
+        self.message = '\n{}'.format(message)
 
     def __str__(self):
         return self.message

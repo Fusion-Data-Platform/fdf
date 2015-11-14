@@ -22,6 +22,9 @@ import shlex
 src = os.path.abspath('../../fdf')
 print('Source code dir: '+src)
 sys.path.insert(0, src)
+src = os.path.abspath('../../tests')
+print('Source code dir: '+src)
+sys.path.insert(1, src)
 #print(os.path.abspath('../../fdf'))
 
 # -- General configuration ------------------------------------------------
