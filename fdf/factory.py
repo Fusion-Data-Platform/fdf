@@ -24,7 +24,7 @@ from fdf_signal import Signal
 import numpy as np
 import datetime as dt
 #import modules   # I think this import is not necessary - DRS 10/17/15
-from collections import MutableMapping
+from collections import MutableMapping, Mapping
 import MDSplus as mds
 import types
 import inspect
@@ -328,7 +328,7 @@ class Machine(MutableMapping):
             shotObj.logbook()
 
 
-class ImmutableMachine(MutableMapping):
+class ImmutableMachine(Mapping):
     
     def __init__(self, xp=[], date=[], parent=None):
         self._shots = {}
@@ -357,13 +357,7 @@ class ImmutableMachine(MutableMapping):
     def __len__(self):
         return len(self._shots.keys())
 
-    def __delitem__(self, item):
-        pass
-
     def __getitem__(self, item):
-        pass
-
-    def __setitem__(self, item, value):
         pass
 
     def __dir__(self):
