@@ -1099,4 +1099,5 @@ class Node(object):
 
 if __name__ == '__main__':
     nstx = Machine()
-    xp = nstx.filter_shots(xp=1037)
+    s = nstx.s141000
+    s.bes.ch01.fft()
