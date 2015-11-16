@@ -23,7 +23,7 @@ import fdf_globals
 from fdf_signal import Signal
 import numpy as np
 import datetime as dt
-#import modules   # I think this import is not necessary - DRS 10/17/15
+#import modules   # I think this import is unused - DRS 10/17/15
 from collections import MutableMapping, Mapping
 import MDSplus as mds
 import types
@@ -1099,15 +1099,4 @@ class Node(object):
 
 if __name__ == '__main__':
     nstx = Machine()
-#    nstx.listshot()
-    xp = nstx.filter_shots(xp=1048)
-    dir(xp)
-#    s.bes.ch01.plot()
-#    s.usxr.hup.hup00.plot()
-#    s.magnetics.highn.highn_10.plot()
-#    s.filterscopes.bayg_dalpha_eies.plot()
-#    s.mpts.ne.plot()
-#    s.chers.ti.plot()
-#    s.chers.derived.zeff.plot()
-#    s.ip.plot()
-#    s.vloop.plot()
+    xp = nstx.filter_shots(xp=1037)
