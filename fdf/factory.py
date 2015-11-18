@@ -872,11 +872,9 @@ class Container(object):
 
 
 def init_class(cls, module_tree, **kwargs):
-
     cls._name = module_tree.get('name')
     if cls not in cls._instances:
         cls._instances[cls] = {}
-
     for read_only in ['root', 'container', 'classparent']:
         try:
             setattr(cls, '_'+read_only, kwargs[read_only])
@@ -888,7 +886,6 @@ def init_class(cls, module_tree, **kwargs):
         getitem = module_tree.get(item)
         if getitem is not None:
             setattr(cls, '_'+item, getitem)
-
     cls._base_items = set(cls.__dict__.keys())
     parse_method(cls, module_tree)
 
@@ -897,12 +894,18 @@ def parse_method(obj, module_tree):
     objpath = obj._get_path()
     sys.path.insert(0, objpath)
     for method in module_tree.findall('method'):
-        method_text = method.text
-        if method_text is None:
-            method_text = method.get('name')
-        module_object = importlib.import_module(method_text)
-        method_from_object = module_object.__getattribute__(method_text)
-        setattr(obj, method.get('name'), method_from_object)
+        method_name = method.text
+        if method_name is None:
+            method_name = method.get('name')
+        module = method.get('module')
+        if module is None:
+            module = method_name
+        method_in_module = method.get('method_in_module')
+        if method_in_module is None:
+            method_in_module = method_name
+        module_object = importlib.import_module(module)
+        method_from_object = module_object.__getattribute__(method_in_module)
+        setattr(obj, method_name, method_from_object)
     sys.path.pop(0)
 
 
@@ -1099,4 +1102,6 @@ class Node(object):
 
 if __name__ == '__main__':
     nstx = Machine()
-    xp = nstx.filter_shots(xp=1037)
+    s = nstx.s141000
+    s.bes.ch01.myfft()
+#    s.bes.ch01.fft2()
